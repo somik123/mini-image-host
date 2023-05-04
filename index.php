@@ -18,7 +18,7 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
         $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
         $file_id = rand_str(6);
         
-        $file_up_path = "img/{$file_id}.{$file_ext}"; 
+        $file_up_path = "i/{$file_id}.{$file_ext}"; 
         move_uploaded_file($tmp_name, $file_up_path); 
         
         $out = array("status"=>"OK","path"=>$file_up_path);
