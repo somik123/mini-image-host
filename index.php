@@ -1,8 +1,8 @@
 <?php
-header("Access-Control-Allow-Origin: *");
 
-$domain = "https://img.ec.gy/";
-$upload_path = "/var/www/img.ec.gy/public_html/";
+require_once("config.php");
+
+header("Access-Control-Allow-Origin: *");
 
 if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
     try{
@@ -26,7 +26,7 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
         
         move_uploaded_file($tmp_name, $upload_path.$new_file_name);
         
-        $url = $domain.$new_file_name;
+        $url = $protocol.$domain.$url_path.$new_file_name;
         
         $out = array("status"=>"OK","url"=>$url);
         echo json_encode($out);
@@ -58,8 +58,12 @@ else{
         <div class="mirror-div">
             Select mirror:
             <select id="mirror">
-                <option value="">img.ec.gy</option>
-                <option>img.c1.is</option>
+                <?php
+                    echo "<option value=\"\">{$domain}</option>";
+                    foreach($mirror_list as $mirror){
+                        echo "<option>$mirror</option>";
+                    }
+                ?>
             </select>
         </div>
         <form action="#">
