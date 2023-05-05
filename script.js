@@ -18,16 +18,21 @@ fileInput.onchange = ({
             let splitName = fileName.split('.');
             fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
         }
-        uploadFile(fileName);
+        let mirror = document.getElementById("mirror").value;
+        if(mirror.length > 0){
+            mirror = "https://"+mirror+"/";
+        }
+        //alert(mirror);
+        uploadFile(fileName,mirror);
     }
 }
 
 // file upload function
-function uploadFile(name) {
+function uploadFile(name, mirror) {
     let fileSize;
 
     let xhr = new XMLHttpRequest(); 
-    xhr.open("POST", "index.php"); 
+    xhr.open("POST", mirror + "index.php"); 
 
     xhr.upload.addEventListener("progress", ({
         loaded,
@@ -62,7 +67,7 @@ function uploadFile(name) {
         var api_reply = JSON.parse(xhr.responseText);
         if (api_reply['status'] == "OK") {
 
-            let url = window.location.href + api_reply['path'];
+            let url = api_reply['url'];
 
             progressArea.innerHTML = "";
             let uploadedHTML = `<li class="row">

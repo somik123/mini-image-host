@@ -1,4 +1,8 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+
+$domain = "https://img.ec.gy/";
+$upload_path = "/var/www/img.ec.gy/public_html/";
 
 if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
     try{
@@ -18,10 +22,13 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
         $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
         $file_id = rand_str(6);
         
-        $file_up_path = "i/{$file_id}.{$file_ext}"; 
-        move_uploaded_file($tmp_name, $file_up_path); 
+        $new_file_name = "{$file_id}.{$file_ext}";
         
-        $out = array("status"=>"OK","path"=>$file_up_path);
+        move_uploaded_file($tmp_name, $upload_path.$new_file_name);
+        
+        $url = $domain.$new_file_name;
+        
+        $out = array("status"=>"OK","url"=>$url);
         echo json_encode($out);
 
     }
@@ -40,18 +47,26 @@ else{
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Image Host</title>
+    <title>Mini Image Host | ImagePerl</title>
     <link rel="stylesheet" href="style.css<?=$v?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 
 <body>
     <div class="wrapper">
-        <header>Mini Image Host</header>
+        <header onclick="location.href='.';">Mini Image Host</header>
+        <div class="mirror-div">
+            Select mirror:
+            <select id="mirror">
+                <option value="">img.ec.gy</option>
+                <option>img.c1.is</option>
+            </select>
+        </div>
         <form action="#">
             <input class="file-input" type="file" name="file" hidden>
             <i class="fas fa-cloud-upload-alt"></i>
             <p>Browse Image to Upload</p>
+            <span class="small">Max file size: 5MB</span>
         </form>
         <section class="progress-area"></section>
         <section class="uploaded-area"></section>
