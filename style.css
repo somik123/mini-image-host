@@ -13,7 +13,8 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: #6990F2;
+    /* background: #6990F2; */
+    background: radial-gradient(#e66465, #9198e5);
 }
 
 ::selection {
@@ -21,12 +22,26 @@ body {
     background: #6990F2;
 }
 
-.wrapper {
+.wrapper{
     width: 430px;
     background: #fff;
     border-radius: 5px;
     padding: 30px;
     box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.wrapper-big {
+    width: 900px;
+    text-align: center;
+}
+
+.wrapper-big .fa-upload{
+    float:right; 
+    font-size: 20pt; 
+    margin-top: -10px; 
+    margin-right:-10px;
+    cursor: pointer;
 }
 
 .wrapper header {
@@ -34,6 +49,7 @@ body {
     font-size: 27px;
     font-weight: 600;
     text-align: center;
+    cursor: pointer;
 }
 
 .wrapper form {
@@ -46,6 +62,30 @@ body {
     flex-direction: column;
     border-radius: 5px;
     border: 2px dashed #6990F2;
+}
+
+.wrapper form .small {
+    color: #6990F2;
+    font-size: 11px;
+}
+
+.wrapper .mirror-div{
+    margin-bottom: -20px;
+    margin-top: 20px;
+    color: #6990F2;
+}
+
+.wrapper .mirror-div #mirror{
+    border: 1px solid #6990F2;
+    padding: 3px 5px;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #6990F2;
+}
+
+.wrapper .mirror-div .fa-image{
+    color: #6990F2;
+    cursor: pointer;
 }
 
 form :where(i, p) {
@@ -149,3 +189,72 @@ section .details span {
 .uploaded-area i.fa-exclamation-triangle {
     font-size: 24px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /* Popup container */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.popup .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+} 

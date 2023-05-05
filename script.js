@@ -1,33 +1,10 @@
-const form = document.querySelector("form");
-const fileInput = document.querySelector(".file-input");
-const progressArea = document.querySelector(".progress-area");
-const uploadedArea = document.querySelector(".uploaded-area");
-
-// form click event
-form.addEventListener("click", () => {
-    fileInput.click();
-});
-
-fileInput.onchange = ({
-    target
-}) => {
-    let file = target.files[0];
-    if (file) {
-        let fileName = file.name;
-        if (fileName.length >= 12) {
-            let splitName = fileName.split('.');
-            fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
-        }
-        uploadFile(fileName);
-    }
-}
 
 // file upload function
-function uploadFile(name) {
+function uploadFile(name, mirror) {
     let fileSize;
 
     let xhr = new XMLHttpRequest(); 
-    xhr.open("POST", "index.php"); 
+    xhr.open("POST", mirror + "index.php"); 
 
     xhr.upload.addEventListener("progress", ({
         loaded,
@@ -62,7 +39,7 @@ function uploadFile(name) {
         var api_reply = JSON.parse(xhr.responseText);
         if (api_reply['status'] == "OK") {
 
-            let url = window.location.href + api_reply['path'];
+            let url = api_reply['url'];
 
             progressArea.innerHTML = "";
             let uploadedHTML = `<li class="row">
@@ -152,3 +129,43 @@ function copyTextToClipboard(text,el) {
         el.className = "fas fa-clipboard";
     },3000);
 }
+
+// Main function to copy text to clipboard
+function copyTextToClipboard(text) {
+    if (!navigator.clipboard) {
+        fallbackCopyTextToClipboard(text);
+    }
+    else{
+        navigator.clipboard.writeText(text).then(
+            function() {
+                console.log('Async: Copying to clipboard was successful!');
+            }, function(err) {
+                console.error('Async: Could not copy text: ', err);
+            }
+        );
+    }
+}
+
+
+
+
+// When the user clicks on <div>, open the popup
+function showPopup(popupId,text) {
+    var popup = document.getElementById(popupId);
+    copyTextToClipboard(text)
+    popup.classList.toggle("show");
+    setTimeout(()=> {
+        popup.classList.toggle("show");
+    },3000);
+}
+
+
+
+
+
+
+
+
+
+
+
