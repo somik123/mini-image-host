@@ -53,6 +53,40 @@ else{
 </head>
 
 <body>
+
+<?php 
+
+if(isset($_REQUEST['gallery'])){ 
+    $files = scandir($upload_path);
+    
+?>
+    <div class="wrapper wrapper-big">
+        <i class="fas fa-upload" onclick="location.href='.';"></i>
+        <header onclick="location.href='.';">Mini Image Host</header>
+        <div style="margin: 30px 0;">
+<?php
+
+$i = 0;
+foreach($files as $file){
+    $file_url = $protocol.$domain.$url_path.$file;
+    if(!is_dir($upload_path.$file)){
+        ?>
+        
+            <div class="popup" onclick="showPopup('popup_<?=$i?>','<?=$file_url?>')">
+                <img src="<?=$file_url?>" alt="<?=$file_url?>" style="max-width: 200px; max-height: 200px; padding: 5px 5px;" />
+                <span class="popuptext" id="popup_<?=$i?>">Link copied.</span>
+            </div>
+        <?php
+        $i++;
+    }
+}
+
+?>  
+        </div>
+    </div>
+
+<?php } else { ?>
+
     <div class="wrapper">
         <header onclick="location.href='.';">Mini Image Host</header>
         <div class="mirror-div">
@@ -65,6 +99,7 @@ else{
                     }
                 ?>
             </select>
+            <i class="fas fa-image" onclick="location.href='/?gallery';" style="float:right; font-size: 20pt;"></i>
         </div>
         <form action="#">
             <input class="file-input" type="file" name="file" hidden>
@@ -75,10 +110,35 @@ else{
         <section class="progress-area"></section>
         <section class="uploaded-area"></section>
     </div>
+    
+    <script>
+        // form click event
+        form.addEventListener("click", () => {
+            fileInput.click();
+        });
+        
+        fileInput.onchange = ({
+            target
+        }) => {
+            let file = target.files[0];
+            if (file) {
+                let fileName = file.name;
+                if (fileName.length >= 12) {
+                    let splitName = fileName.split('.');
+                    fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
+                }
+                let mirror = document.getElementById("mirror").value;
+                if(mirror.length > 0){
+                    mirror = "https://"+mirror+"/";
+                }
+                uploadFile(fileName,mirror);
+            }
+        }
+    </script>
+    
+<?php } ?>
 
     <script src="script.js<?=$v?>"></script>
-
-    
 
 </body>
 

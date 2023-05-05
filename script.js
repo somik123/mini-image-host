@@ -3,29 +3,8 @@ const fileInput = document.querySelector(".file-input");
 const progressArea = document.querySelector(".progress-area");
 const uploadedArea = document.querySelector(".uploaded-area");
 
-// form click event
-form.addEventListener("click", () => {
-    fileInput.click();
-});
 
-fileInput.onchange = ({
-    target
-}) => {
-    let file = target.files[0];
-    if (file) {
-        let fileName = file.name;
-        if (fileName.length >= 12) {
-            let splitName = fileName.split('.');
-            fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
-        }
-        let mirror = document.getElementById("mirror").value;
-        if(mirror.length > 0){
-            mirror = "https://"+mirror+"/";
-        }
-        //alert(mirror);
-        uploadFile(fileName,mirror);
-    }
-}
+
 
 // file upload function
 function uploadFile(name, mirror) {
@@ -157,3 +136,43 @@ function copyTextToClipboard(text,el) {
         el.className = "fas fa-clipboard";
     },3000);
 }
+
+// Main function to copy text to clipboard
+function copyTextToClipboard(text) {
+    if (!navigator.clipboard) {
+        fallbackCopyTextToClipboard(text);
+    }
+    else{
+        navigator.clipboard.writeText(text).then(
+            function() {
+                console.log('Async: Copying to clipboard was successful!');
+            }, function(err) {
+                console.error('Async: Could not copy text: ', err);
+            }
+        );
+    }
+}
+
+
+
+
+// When the user clicks on <div>, open the popup
+function showPopup(popupId,text) {
+    var popup = document.getElementById(popupId);
+    copyTextToClipboard(text)
+    popup.classList.toggle("show");
+    setTimeout(()=> {
+        popup.classList.toggle("show");
+    },3000);
+}
+
+
+
+
+
+
+
+
+
+
+
