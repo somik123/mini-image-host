@@ -1,10 +1,3 @@
-const form = document.querySelector("form");
-const fileInput = document.querySelector(".file-input");
-const progressArea = document.querySelector(".progress-area");
-const uploadedArea = document.querySelector(".uploaded-area");
-
-
-
 
 // file upload function
 function uploadFile(name, mirror) {

@@ -112,6 +112,10 @@ foreach($files as $file){
     </div>
     
     <script>
+        const form = document.querySelector("form");
+        const fileInput = document.querySelector(".file-input");
+        const progressArea = document.querySelector(".progress-area");
+        const uploadedArea = document.querySelector(".uploaded-area");
         // form click event
         form.addEventListener("click", () => {
             fileInput.click();
