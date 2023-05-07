@@ -4,6 +4,8 @@ require_once("config.php");
 
 header("Access-Control-Allow-Origin: *");
 
+$max_filesize_msg = human_readable_size($max_filesize,0);
+
 if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
     try{
         $file_name =  $_FILES['file']['name']; //getting file name
@@ -15,16 +17,28 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
             throw new Exception('Please upload valid image file.');
         
         $type = $_FILES['file']['type'];     
-        $extensions = array( 'image/jpeg', 'image/png', 'image/gif' );
+        $extensions = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
         if(!in_array( $type, $extensions ))
-            throw new Exception('Only jpg, jpeg, png, and gif image type supported.');
+            throw new Exception("Only jpg, jpeg, png, webp, and gif image type supported.");
+        
+        if(filesize($tmp_name)>$max_filesize)
+            throw new Exception("File over allowed size of {$max_filesize_msg}");
         
         $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
         $file_id = rand_str(6);
         
-        $new_file_name = "{$file_id}.{$file_ext}";
-        
-        move_uploaded_file($tmp_name, $upload_path.$new_file_name);
+        if($type=='image/webp'){
+            $new_file_name = "{$file_id}.jpg";
+            // Convert webp to jpeg with 80% quality
+            $im = imagecreatefromwebp($tmp_name);
+            imagejpeg($im, $upload_path.$new_file_name, 80);
+            imagedestroy($im);
+        }
+        else{
+            $new_file_name = "{$file_id}.{$file_ext}";
+            // Save all other formats
+            move_uploaded_file($tmp_name, $upload_path.$new_file_name);
+        }
         
         $url = $protocol.$domain.$url_path.$new_file_name;
         
@@ -93,9 +107,8 @@ foreach($files as $file){
             Select mirror:
             <select id="mirror">
                 <?php
-                    echo "<option value=\"\">{$domain}</option>";
-                    foreach($mirror_list as $mirror){
-                        echo "<option>$mirror</option>";
+                    foreach($mirror_list as $mirror=>$host){
+                        echo "<option value=\"$host\">$mirror</option>";
                     }
                 ?>
             </select>
@@ -105,7 +118,7 @@ foreach($files as $file){
             <input class="file-input" type="file" name="file" hidden>
             <i class="fas fa-cloud-upload-alt"></i>
             <p>Browse Image to Upload</p>
-            <span class="small">Max file size: 5MB</span>
+            <span class="small">Max file size: <?=$max_filesize_msg?></span>
         </form>
         <section class="progress-area"></section>
         <section class="uploaded-area"></section>
@@ -128,8 +141,12 @@ foreach($files as $file){
             if (file) {
                 let fileName = file.name;
                 if (fileName.length >= 12) {
-                    let splitName = fileName.split('.');
-                    fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
+                    let lastIndex = fileName.lastIndexOf('.');
+                    let name = fileName.slice(0, lastIndex);
+                    let ext = fileName.slice(lastIndex + 1);
+                    fileName = name.substring(0, 13) + "... ." + ext;
+                    //let splitName = fileName.split('.');
+                    //fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
                 }
                 let mirror = document.getElementById("mirror").value;
                 if(mirror.length > 0){
@@ -154,6 +171,7 @@ foreach($files as $file){
 
 
 
+
 function rand_str($length = 10) {
     $characters = '23456789abcdefghjkmnpqrtuvwxyzABCDEFGHJKLMNPQRTUVWXYZ';
     $charactersLength = strlen($characters);
@@ -163,3 +181,21 @@ function rand_str($length = 10) {
     }
     return $randomString;
 }
+
+
+
+function human_readable_size($raw_size,$return_array = true){
+    $size_arr = array("B","KB","MB","GB","TB","PB");
+    $max = count($size_arr)-1;
+    
+    for($i=$max; $i>=0; $i--){
+        $value = pow(1024,$i);
+        
+        if($raw_size > $value){
+            $size_hr = round(($raw_size / $value), 2);
+            
+            return $return_array ? array($size_hr,$size_arr[$i]) : "{$size_hr} {$size_arr[$i]}";
+        }
+    }
+}
+

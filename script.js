@@ -18,7 +18,7 @@ function uploadFile(name, mirror) {
                           <i class="fas fa-file-alt"></i>
                           <div class="content">
                             <div class="details">
-                              <span class="name">${name} • Uploading</span>
+                              <span class="name">${name} <i class="fa fa-upload" aria-hidden="true"></i></span>
                               <span class="percent">${fileLoaded}%</span>
                             </div>
                             <div class="progress-bar">
@@ -40,6 +40,7 @@ function uploadFile(name, mirror) {
         if (api_reply['status'] == "OK") {
 
             let url = api_reply['url'];
+            //name = url.substring(url.lastIndexOf('/')+1);
 
             progressArea.innerHTML = "";
             let uploadedHTML = `<li class="row">
