@@ -126,12 +126,17 @@ section .details span {
     margin-left: 15px;
 }
 
+.progress-area .row .content i.fa-upload {
+    font-size: 16px;
+}
+
 .progress-area .details {
     display: flex;
     align-items: center;
     margin-bottom: 7px;
     justify-content: space-between;
 }
+
 
 .progress-area .content .progress-bar {
     height: 6px;
