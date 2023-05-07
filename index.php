@@ -15,16 +15,25 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
             throw new Exception('Please upload valid image file.');
         
         $type = $_FILES['file']['type'];     
-        $extensions = array( 'image/jpeg', 'image/png', 'image/gif' );
+        $extensions = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
         if(!in_array( $type, $extensions ))
             throw new Exception('Only jpg, jpeg, png, and gif image type supported.');
         
         $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
         $file_id = rand_str(6);
         
-        $new_file_name = "{$file_id}.{$file_ext}";
-        
-        move_uploaded_file($tmp_name, $upload_path.$new_file_name);
+        if($type=='image/webp'){
+            $new_file_name = "{$file_id}.jpg";
+            // Convert webp to jpeg with 80% quality
+            $im = imagecreatefromwebp($tmp_name);
+            imagejpeg($im, $upload_path.$new_file_name, 80);
+            imagedestroy($im);
+        }
+        else{
+            $new_file_name = "{$file_id}.{$file_ext}";
+            // Save all other formats
+            move_uploaded_file($tmp_name, $upload_path.$new_file_name);
+        }
         
         $url = $protocol.$domain.$url_path.$new_file_name;
         
