@@ -17,7 +17,7 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
         $type = $_FILES['file']['type'];     
         $extensions = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
         if(!in_array( $type, $extensions ))
-            throw new Exception('Only jpg, jpeg, png, and gif image type supported.');
+            throw new Exception('Only jpg, jpeg, png, webp, and gif image type supported.');
         
         $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
         $file_id = rand_str(6);
