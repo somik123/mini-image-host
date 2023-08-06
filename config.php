@@ -1,11 +1,17 @@
 <?php
 
 $protocol = "https://";
-$domain = "img.ec.gy";
+$domain = "img.l5.ca";
 
-$upload_path = "/var/www/{$domain}/public_html/";
-$url_path = "/";
+$image_path = "/var/www/{$domain}/public_html/i/";
+$image_url = "/i/";
+
+$thumb_path = "/var/www/{$domain}/public_html/t/";
+$thumb_url = "/t/";
 
 $mirror_list = array($domain=>"");
 
 $max_filesize = 5 * 1024 * 1024;
+
+$allowed_types = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
+
