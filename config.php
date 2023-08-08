@@ -9,9 +9,18 @@ $image_url = "/i/";
 $thumb_path = "/var/www/{$domain}/public_html/t/";
 $thumb_url = "/t/";
 
-$mirror_list = array($domain=>"");
+$mirror_list = array(
+    $domain => "",
+    "thinpcb.com" => "thinpcb.com"
+);
 
-$max_filesize = 5 * 1024 * 1024;
+$max_file_size = 25 * 1024 * 1024; // In bytes, for file uploads
 
-$allowed_types = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
+$max_image_size = 800; // In Pixles, images bigger then this will be resized
 
+$allowed_types = array(
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp'
+);
