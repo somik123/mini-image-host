@@ -1,17 +1,17 @@
 <?php
 
 $protocol = "https://";
-$domain = "img.l5.ca";
+$domain = "example.com";
 
-$image_path = "/var/www/{$domain}/public_html/i/";
-$image_url = "/i/";
+$image_path = "./i/"; // path to image upload folder in filesystem
+$image_url = "/i/";   // url to image
 
-$thumb_path = "/var/www/{$domain}/public_html/t/";
-$thumb_url = "/t/";
+$thumb_path = "./t/"; // path to image thumbnail upload folder in filesystem
+$thumb_url = "/t/";   // url to image thumbnail
 
 $mirror_list = array(
     $domain => "",
-    "thinpcb.com" => "thinpcb.com"
+    "example.net" => "example.net" // domain for second mini-image-host site (remove if not needed)
 );
 
 $max_file_size = 25 * 1024 * 1024; // In bytes, for file uploads
