@@ -6,5 +6,5 @@ services:
     ports:
       - 8080:80
     volumes:
-      - /home/somik/mini-image-host/html:/var/www/html
+      - ./html:/var/www/html
   
