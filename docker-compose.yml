@@ -1,10 +1,37 @@
+volumes:
+  imagehost_image:
+      name: imagehost_image
+  imagehost_thumbnail:
+      name: imagehost_thumbnail
+
 services:
   app:
     container_name: mini-image-host
-    image: somik123/php-nginx
     restart: unless-stopped
+    image: somik123/mini-image-host
     ports:
       - 8080:80
     volumes:
-      - ./html:/var/www/html
-  
+      - imagehost_image:/var/www/html/i
+      - imagehost_thumbnail:/var/www/html/t
+    environment:
+      # Site base settings
+      APP_PROTOCOL: "https://"
+      APP_DOMAIN: "example.com"
+
+      # Paths inside the container match above volumes
+      IMAGE_PATH: "/var/www/html/i/"
+      IMAGE_URL: "/i/"
+
+      THUMB_PATH: "/var/www/html/t/"
+      THUMB_URL: "/t/"
+
+      # Optional mirror domains (comma-separated)
+      MIRROR_DOMAINS: "example.net,example2.net,example3.net"
+
+      # Upload limits
+      MAX_FILE_SIZE: "26214400"
+      MAX_IMAGE_SIZE: "800"
+
+      # Allowed MIME types
+      ALLOWED_TYPES: "image/jpeg,image/png,image/gif,image/webp"
