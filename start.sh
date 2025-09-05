@@ -14,6 +14,8 @@
 : "${MAX_IMAGE_SIZE:=800}"
 : "${ALLOWED_TYPES:=image/jpeg,image/png,image/gif,image/webp}"
 
+: "${ADMIN_KEY:=aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa}"
+
 # Initialize mirror list with APP_DOMAIN
 mirror_list="    \"${APP_DOMAIN}\" => \"\""
 
@@ -65,6 +67,8 @@ $mirror_list
 \$allowed_types = array(
 $allowed_types
 );
+
+\$admin_key = "${ADMIN_KEY}"; // Used to delete files
 EOF
 
 echo "config.php generated at /var/www/html/config.php"

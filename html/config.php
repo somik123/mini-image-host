@@ -24,3 +24,5 @@ $allowed_types = array(
     'image/gif',
     'image/webp'
 );
+
+$admin_key = "aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa"; // Change this to a strong key

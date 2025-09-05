@@ -85,6 +85,26 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
         $out = array("status" => "FAIL", "msg" => $e->getMessage());
         echo json_encode($out);
     }
+} elseif ($_REQUEST['delete'] && $_REQUEST['key']) {
+    $file = $_REQUEST['delete'];
+    $key = $_REQUEST['key'];
+    if ($key === $admin_key) {
+        $file_path = $image_path . $file;
+        if (file_exists($file_path) && !is_dir($file_path)) {
+            @unlink($file_path);
+            $parts = explode(".", $file);
+            $thumb_name = $parts[0] . "_thumb." . $parts[1];
+            $thumb_path_full = $thumb_path . $thumb_name;
+            if (file_exists($thumb_path_full) && !is_dir($thumb_path_full)) {
+                @unlink($thumb_path_full);
+            }
+            echo "Image and thumbnail deleted.";
+        } else {
+            echo "Image not found.";
+        }
+    } else {
+        echo "Invalid ADMIN_KEY.";
+    }
 } else {
     $v = "?v=" . rand(1111, 9999);
 ?>
@@ -107,13 +127,21 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
         if (isset($_REQUEST['gallery'])) {
             $files = scandir($image_path);
 
+            $files = array_diff($files, array('.', '..'));
+            // Sort files by modified time, latest first
+            usort($files, function ($a, $b) use ($image_path) {
+                return filemtime($image_path . $b) - filemtime($image_path . $a);
+            });
+            if (count($files) == 0) {
+                echo "<div class=\"wrapper\"><header onclick=\"location.href='.';\">Mini Image Host</header><p>No images found.</p></div>";
+                exit;
+            }
         ?>
             <div class="wrapper wrapper-big">
                 <i class="fas fa-upload" onclick="location.href='.';"></i>
                 <header onclick="location.href='.';">Mini Image Host</header>
                 <div style="margin: 30px 0;">
                     <?php
-
                     $i = 0;
                     foreach ($files as $file) {
                         $parts = explode(".", $file);
@@ -131,8 +159,8 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
 
                         if ($file_exists) {
                     ?>
-
-                            <div class="popup" onclick="showPopup('popup_<?= $i ?>','<?= $file_url ?>')">
+                            <div class="popup" onclick="showPopup('popup_<?= $i ?>','<?= $file_url ?>')"
+                                oncontextmenu="return showDeleteConfirm('<?= $file ?>');">
                                 <img src="<?= $img_scr_url ?>" alt="<?= $file_url ?>" />
                                 <span class="popuptext" id="popup_<?= $i ?>">Link copied.</span>
                             </div>
@@ -140,7 +168,6 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                             $i++;
                         }
                     }
-
                     ?>
                 </div>
             </div>

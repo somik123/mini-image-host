@@ -3,17 +3,17 @@
 function uploadFile(name, mirror) {
     let fileSize;
 
-    let xhr = new XMLHttpRequest(); 
-    xhr.open("POST", mirror + "index.php"); 
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", mirror + "index.php");
 
     xhr.upload.addEventListener("progress", ({
         loaded,
         total
-    }) => { 
-        let fileLoaded = Math.floor((loaded / total) * 100); 
-        let fileTotal = Math.floor(total / 1000); 
+    }) => {
+        let fileLoaded = Math.floor((loaded / total) * 100);
+        let fileTotal = Math.floor(total / 1000);
 
-        (fileTotal < 1024) ? fileSize = fileTotal + " KB": fileSize = (loaded / (1024 * 1024)).toFixed(2) + " MB";
+        (fileTotal < 1024) ? fileSize = fileTotal + " KB" : fileSize = (loaded / (1024 * 1024)).toFixed(2) + " MB";
         let progressHTML = `<li class="row">
                           <i class="fas fa-file-alt"></i>
                           <div class="content">
@@ -30,12 +30,12 @@ function uploadFile(name, mirror) {
         uploadedArea.classList.add("onprogress");
         progressArea.innerHTML = progressHTML;
     });
-    let data = new FormData(form); 
-    xhr.send(data); 
+    let data = new FormData(form);
+    xhr.send(data);
 
 
-    xhr.onload = function() {
-            
+    xhr.onload = function () {
+
         var api_reply = JSON.parse(xhr.responseText);
         if (api_reply['status'] == "OK") {
 
@@ -58,7 +58,7 @@ function uploadFile(name, mirror) {
             uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML); //remove this line if you don't want to show upload history
 
         } else if (api_reply['status'] == "FAIL") {
-            
+
             let error = api_reply['msg'];
 
             progressArea.innerHTML = "";
@@ -75,7 +75,7 @@ function uploadFile(name, mirror) {
             uploadedArea.classList.remove("onprogress");
             // uploadedArea.innerHTML = uploadedHTML; //uncomment this line if you don't want to show upload history
             uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML); //remove this line if you don't want to show upload history
-            
+
         }
     }
 }
@@ -112,23 +112,23 @@ function fallbackCopyTextToClipboard(text) {
 
 
 // Main function to copy text to clipboard
-function copyTextToClipboard(text,el) {
+function copyTextToClipboard(text, el) {
     if (!navigator.clipboard) {
         fallbackCopyTextToClipboard(text);
     }
-    else{
+    else {
         navigator.clipboard.writeText(text).then(
-            function() {
+            function () {
                 console.log('Async: Copying to clipboard was successful!');
-            }, function(err) {
+            }, function (err) {
                 console.error('Async: Could not copy text: ', err);
             }
         );
     }
     el.className = "fas fa-check";
-    setTimeout(()=> {
+    setTimeout(() => {
         el.className = "fas fa-clipboard";
-    },3000);
+    }, 3000);
 }
 
 // Main function to copy text to clipboard
@@ -136,11 +136,11 @@ function copyTextToClipboard(text) {
     if (!navigator.clipboard) {
         fallbackCopyTextToClipboard(text);
     }
-    else{
+    else {
         navigator.clipboard.writeText(text).then(
-            function() {
+            function () {
                 console.log('Async: Copying to clipboard was successful!');
-            }, function(err) {
+            }, function (err) {
                 console.error('Async: Could not copy text: ', err);
             }
         );
@@ -148,25 +148,31 @@ function copyTextToClipboard(text) {
 }
 
 
-
-
 // When the user clicks on <div>, open the popup
-function showPopup(popupId,text) {
+function showPopup(popupId, text) {
     var popup = document.getElementById(popupId);
     copyTextToClipboard(text)
     popup.classList.toggle("show");
-    setTimeout(()=> {
+    setTimeout(() => {
         popup.classList.toggle("show");
-    },3000);
+    }, 3000);
 }
 
 
-
-
-
-
-
-
-
+// Show delete confirmation prompt
+function showDeleteConfirm(file) {
+    var ret = prompt("Provide ADMIN_KEY to delete this image (case-sensitive):", "");
+    if (ret != null) {
+        var url = "index.php?delete=" + file + "&key=" + ret;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.onload = function () {
+            alert(xhr.responseText);
+            location.reload();
+        }
+        xhr.send();
+    }
+    return false;
+}
 
 
