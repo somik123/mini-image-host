@@ -185,12 +185,12 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                         }
                         ?>
                     </select>
-                    <i class="fas fa-image" onclick="location.href='/?gallery';" style="float:right; font-size: 20pt;"></i>
+                    <i class="fas fa-image" onclick="location.href='./?gallery';" style="float:right; font-size: 20pt;"></i>
                 </div>
                 <form action="#">
-                    <input class="file-input" type="file" name="file" hidden>
+                    <input class="file-input" type="file" name="file" id="file" hidden>
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Browse Image to Upload</p>
+                    <p>Click or drag or paste image to upload</p>
                     <span class="small">Max file size:
                         <?= $max_filesize_msg ?>
                     </span>
@@ -204,11 +204,13 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                 const fileInput = document.querySelector(".file-input");
                 const progressArea = document.querySelector(".progress-area");
                 const uploadedArea = document.querySelector(".uploaded-area");
+
                 // form click event
                 form.addEventListener("click", () => {
                     fileInput.click();
                 });
 
+                // file input change event
                 fileInput.onchange = ({
                     target
                 }) => {
@@ -220,16 +222,44 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                             let name = fileName.slice(0, lastIndex);
                             let ext = fileName.slice(lastIndex + 1);
                             fileName = name.substring(0, 13) + "... ." + ext;
-                            //let splitName = fileName.split('.');
-                            //fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
                         }
-                        let mirror = document.getElementById("mirror").value;
-                        if (mirror.length > 0) {
-                            mirror = "https://" + mirror + "/";
-                        }
-                        uploadFile(fileName, mirror);
+                        uploadFile(fileName);
                     }
                 }
+
+                // form dragover or drop event
+                ['dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    document.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                });
+
+                // handle dropped files
+                document.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    if (dt.files && dt.files.length > 0) {
+                        console.log('File(s) dropped');
+                        console.log(dt.files);
+                        const file = dt.files[0];
+                        setFileInput(file);
+                    }
+                });
+
+                // handle pasted images
+                document.addEventListener('paste', function(e) {
+                    const items = (event.clipboardData || event.originalEvent.clipboardData || window.clipboardData).items;
+                    for (let i = 0; i < items.length; i++) {
+                        if ((items[i].kind === 'file' && items[i].type.startsWith('image/')) || (items[i].type.indexOf("image") !== -1)) {
+                            console.log('Pasted image');
+                            console.log(items[i]);
+                            const file = items[i].getAsFile();
+                            setFileInput(file);
+                            e.preventDefault();
+                            break; // We only need the first image
+                        }
+                    }
+                });
             </script>
 
         <?php } ?>

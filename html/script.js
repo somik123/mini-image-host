@@ -1,7 +1,13 @@
 
 // file upload function
-function uploadFile(name, mirror) {
+function uploadFile(name) {
     let fileSize;
+    let mirror = "";
+
+    let mirrorEl = document.getElementById("mirror");
+    if (mirrorEl.value.length > 0) {
+        mirror = "https://" + mirror.value + "/";
+    }
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", mirror + "index.php");
@@ -176,3 +182,10 @@ function showDeleteConfirm(file) {
 }
 
 
+// Set file input and upload file
+function setFileInput(file) {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    fileInput.files = dataTransfer.files;
+    uploadFile(file.name);
+}
