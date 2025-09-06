@@ -24,7 +24,7 @@ function uploadFile(name) {
                           <i class="fas fa-file-alt"></i>
                           <div class="content">
                             <div class="details">
-                              <span class="name">${name} <i class="fa fa-upload" aria-hidden="true"></i></span>
+                              <span class="name">${name} <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i></span>
                               <span class="percent">${fileLoaded}%</span>
                             </div>
                             <div class="progress-bar">
@@ -188,4 +188,50 @@ function setFileInput(file) {
     dataTransfer.items.add(file);
     fileInput.files = dataTransfer.files;
     uploadFile(file.name);
+}
+
+
+// Convert text to image and set file input
+function text2image(button) {
+    button.disabled = true;
+    button.innerHTML = "Converting...";
+
+    var text = document.getElementById("txt2img").value;
+    if (text.trim() === "") {
+        alert("Please enter some text to convert.");
+        button.disabled = false;
+        button.innerHTML = "Convert to Image";
+        return false;
+    }
+    var formData = new FormData();
+    formData.append("textblk", text);
+
+    fetch('', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.blob())
+        .then(imageBlob => {
+            // Get as file
+            const file = new File([imageBlob], "converted_image.png", {
+                type: 'image/png'
+            });
+            setFileInput(file);
+            button.disabled = false;
+            button.innerHTML = "Convert to Image";
+        })
+        .catch(error => {
+            console.error("Conversion failed:", error);
+        });
+    return false;
+}
+
+function showHideContainer(el) {
+    var container = document.getElementById(el);
+    if (container.style.display === "none") {
+        container.style.display = "block";
+    } else {
+        container.style.display = "none";
+    }
+    return false;
 }

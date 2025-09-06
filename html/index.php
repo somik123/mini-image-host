@@ -86,6 +86,7 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
         echo json_encode($out);
     }
 } elseif ($_REQUEST['delete'] && $_REQUEST['key']) {
+    // Delete image and thumbnail if admin key is correct
     $file = $_REQUEST['delete'];
     $key = $_REQUEST['key'];
     if ($key === $admin_key) {
@@ -105,6 +106,11 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
     } else {
         echo "Invalid ADMIN_KEY.";
     }
+} elseif ($_POST['textblk']) {
+    // Convert text block to image
+    $text = $_POST['textblk'];
+    text2image($text);
+    exit;
 } else {
     $v = "?v=" . rand(1111, 9999);
 ?>
@@ -116,8 +122,8 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Mini Image Host</title>
-        <link rel="stylesheet" href="style.css<?= $v ?>">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+        <link rel="stylesheet" href="./static/style.css<?= $v ?>">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
     </head>
 
     <body>
@@ -138,7 +144,7 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
             }
         ?>
             <div class="wrapper wrapper-big">
-                <i class="fas fa-upload" onclick="location.href='.';"></i>
+                <i class="fa-solid fa-cloud-arrow-up" onclick="location.href='.';"></i>
                 <header onclick="location.href='.';">Mini Image Host</header>
                 <div style="margin: 30px 0;">
                     <?php
@@ -185,7 +191,8 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                         }
                         ?>
                     </select>
-                    <i class="fas fa-image" onclick="location.href='./?gallery';" style="float:right; font-size: 20pt;"></i>
+                    <i class="fa-solid fa-images" onclick="location.href='./?gallery';" style="float:right; font-size: 20pt;"></i>
+                    <i class="fa-regular fa-message" onclick="showHideContainer('txt2imgDiv');" style="float:right; font-size: 20pt;"></i>
                 </div>
                 <form action="#">
                     <input class="file-input" type="file" name="file" id="file" hidden>
@@ -195,6 +202,10 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                         <?= $max_filesize_msg ?>
                     </span>
                 </form>
+                <div id="txt2imgDiv">
+                    <textarea rows="10" id="txt2img" name="textblk" placeholder="Enter text here to convert to image"></textarea>
+                    <button id="txt2imgBtn" onclick="text2image(this)">Convert Text to Image</button>
+                </div>
                 <section class="progress-area"></section>
                 <section class="uploaded-area"></section>
             </div>
@@ -257,6 +268,14 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                             setFileInput(file);
                             e.preventDefault();
                             break; // We only need the first image
+                        } else if (items[i].kind === 'string' && items[i].type === 'text/plain') {
+                            // Handle pasted text
+                            items[i].getAsString(function(text) {
+                                document.getElementById("txt2img").value = text;
+                            });
+                            document.getElementById("txt2imgDiv").style.display = "block";
+                            form.style.display = "none";
+                            e.preventDefault();
                         }
                     }
                 });
@@ -264,7 +283,7 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
 
         <?php } ?>
 
-        <script src="script.js<?= $v ?>"></script>
+        <script src="./static/script.js<?= $v ?>"></script>
 
     </body>
 
@@ -343,4 +362,87 @@ function resizeAndSaveImage($source, $dest, $maxSize = 200)
         imagecopyresized($new_image, $old_image, 0, 0, 0, 0, $new_width, $new_height, $w, $h);
         $save = $imgt($new_image, $dest);
     }
+}
+
+
+
+function imagettftextSpaced($im, $size, $angle, $x, $y, $color, $font, $text, $spacing = 0)
+{
+    $chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY); // handle UTF-8 too
+    foreach ($chars as $char) {
+        // Draw one character
+        imagettftext($im, $size, $angle, $x, $y, $color, $font, $char);
+
+        // Calculate width of this char
+        $bbox = imagettfbbox($size, $angle, $font, $char);
+        $char_width = $bbox[2] - $bbox[0];
+
+        // Move X forward with extra spacing
+        $x += $char_width + $spacing;
+    }
+}
+
+
+function hex2rgb($hex)
+{
+    $hex = ltrim($hex, '#');
+    if (strlen($hex) === 3) {
+        $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+    }
+    return [
+        hexdec(substr($hex, 0, 2)),
+        hexdec(substr($hex, 2, 2)),
+        hexdec(substr($hex, 4, 2))
+    ];
+}
+
+function text2image($text)
+{
+    // Settings
+    $font_size = 14;
+    $font_file = __DIR__ . "/static/calibri-regular.ttf"; // Make sure this font file exists
+    $max_width = 800;
+    $line_height = 20;
+
+    // Word wrap text to fit max width
+    $wrapped = '';
+    $width = intval($max_width / 10); // Approximate character width
+    foreach (explode("\n", $text) as $line) {
+        $wrapped .= wordwrap($line, $width, "\n", true) . "\n";
+    }
+
+    $lines = explode("\n", trim($wrapped));
+    $height = max(100, count($lines) * $line_height + 20);
+
+    // Create image
+    $im = imagecreatetruecolor($max_width, $height);
+
+    // Colors
+    list($r, $g, $b) = hex2rgb("#303030"); // Dark gray background
+    $background = imagecolorallocate($im, $r, $g, $b);
+
+    $white = imagecolorallocate($im, 255, 255, 255); // White text
+
+    imagefill($im, 0, 0, $background);
+
+
+    // Draw text line by line
+    $y = 30;
+    foreach ($lines as $line) {
+        //imagettftext($im, $font_size, 0, 10, $y, $black, $font_file, $line);
+        imagettftextSpaced($im, $font_size, 10, 10, $y, $white, $font_file, $line, 2.5); // spacing = 2px
+
+        $y += $line_height;
+    }
+
+    // Output image
+    $output_file = __DIR__ . "/output.png";
+    //imagepng($im, $output_file);
+
+    header('Content-Type: image/png');
+    imagepng($im);
+    imagedestroy($im);
+
+    //header("Location: output.png");
+    exit;
 }
