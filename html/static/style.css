@@ -273,7 +273,6 @@ section .details span {
 
 #txt2imgDiv{
     margin: 30px 0;
-    display: none;
 }
 
 #txt2img, #txt2imgBtn {

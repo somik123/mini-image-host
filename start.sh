@@ -16,6 +16,8 @@
 
 : "${ADMIN_KEY:=aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa}"
 
+: "${ENABLE_EXTERNAL_HOSTS:=false}"
+
 # Initialize mirror list with APP_DOMAIN
 mirror_list="    \"${APP_DOMAIN}\" => \"\""
 
@@ -69,6 +71,8 @@ $allowed_types
 );
 
 \$admin_key = "${ADMIN_KEY}"; // Used to delete files
+
+\$enable_external_hosts = ${ENABLE_EXTERNAL_HOSTS}; // Enable hotlinking from other sites
 EOF
 
 echo "config.php generated at /var/www/html/config.php"

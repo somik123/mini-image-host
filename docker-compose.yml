@@ -38,3 +38,6 @@ services:
 
       # Allowed MIME types
       ALLOWED_TYPES: "image/jpeg,image/png,image/gif,image/webp"
+
+      # Enable hotlinking from other sites
+      ENABLE_EXTERNAL_HOSTS: "false"

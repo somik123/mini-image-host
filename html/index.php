@@ -189,6 +189,16 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                         foreach ($mirror_list as $mirror => $host) {
                             echo "<option value=\"$host\">$mirror</option>";
                         }
+                        if ($enable_external_hosts) {
+                            echo "<option disabled>--External--</option>\n";
+                            echo "<option value=\"1\">PostImages</option>\n";
+                            echo "<option value=\"2\">CatBox.moe</option>\n";
+                            echo "<option value=\"3\">Pomf2.lain.la</option>\n";
+                            echo "<option value=\"4\">ImgBB</option>\n";
+                            echo "<option value=\"5\">FreeImage.host</option>\n";
+                            echo "<option value=\"6\">0x0.st</option>\n";
+                            echo "<option value=\"7\">UploadImgur</option>\n";
+                        }
                         ?>
                     </select>
                     <i class="fa-solid fa-images" onclick="location.href='./?gallery';" style="float:right; font-size: 20pt;"></i>
@@ -202,7 +212,7 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                         <?= $max_filesize_msg ?>
                     </span>
                 </form>
-                <div id="txt2imgDiv">
+                <div id="txt2imgDiv" style="display: none;">
                     <textarea rows="10" id="txt2img" name="textblk" placeholder="Enter text here to convert to image"></textarea>
                     <button id="txt2imgBtn" onclick="text2image(this)">Convert Text to Image</button>
                 </div>
@@ -398,10 +408,12 @@ function hex2rgb($hex)
 
 function text2image($text)
 {
+    global $max_image_size;
+
     // Settings
     $font_size = 14;
     $font_file = __DIR__ . "/static/calibri-regular.ttf"; // Make sure this font file exists
-    $max_width = 800;
+    $max_width = $max_image_size; // Max width of image
     $line_height = 20;
 
     // Word wrap text to fit max width

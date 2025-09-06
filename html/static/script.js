@@ -3,14 +3,33 @@
 function uploadFile(name) {
     let fileSize;
     let mirror = "";
+    let url;
+    let data;
+
+    let external = false;
 
     let mirrorEl = document.getElementById("mirror");
     if (mirrorEl.value.length > 0) {
-        mirror = "https://" + mirror.value + "/";
+        if (parseInt(mirrorEl.value, 10) > 0) {
+            external = true;
+        } else {
+            mirror = "https://" + mirrorEl.value + "/";
+        }
+    }
+
+
+    if (external) {
+        url = "process_external.php";
+        data = new FormData();
+        data.append('file', document.getElementById("file").files[0]);
+        data.append('file_host', mirrorEl.value);
+    } else {
+        data = new FormData(form);
+        url = mirror + "index.php";
     }
 
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", mirror + "index.php");
+    xhr.open("POST", url);
 
     xhr.upload.addEventListener("progress", ({
         loaded,
@@ -36,10 +55,6 @@ function uploadFile(name) {
         uploadedArea.classList.add("onprogress");
         progressArea.innerHTML = progressHTML;
     });
-    let data = new FormData(form);
-    xhr.send(data);
-
-
     xhr.onload = function () {
 
         var api_reply = JSON.parse(xhr.responseText);
@@ -84,6 +99,8 @@ function uploadFile(name) {
 
         }
     }
+
+    xhr.send(data);
 }
 
 
@@ -229,9 +246,11 @@ function text2image(button) {
 function showHideContainer(el) {
     var container = document.getElementById(el);
     if (container.style.display === "none") {
-        container.style.display = "block";
+        container.style.display = "";
+        form.style.display = "none";
     } else {
         container.style.display = "none";
+        form.style.display = "";
     }
     return false;
 }

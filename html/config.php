@@ -26,3 +26,6 @@ $allowed_types = array(
 );
 
 $admin_key = "aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa"; // Change this to a strong key
+
+$enable_external_hosts = false; // Enable hotlinking from other sites
+
