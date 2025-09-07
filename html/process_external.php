@@ -2,15 +2,32 @@
 
 require_once("config.php");
 
-if ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
+
+
+if ($_POST['textblk']) {
+    // Convert text block to image
+    $text = $_POST['textblk'];
+    text2image($text);
+    exit;
+} elseif ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
+
     // Move the uploaded file to a temporary location
     $file = $_FILES['file'];
     $file_host = isset($_POST['file_host']) ? intval($_POST['file_host']) : 1;
-    $hotlink = "";
 
+    $hotlink = "";
     $error = "";
 
+    $debug = isset($_POST['debug']) ? true : false;
+
+    // Add random bytes to the filename to avoid issues with same filename uploads
+    file_put_contents($file['tmp_name'], random_bytes(16), FILE_APPEND);
+
+    // Prepare the file and cookie for upload
     $curlfile = new CURLFile($file['tmp_name'], $file['type'], $file['name']);
+    $cookie_file = tempnam(sys_get_temp_dir(), 'cookie');
+
+    // Handle different file hosts
     if ($file_host == 1) {
         // PostImages upload logic
         $upload_url = 'https://postimages.org/json/upload';
@@ -24,8 +41,6 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
             $page = get_page($response['url']);
             preg_match_all('#\[img\](.*?)\[\/img\]#si', $page, $matches);
             $hotlink = $matches[1][1]; // Direct link is the second [img] tag
-        } else {
-            $error = "Error uploading to PostImages: " . htmlspecialchars($page);
         }
     } elseif ($file_host == 2) {
         // CatBox upload logic
@@ -36,7 +51,7 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
         if (strpos($page, 'files.catbox.moe') !== false) {
             $hotlink = trim($page);
         } else {
-            $error = "Error uploading to CatBox: " . htmlspecialchars($page);
+            $error = "Error uploading to CatBox" . $debug ? "\n" . htmlspecialchars($page) : "";
         }
     } elseif ($file_host == 3) {
         // pomf2.lain.la upload logic
@@ -48,46 +63,9 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
         if ($response['success'] == "true") {
             $hotlink = $response['files'][0]['url'];
         } else {
-            $error = "Error uploading to pomf2.lain.la: " . htmlspecialchars($page);
+            $error = "Error uploading to pomf2.lain.la" . $debug ? "\n" . htmlspecialchars($page) : "";
         }
-    } elseif ($file_host == 4 || $file_host == 5) {
-        // Chevereto-based hosts (ImgBB and FreeImage.host)
-        if ($file_host == 4) {
-            // Imgbb
-            $url = "https://imgbb.com/";
-            $upload_url = "https://imgbb.com/json";
-            $name = "ImgBB";
-        } elseif ($file_host == 5) {
-            // FreeImage.host
-            $url = "https://freeimage.host/";
-            $upload_url = "https://freeimage.host/json";
-            $name = "FreeImage.host";
-        }
-
-        // Chevereto upload logic
-        $page = get_page($url);
-        preg_match('#auth_token\s?\=\s?"([^"]+)"#si', $page, $matches);
-        $auth_token = $matches[1];
-        if (empty($auth_token)) {
-            $error = "Error retrieving auth_token from {$name}.";
-        }
-
-        $data = array(
-            "source" => $curlfile,
-            "type" => "file",
-            "action" => "upload",
-            "timestamp" => time(),
-            "auth_token" => $auth_token
-        );
-        $page = get_page($upload_url, $data, $url);
-        $response = json_decode($page, true);
-
-        if ($response['status_code'] == 200) {
-            $hotlink = $response['image']['url'];
-        } else {
-            $error = "Error uploading to {$name}: " . htmlspecialchars($page);
-        }
-    } elseif ($file_host == 6) {
+    } elseif ($file_host == 4) {
         // 0x0.st upload logic
         $upload_url = 'https://0x0.st';
         $data = array('file' => $curlfile);
@@ -106,12 +84,14 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
         }
         curl_close($ch);
 
-        if (strpos($page, '0x0.st') !== false) {
-            $hotlink = trim($page);
-        } else {
-            $error = "Error uploading to 0x0.st: " . htmlspecialchars($page);
+        if (empty($error)) {
+            if (strpos($page, '0x0.st') !== false) {
+                $hotlink = trim($page);
+            } else {
+                $error = "Error uploading to 0x0.st" . $debug ? "\n" . htmlspecialchars($page) : "";
+            }
         }
-    } elseif ($file_host == 7) {
+    } elseif ($file_host == 5) {
         // UploadImgur upload logic
         $upload_url = "https://uploadimgur.com/api/upload";
         $data = array('image' => $curlfile);
@@ -120,7 +100,129 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
         if ($response['link'])
             $hotlink = $response['link'];
         else {
-            $error = "Error uploading to UploadImgur: " . htmlspecialchars($page);
+            $error = "Error uploading to UploadImgur" . $debug ? "\n" . htmlspecialchars($page) : "";
+        }
+    } elseif ($file_host == 6) {
+        $url = "http://myimgs.org/";
+        $upload_url = "https://myimgs.org/";
+        $page = get_page($url, false, $url, true);
+        preg_match('#name="_token" value="([^"]+)"#si', $page, $matches);
+
+        $token = $matches[1];
+        if (empty($token)) {
+            $error = "Error retrieving token from myimgs.org.";
+            cleanup();
+        }
+        if (empty($error)) {
+            $data = array(
+                "_token" => $token,
+                "image" => $curlfile,
+                "alt" => "",
+                "submit" => "Upload"
+            );
+            $page = get_page($upload_url, $data, $url, true);
+            preg_match('#"(https\:\/\/myimgs\.org\/storage\/images/.*?)"#si', $page, $matches);
+            if ($matches[1]) {
+                $hotlink = $matches[1];
+            } else {
+                $error = "Error uploading to myimgs.org" . $debug ? "\n" . htmlspecialchars($page) : "";
+            }
+        }
+    } elseif ($file_host >= 7 && $file_host <= 19) {
+        // Chevereto-based hosts 
+        // (ImgBB, FreeImage.host, HostImage.org, PasteImg, Imgbb.ws, img.in.th, Dodaj.rs, 
+        // Inspirats, FxPics.ru, Poop.pictures, Site.pictures, SnappyPic, Eikona.info)
+        if ($file_host == 7) {
+            // Imgbb
+            $url = "https://imgbb.com/";
+            $name = "ImgBB";
+        } elseif ($file_host == 8) {
+            // FreeImage.host
+            $url = "https://freeimage.host/";
+            $name = "FreeImage.host";
+        } else if ($file_host == 9) {
+            // HostImage.org
+            $url = "https://hostimage.org/";
+            $name = "HostImage.org";
+        } elseif ($file_host == 10) {
+            // PasteImg
+            $url = "https://pasteimg.com/";
+            $name = "PasteImg";
+        } elseif ($file_host == 11) {
+            // Imgbb.ws
+            $url = "https://imgbb.ws/";
+            $name = "ImgBB.ws";
+        } elseif ($file_host == 12) {
+            // img.in.th
+            $url = "https://www.img.in.th/";
+            $name = "img.in.th";
+        } elseif ($file_host == 13) {
+            // Dodaj.rs
+            $url = "https://dodaj.rs/";
+            $name = "Dodaj.rs";
+        } elseif ($file_host == 14) {
+            // Inspirats
+            $url = "https://inspirats.com/";
+            $name = "Inspirats";
+        } elseif ($file_host == 15) {
+            // FxPics.ru
+            $url = "https://fxpics.ru/";
+            $name = "FxPics.ru";
+        } elseif ($file_host == 16) {
+            // Poop.pictures
+            $url = "https://poop.pictures/";
+            $name = "Poop.pictures";
+        } elseif ($file_host == 17) {
+            // Site.pictures
+            $url = "https://site.pictures/";
+            $name = "Site.pictures";
+        } elseif ($file_host == 18) {
+            // SnappyPic
+            $url = "https://snappypic.com/";
+            $name = "SnappyPic";
+        } elseif ($file_host == 19) {
+            // Eikona.info
+            $url = "https://eikona.info/";
+            $name = "Eikona.info";
+        } else {
+            $error = "Invalid Chevereto host selected.";
+            echo json_encode(array('status' => 'ERROR', 'message' => $error));
+            cleanup();
+        }
+
+
+        $upload_url = $url . "json";
+
+        // Chevereto upload logic
+        $page = get_page($url, false, $url, true);
+
+        preg_match('#auth_token\s?\=\s?"([^"]+)"#si', $page, $matches);
+        $auth_token = $matches[1];
+        if (empty($auth_token)) {
+            $error = "Error retrieving auth_token from {$name}." . $debug ? "\n" . htmlspecialchars($page) : "";
+            echo json_encode(array('status' => 'ERROR', 'message' => $error));
+            cleanup();
+        }
+
+
+        $data = array(
+            "source" => $curlfile,
+            "type" => "file",
+            "action" => "upload",
+            "timestamp" => time(),
+            "auth_token" => $auth_token,
+            "expiration" => "",
+            "nsfw" => "0",
+            "mimetype" => $file['type']
+        );
+
+        $page = get_page($upload_url, $data, $url, true);
+        $response = json_decode($page, true);
+
+        if ($response['status_code'] == 200) {
+            $hotlink = $response['image']['url'];
+        } else {
+            $error = "Error uploading to {$name}." . $debug ? "\n" . htmlspecialchars($page) : "";
         }
     } else {
         $error = "Invalid file host selected.";
@@ -131,7 +233,9 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
     } else {
         echo json_encode(array('status' => 'OK', 'url' => $hotlink));
     }
-    exit;
+
+    # Clean up the temporary file and exit
+    cleanup();
 }
 
 
@@ -139,9 +243,11 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK && $enable_external_hosts) {
 
 
 
-
-function get_page($upload_url, $data = false, $reffer = false, $head = false)
+// Function to perform HTTP requests using cURL
+function get_page($upload_url, $data = false, $reffer = false, $cookie = false, $head = false)
 {
+    global $cookie_file;
+
     $headers = [
         'sec-ch-ua: "Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"',
         'sec-ch-ua-mobile: ?0',
@@ -178,6 +284,12 @@ function get_page($upload_url, $data = false, $reffer = false, $head = false)
     if ($reffer)
         curl_setopt($ch, CURLOPT_REFERER, $reffer);
 
+    if ($cookie) {
+        //$cookie_file = tempnam(sys_get_temp_dir(), 'cookie');
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
+    }
+
     $response = curl_exec($ch);
     // Check for errors
     if (curl_errno($ch)) {
@@ -189,7 +301,7 @@ function get_page($upload_url, $data = false, $reffer = false, $head = false)
 }
 
 
-
+// Function to draw text with custom spacing between characters
 function imagettftextSpaced($im, $size, $angle, $x, $y, $color, $font, $text, $spacing = 0)
 {
     $chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY); // handle UTF-8 too
@@ -206,7 +318,7 @@ function imagettftextSpaced($im, $size, $angle, $x, $y, $color, $font, $text, $s
     }
 }
 
-
+// Convert hex color to RGB array
 function hex2rgb($hex)
 {
     $hex = ltrim($hex, '#');
@@ -220,6 +332,8 @@ function hex2rgb($hex)
     ];
 }
 
+
+// Convert text block to image
 function text2image($text)
 {
     // Settings
@@ -261,64 +375,19 @@ function text2image($text)
 
     // Output image
     $output_file = __DIR__ . "/output.png";
-    //imagepng($im, $output_file);
-
     header('Content-Type: image/png');
     imagepng($im);
     imagedestroy($im);
 
-    //header("Location: output.png");
     exit;
 }
 
 
-
-
-
-
-// Used for proxied image fetching
-
-
-function convert_header_to_array($header)
+// Clean up temporary files and exit
+function cleanup()
 {
-    $lines = explode("\r\n", $header);
-    $result = array();
-    foreach ($lines as $line) {
-        if (strpos($line, ':') !== false) {
-            list($key, $value) = explode(': ', $line, 2);
-            $key = strtolower(trim($key)); // Normalize key to lowercase
-            $value = trim($value);
-            // If the key already exists, append the value to the existing array
-            if (isset($result[$key])) {
-                if (is_array($result[$key])) {
-                    $result[$key][] = $value;
-                } else {
-                    $result[$key] = array($result[$key], $value);
-                }
-            } else {
-                $result[$key] = $value;
-            }
-        }
-    }
-    return $result;
-}
-
-function curl_get_image($url)
-{
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_HEADER, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'curl/7.68.0');
-    $response = curl_exec($ch);
-
-    if (curl_errno($ch)) {
-        echo 'Curl error: ' . curl_error($ch);
-    } else {
-        // Separate header and body
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $header = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
-    }
-    curl_close($ch);
-    return array('header' => $header, 'body' => $body);
+    global $cookie_file, $file;
+    @unlink($cookie_file);
+    @unlink($file['tmp_name']);
+    exit;
 }

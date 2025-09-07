@@ -223,7 +223,7 @@ function text2image(button) {
     var formData = new FormData();
     formData.append("textblk", text);
 
-    fetch('', {
+    fetch('process_external.php', {
         method: 'POST',
         body: formData
     })
