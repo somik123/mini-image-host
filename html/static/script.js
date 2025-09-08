@@ -19,7 +19,7 @@ function uploadFile(name) {
 
 
     if (external) {
-        url = "process_external.php";
+        url = "external.php";
         data = new FormData();
         data.append('file', document.getElementById("file").files[0]);
         data.append('file_host', mirrorEl.value);
@@ -31,20 +31,19 @@ function uploadFile(name) {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url);
 
-    xhr.upload.addEventListener("progress", ({
-        loaded,
-        total
-    }) => {
+    xhr.upload.addEventListener("progress", ({ loaded, total }) => {
         let fileLoaded = Math.floor((loaded / total) * 100);
         let fileTotal = Math.floor(total / 1000);
 
-        (fileTotal < 1024) ? fileSize = fileTotal + " KB" : fileSize = (loaded / (1024 * 1024)).toFixed(2) + " MB";
+        let fileLoadedTxt = (fileLoaded >= 100) ? '<i class="fa-solid fa-spinner" style="font-size: 20px;"></i>' : fileLoaded + "%";
+
+        fileSize = (fileTotal < 1024) ? fileTotal + " KB" : (loaded / (1024 * 1024)).toFixed(2) + " MB";
         let progressHTML = `<li class="row">
                           <i class="fas fa-file-alt"></i>
                           <div class="content">
                             <div class="details">
                               <span class="name">${name} <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i></span>
-                              <span class="percent">${fileLoaded}%</span>
+                              <span class="percent">${fileLoadedTxt}</span>
                             </div>
                             <div class="progress-bar">
                               <div class="progress" style="width: ${fileLoaded}%"></div>
@@ -69,7 +68,7 @@ function uploadFile(name) {
                             <i class="fas fa-file-alt"></i>
                             <div class="details">
                                 <span class="name">${name} [${fileSize}] <i class="fas fa-check"></i></span>
-                                <span class="small"><a href="${url}">${url}</a></span>
+                                <span class="small"><a href="${url}" target="_blank">${url}</a></span>
                             </div>
                             </div>
                             <i onclick="copyTextToClipboard('${url}',this)" class="fas fa-clipboard"></i>
@@ -223,14 +222,14 @@ function text2image(button) {
     var formData = new FormData();
     formData.append("textblk", text);
 
-    fetch('process_external.php', {
+    fetch('external.php', {
         method: 'POST',
         body: formData
     })
         .then(response => response.blob())
         .then(imageBlob => {
             // Get as file
-            const file = new File([imageBlob], "converted_image.png", {
+            const file = new File([imageBlob], "image.png", {
                 type: 'image/png'
             });
             setFileInput(file);
@@ -243,6 +242,49 @@ function text2image(button) {
     return false;
 }
 
+
+// Generate preview image from text
+function txt2imgPreview() {
+    var text = document.getElementById("txt2img").value.trim();
+    var imgEl = document.getElementById("txt2imgView");
+    var txt2imgBtn = document.getElementById("txt2imgBtn");
+    var txt2imgLink = document.getElementById("txt2imgLink");
+
+    if (text === "") {
+        document.getElementById("txt2imgView").src = "";
+        console.log("Empty text, no preview");
+        imgEl.style.display = "none";
+        return;
+    }
+
+    txt2imgBtn.disabled = true;
+    txt2imgBtn.innerHTML = "Generating Preview...";
+
+    var formData = new FormData();
+    formData.append("textblk", text);
+    fetch('external.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.blob())
+        .then(imageBlob => {
+            var imageUrl = URL.createObjectURL(imageBlob);
+            imgEl.src = imageUrl;
+            imgEl.style.display = "";
+            txt2imgBtn.disabled = false;
+            txt2imgBtn.innerHTML = "Convert Text to Image";
+
+            // Set link href and show link
+            txt2imgLink.href = imageUrl;
+            txt2imgLink.style.display = "";
+        })
+        .catch(error => {
+            console.error("Preview failed:", error);
+        });
+}
+
+
+// Show/hide text to image container
 function showHideContainer(el) {
     var container = document.getElementById(el);
     if (container.style.display === "none") {

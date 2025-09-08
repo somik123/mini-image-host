@@ -41,6 +41,13 @@ RUN chmod +x /start.sh \
     location / { \n\
             try_files \$uri \$uri/ =404; \n\
     } \n\
+    # only serve images in /i/ and /t/ \n\
+    location ~ ^/(i|t)/ { \n\
+        location ~ \.(jpe?g|png|gif|webp|avif|bmp|svg)$ { \n\
+            try_files \$uri =404; \n\
+        } \n\
+        return 403; \n\
+    } \n\
     location ~ \.php$ { \n\
            include snippets/fastcgi-php.conf; \n\
            fastcgi_pass unix:/run/php/php${PHP_VERSION}-fpm.sock; \n\

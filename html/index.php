@@ -175,10 +175,10 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
 
         <?php } else { ?>
 
-            <div class="wrapper">
+            <div class="wrapper" id="uploadDiv">
                 <header onclick="location.href='.';">Mini Image Host</header>
                 <div class="mirror-div">
-                    Select mirror:
+                    Host:
                     <select id="mirror">
                         <?php
                         foreach ($mirror_list as $mirror => $host) {
@@ -186,27 +186,29 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                         }
                         if ($enable_external_hosts) {
                         ?>
-                            <option disabled>--External--</option>
+                            <option disabled> &dArr; External &dArr; </option>
                             <option value="1">PostImages</option>
                             <option value="2">CatBox.moe</option>
                             <option value="3">Pomf2.lain.la</option>
                             <option value="4">0x0.st</option>
                             <option value="5">UploadImgur</option>
                             <option value="6">MyImgs.org</option>
+                            <option value="7">ImgHost.cc</option>
+                            <option value="8">UpImg</option>
                             <option disabled>──Chevereto──</option>
-                            <option value="7">ImgBB</option>
-                            <option value="8">FreeImage.host</option>
-                            <option value="9">HostImage.org</option>
-                            <option value="10">PasteImg</option>
-                            <option value="11">ImgBB.ws</option>
-                            <option value="12">img.in.th</option>
-                            <option value="13">Dodaj.rs</option>
-                            <option value="14">Inspirats</option>
-                            <option value="15">FxPics.ru</option>
-                            <option value="16">Poop.pictures</option>
-                            <option value="17">Site.pictures</option>
-                            <option value="18">SnappyPic</option>
-                            <option value="19">Eikona.info</option>
+                            <option value="101">ImgBB</option>
+                            <option value="102">FreeImage.host</option>
+                            <option value="103">HostImage.org</option>
+                            <option value="104">PasteImg</option>
+                            <option value="105">ImgBB.ws</option>
+                            <option value="106">img.in.th</option>
+                            <option value="107">Dodaj.rs</option>
+                            <option value="108">Inspirats</option>
+                            <option value="109">FxPics.ru</option>
+                            <option value="110">Poop.pictures</option>
+                            <option value="111">Site.pictures</option>
+                            <option value="112">SnappyPic</option>
+                            <option value="113">Eikona.info</option>
                         <?php
                         }
                         ?>
@@ -217,14 +219,21 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                 <form action="#">
                     <input class="file-input" type="file" name="file" id="file" hidden>
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Click or drag or paste image to upload</p>
+                    <p style="text-align: center;">
+                        Click or drag or<br />
+                        paste image to upload
+                    </p>
                     <span class="small">Max file size:
                         <?= $max_filesize_msg ?>
                     </span>
                 </form>
                 <div id="txt2imgDiv" style="display: none;">
-                    <textarea rows="10" id="txt2img" name="textblk" placeholder="Enter text here to convert to image"></textarea>
+                    <textarea rows="10" id="txt2img" name="textblk" onchange="txt2imgPreview();"
+                        placeholder="Enter text here to convert to image"></textarea>
                     <button id="txt2imgBtn" onclick="text2image(this)">Convert Text to Image</button>
+                    <a href="#" id="txt2imgLink" target="_blank" style="display: none;">
+                        <img id="txt2imgView" src="" alt="blank" />
+                    </a>
                 </div>
                 <section class="progress-area"></section>
                 <section class="uploaded-area"></section>
@@ -295,7 +304,13 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                             });
                             document.getElementById("txt2imgDiv").style.display = "block";
                             form.style.display = "none";
+
+                            // delay to allow text area to update
+                            setTimeout(function() {
+                                txt2imgPreview();
+                            }, 100);
                             e.preventDefault();
+                            break; // We only need the first text
                         }
                     }
                 });
