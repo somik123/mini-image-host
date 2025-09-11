@@ -1,191 +1,126 @@
 <?php
 
-// Read config file for settings
-require_once("config.php");
+// Read functions file for helper functions
+require_once("inc/functions.php");
 
-// Allow cross site posting
-header("Access-Control-Allow-Origin: *");
+
+$rand_v = "?v=" . rand(10000, 99999);
 
 // To print the max file size in human readable format
 $max_filesize_msg = human_readable_size($max_file_size, 0);
 
-// If file has been posted
-if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
-    try {
-        if (!file_exists($image_path))
-            mkdir($image_path, 0777, true);
-        if (!file_exists($thumb_path))
-            mkdir($thumb_path, 0777, true);
-        //getting file name
-        $file_name = $_FILES['file']['name'];
-        //getting temp_name of file
-        $tmp_name = $_FILES['file']['tmp_name'];
-
-        // Ensure the file has image size parameters
-        $image_info = @getimagesize($tmp_name);
-
-        if ($image_info == false)
-            throw new Exception('Please upload valid image file.');
-
-        // Check the types of files that are allowed to be uploaded
-        $type = $_FILES['file']['type'];
-        if (!in_array($type, $allowed_types))
-            throw new Exception("Only jpg, jpeg, png, webp, and gif image type supported.");
-
-        // Check the file size is acceptable
-        if (filesize($tmp_name) > $max_file_size)
-            throw new Exception("File over allowed size of {$max_filesize_msg}");
-
-        // Get the extension of the file
-        $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-        $file_id = rand_str(6);
-
-        // Convert webp files into jpg image
-        if ($type == 'image/webp') {
-            $new_file_name = "{$file_id}.jpg";
-            $new_thumb_name = "{$file_id}_thumb.jpg";
-
-            // Convert webp to jpeg with 80% quality and save to save path
-            $im = imagecreatefromwebp($tmp_name);
-            imagejpeg($im, $image_path . $new_file_name, 80);
-            imagedestroy($im);
-        }
-        // Resize image if it's JPEG and more then 1200px in any side
-        elseif ($type == 'image/jpeg' && ($image_info[0] > $max_image_size || $image_info[1] > $max_image_size)) {
-            $new_file_name = "{$file_id}.jpg";
-            $new_thumb_name = "{$file_id}_thumb.jpg";
-
-            // Resize image to a smaller size
-            $source = $tmp_name;
-            $dest = $image_path . $new_file_name;
-            resizeAndSaveImage($source, $dest, $max_image_size);
-        }
-        // Move the uploaded file to save path
-        else {
-            $new_file_name = "{$file_id}.{$file_ext}";
-            $new_thumb_name = "{$file_id}_thumb.{$file_ext}";
-
-            // Move the uploaded file to save path (for all other formats)
-            move_uploaded_file($tmp_name, $image_path . $new_file_name);
-        }
-
-        // Generate thumbnails
-        $source = $image_path . $new_file_name;
-        $dest = $thumb_path . $new_thumb_name;
-        resizeAndSaveImage($source, $dest, 150);
-
-        // Generate the file url and reply
-        $url = $protocol . $domain . $image_url . $new_file_name;
-
-        $out = array("status" => "OK", "url" => $url);
-        echo json_encode($out);
-    }
-    // Catch and print the exception
-    catch (Exception $e) {
-        $out = array("status" => "FAIL", "msg" => $e->getMessage());
-        echo json_encode($out);
-    }
-} elseif ($_REQUEST['delete'] && $_REQUEST['key']) {
-    // Delete image and thumbnail if admin key is correct
-    $file = $_REQUEST['delete'];
-    $key = $_REQUEST['key'];
-    if ($key === $admin_key) {
-        $file_path = $image_path . $file;
-        if (file_exists($file_path) && !is_dir($file_path)) {
-            @unlink($file_path);
-            $parts = explode(".", $file);
-            $thumb_name = $parts[0] . "_thumb." . $parts[1];
-            $thumb_path_full = $thumb_path . $thumb_name;
-            if (file_exists($thumb_path_full) && !is_dir($thumb_path_full)) {
-                @unlink($thumb_path_full);
-            }
-            echo "Image and thumbnail deleted.";
-        } else {
-            echo "Image not found.";
-        }
-    } else {
-        echo "Invalid ADMIN_KEY.";
-    }
-} else {
-    $v = "?v=" . rand(1111, 9999);
 ?>
 
-    <!DOCTYPE html>
-    <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Mini Image Host</title>
-        <link rel="stylesheet" href="./static/style.css<?= $v ?>">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-    </head>
+<!DOCTYPE html>
+<html lang="en">
 
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <title>Mini Image Host - <?= $domain ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/styles.css<?= $rand_v ?>">
+</head>
 
-        <?php
-        // Display the images in gallery
-        if (isset($_REQUEST['gallery'])) {
-            $files = scandir($image_path);
+<body>
 
-            $files = array_diff($files, array('.', '..'));
-            // Sort files by modified time, latest first
-            usort($files, function ($a, $b) use ($image_path) {
-                return filemtime($image_path . $b) - filemtime($image_path . $a);
-            });
-            if (count($files) == 0) {
-                echo "<div class=\"wrapper\"><header onclick=\"location.href='.';\">Mini Image Host</header><p>No images found.</p></div>";
-                exit;
-            }
-        ?>
-            <div class="wrapper wrapper-big">
-                <i class="fa-solid fa-cloud-arrow-up" onclick="location.href='.';"></i>
-                <header onclick="location.href='.';">Mini Image Host</header>
-                <div style="margin: 30px 0;">
-                    <?php
-                    $i = 0;
-                    foreach ($files as $file) {
-                        $parts = explode(".", $file);
-                        $thumb_name = $parts[0] . "_thumb." . $parts[1];
-                        $file_url = $protocol . $domain . $image_url . $file;
+    <?php
+    // Display the images in gallery
+    if (isset($_REQUEST['gallery'])):
+        $files = scandir($image_path);
 
-                        $file_exists = false;
-                        if (file_exists($thumb_path . $thumb_name)) {
-                            $file_exists = true;
-                            $img_scr_url = $protocol . $domain . $thumb_url . $thumb_name;
-                        } elseif (!is_dir($image_path . $file)) {
-                            $file_exists = true;
-                            $img_scr_url = $file_url;
-                        }
+        $files = array_diff($files, array('.', '..'));
+        // Sort files by modified time, latest first
+        usort($files, function ($a, $b) use ($image_path) {
+            return filemtime($image_path . $b) - filemtime($image_path . $a);
+        });
+    ?>
 
-                        if ($file_exists) {
-                    ?>
-                            <div class="popup" onclick="showPopup('popup_<?= $i ?>','<?= $file_url ?>')"
-                                oncontextmenu="return showDeleteConfirm('<?= $file ?>');">
-                                <img src="<?= $img_scr_url ?>" alt="<?= $file_url ?>" />
-                                <span class="popuptext" id="popup_<?= $i ?>">Link copied.</span>
-                            </div>
-                    <?php
-                            $i++;
-                        }
-                    }
-                    ?>
+        <div class="container container-large p-4 bg-white p-3 rounded shadow-sm">
+
+            <h3 class="text-center fw-bold">
+                <a href="." class="header-link">Mini Image Host - Gallery</a>
+            </h3>
+
+
+            <div class="d-flex justify-content-center align-items-center mt-4 flex-wrap popup">
+
+                <?php if (count($files) == 0): ?>
+                    <div class="text-center text-muted">
+                        No images uploaded yet.
+                    </div>
+                <?php endif; ?>
+                <div class="row g-2">
+                    <?php foreach ($files as $file): ?>
+                        <?php $img_url = $protocol . $domain . $image_url . $file ?>
+
+                        <div class="col-6 col-md text-center">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalPopout"
+                                onclick="return expandImage('<?= $img_url ?>', '<?= $file ?>');">
+                                <img src="<?= $img_url ?>" alt="<?= $file ?>" class="gallery-img">
+                            </a>
+                        </div>
+
+                    <?php endforeach; ?>
                 </div>
             </div>
 
-        <?php } else { ?>
+            <div class="footer text-center small mt-3 footer-div">
+                Copyright &copy; <?= date("Y") ?> <a href="https://somik.org/" target="_blank">Somik.org</a> |
+                <a href="https://kfels.com/reach-out" target="_blank">Reach out</a>
+            </div>
+        </div>
 
-            <div class="wrapper" id="uploadDiv">
-                <header onclick="location.href='.';">Mini Image Host</header>
-                <div class="mirror-div">
-                    Host:
-                    <select id="mirror">
-                        <?php
-                        foreach ($mirror_list as $mirror => $host) {
-                            echo "<option value=\"$host\">$mirror</option>";
-                        }
-                        if ($enable_external_hosts) {
-                        ?>
+
+        <!-- Expand Message Modal -->
+        <div class="modal fade" id="modalPopout" tabindex="-1" aria-labelledby="modalPopoutHeader" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title fs-6">Share <span id="modalPopoutHeader"></span></div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center" id="modalPopoutBody">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" readonly aria-describedby="copyBtn" id="modalImageLink">
+                            <button class="btn btn-outline-secondary" type="button" id="copyBtn"
+                                onclick="copyTextToClipboardBtn2('modalImageLink',this);">Copy</button>
+                        </div>
+                        <img id="modalImage" src="" alt="Image" class="img-fluid"
+                            style="max-height: 70vh; object-fit: contain;">
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="showDeleteConfirm();">
+                            Delete
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    <?php else: ?>
+
+
+        <div class="container p-4 bg-white p-3 rounded shadow-sm">
+
+            <h3 class="text-center fw-bold">
+                <a href="." class="header-link">Mini Image Host</a>
+            </h3>
+
+
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Host selector -->
+                <div class="d-flex align-items-center">
+                    <label for="host" class="me-2 fw-semibold">Host:</label>
+                    <select id="mirror" class="form-select form-select-sm select-host">
+                        <?php foreach ($mirror_list as $mirror => $host): ?>
+                            <option value="<?= $host ?>"><?= $mirror ?></option>";
+                        <?php endforeach; ?>
+                        <?php if ($enable_external_hosts): ?>
                             <option disabled> &dArr; External &dArr; </option>
                             <option value="1">PostImages</option>
                             <option value="2">CatBox.moe</option>
@@ -209,192 +144,144 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
                             <option value="111">Site.pictures</option>
                             <option value="112">SnappyPic</option>
                             <option value="113">Eikona.info</option>
-                        <?php
-                        }
-                        ?>
+                        <?php endif; ?>
                     </select>
-                    <i class="fa-solid fa-images" onclick="location.href='./?gallery';" style="float:right; font-size: 20pt;"></i>
-                    <i class="fa-regular fa-message" onclick="showHideContainer('txt2imgDiv');" style="float:right; font-size: 20pt;"></i>
                 </div>
-                <form action="#">
-                    <input class="file-input" type="file" name="file" id="file" hidden>
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p style="text-align: center;">
-                        Click or drag or<br />
-                        paste image to upload
-                    </p>
-                    <span class="small">Max file size:
-                        <?= $max_filesize_msg ?>
-                    </span>
-                </form>
-                <div id="txt2imgDiv" style="display: none;">
-                    <textarea rows="10" id="txt2img" name="textblk" onchange="txt2imgPreview();"
-                        placeholder="Enter text here to convert to image"></textarea>
-                    <button id="txt2imgBtn" onclick="text2image(this)">Convert Text to Image</button>
-                    <a href="#" id="txt2imgLink" target="_blank" style="display: none;">
-                        <img id="txt2imgView" src="" alt="blank" />
+
+                <!-- Icon buttons -->
+                <div class="d-flex">
+                    <button class="btn btn-link p-1" title="Text to Image" onclick="showHideContainer();">
+                        <i class="bi bi-textarea-t font-20"></i>
+                    </button>
+                    <a href="?gallery" class="btn btn-link p-1">
+                        <i class="bi bi-images font-20"></i>
                     </a>
                 </div>
-                <section class="progress-area"></section>
-                <section class="uploaded-area"></section>
             </div>
 
-            <script>
-                const form = document.querySelector("form");
-                const fileInput = document.querySelector(".file-input");
-                const progressArea = document.querySelector(".progress-area");
-                const uploadedArea = document.querySelector(".uploaded-area");
+            <div class="d-flex justify-content-between align-items-center">
+                <form class="p-2 upload-form" action="#" id="upload-form">
+                    <i class="bi bi-cloud-arrow-up-fill font-45"></i>
+                    <div>
+                        Click or drag or paste image to upload
+                    </div>
+                    <div class="text-muted small">
+                        JPG, JPEG, PNG, WebP, and GIF up to <?= $max_filesize_msg ?>
+                    </div>
+                    <input type="file" name="file" id="file" hidden accept="image/*" />
+                </form>
+            </div>
 
-                // form click event
-                form.addEventListener("click", () => {
-                    fileInput.click();
-                });
+            <div class="flex justify-content-between align-items-center" id="text2image-div" style="display: none;">
+                <textarea class="px-2 py-1 text2image mb-2" id="text2image" onchange="txt2imgPreview();"></textarea>
+                <button class="form-control btn btn-sm btn-primary" id="text2imageBtn" onclick="text2image(this)">
+                    Convert to Image
+                </button>
+                <a href="#" id="text2imageLink" target="_blank" style="display: none;">
+                    <img id="text2imageView" src="" alt="blank" />
+                </a>
+            </div>
 
-                // file input change event
-                fileInput.onchange = ({
-                    target
-                }) => {
-                    let file = target.files[0];
-                    if (file) {
-                        let fileName = file.name;
-                        if (fileName.length >= 12) {
-                            let lastIndex = fileName.lastIndexOf('.');
-                            let name = fileName.slice(0, lastIndex);
-                            let ext = fileName.slice(lastIndex + 1);
-                            fileName = name.substring(0, 13) + "... ." + ext;
-                        }
-                        uploadFile(fileName);
-                    }
-                }
+            <div id="progress-area" style="display: none;">
+                <div id="progress-card-template">
+                    <div class="card d-flex flex-row align-items-center p-2 mt-3">
+                        <!-- File icon -->
+                        <div class="me-2 text-primary">
+                            <i class="bi bi-image font-20"></i>
+                        </div>
 
-                // form dragover or drop event
-                ['dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    document.addEventListener(eventName, (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    });
-                });
+                        <!-- File details -->
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold">
+                                <span id="progress-filename">Filename.png</span>
+                                <span class="text-muted" id="progress-size">[15 KB]</span>
+                            </div>
+                            <div class="progress mt-2 progress-div">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 40%;" aria-valuenow="40"
+                                    aria-valuemin="0" aria-valuemax="100" id="progress-bar"></div>
+                            </div>
+                        </div>
 
-                // handle dropped files
-                document.addEventListener('drop', (e) => {
-                    const dt = e.dataTransfer;
-                    if (dt.files && dt.files.length > 0) {
-                        console.log('File(s) dropped');
-                        console.log(dt.files);
-                        const file = dt.files[0];
-                        setFileInput(file);
-                    }
-                });
-
-                // handle pasted images
-                document.addEventListener('paste', function(e) {
-                    const items = (event.clipboardData || event.originalEvent.clipboardData || window.clipboardData).items;
-                    for (let i = 0; i < items.length; i++) {
-                        if ((items[i].kind === 'file' && items[i].type.startsWith('image/')) || (items[i].type.indexOf("image") !== -1)) {
-                            console.log('Pasted image');
-                            console.log(items[i]);
-                            const file = items[i].getAsFile();
-                            setFileInput(file);
-                            e.preventDefault();
-                            break; // We only need the first image
-                        } else if (items[i].kind === 'string' && items[i].type === 'text/plain') {
-                            // Handle pasted text
-                            items[i].getAsString(function(text) {
-                                document.getElementById("txt2img").value = text;
-                            });
-                            document.getElementById("txt2imgDiv").style.display = "block";
-                            form.style.display = "none";
-
-                            // delay to allow text area to update
-                            setTimeout(function() {
-                                txt2imgPreview();
-                            }, 100);
-                            e.preventDefault();
-                            break; // We only need the first text
-                        }
-                    }
-                });
-            </script>
-
-        <?php } ?>
-
-        <script src="./static/script.js<?= $v ?>"></script>
-
-    </body>
-
-    </html>
-
-<?php
-
-}
+                        <!-- Action buttons -->
+                        <div class="d-flex ms-2">
+                            <div class="ms-2 fw-semibold text-primary" id="progress-txt">40%</div>
+                            <i class="bi bi-cpu font-20" id="progress-processing" style="display: none;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="uploaded-area"></div>
 
 
+            <!-- Bootstrap Icons -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-// Function used to generate a random string for filename
-function rand_str($length = 10)
-{
-    $characters = '23456789abcdefghjkmnpqrtuvwxyzABCDEFGHJKLMNPQRTUVWXYZ';
-    $charactersLength = strlen($characters);
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[mt_rand(0, $charactersLength - 1)];
-    }
-    return $randomString;
-}
+            <div class="footer text-center small mt-3 footer-div">
+                Copyright © <a href="https://somik.org/" target="_blank">Somik.org</a> <?= date("Y") ?> |
+                <a href="https://kfels.com/reach-out" target="_blank">Reach out</a>
+            </div>
+        </div>
 
+        <div style="display: none;">
+            <div id="complete-card-template">
+                <div class="card d-flex flex-row align-items-center p-2 mt-3">
+                    <!-- File icon -->
+                    <div class="me-2 text-primary">
+                        <i class="bi bi-image font-20 text-primary"></i>
+                    </div>
 
-// Conver byte size to human redable size
-function human_readable_size($raw_size, $return_array = true)
-{
-    $size_arr = array("B", "KB", "MB", "GB", "TB", "PB");
-    $max = count($size_arr) - 1;
+                    <!-- File details -->
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold">
+                            [[FILENAME]]
+                            <span class="text-muted">[[[FILESIZE]]]</span>
+                        </div>
+                        <a href="[[FILELINK]]" target="_blank" class="small">
+                            [[FILELINK]]
+                        </a>
+                    </div>
 
-    for ($i = $max; $i >= 0; $i--) {
-        $value = pow(1024, $i);
+                    <!-- Action buttons -->
+                    <div class="d-flex ms-2">
+                        <button class="btn btn-link p-1 text-primary" title="Copy Link">
+                            <i class="bi bi-clipboard font-20" onclick="copyTextToClipboardBtn('[[FILELINK]]',this);"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-        if ($raw_size > $value) {
-            $size_hr = round(($raw_size / $value), 2);
+            <div id="error-card-template">
+                <div class="card d-flex flex-row align-items-center p-2 mt-3">
+                    <!-- File icon -->
+                    <div class="me-2 text-primary">
+                        <i class="bi bi-image font-20 text-primary"></i>
+                    </div>
 
-            return $return_array ? array($size_hr, $size_arr[$i]) : "{$size_hr} {$size_arr[$i]}";
-        }
-    }
-}
+                    <!-- File details -->
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold">
+                            [[FILENAME]]
+                            <span class="text-muted">[[[FILESIZE]]]</span>
+                        </div>
+                        [[ERROR_TXT]]
+                    </div>
 
+                    <!-- Action buttons -->
+                    <div class="d-flex ms-2">
+                        <i class="bi bi-exclamation-triangle font-20"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <script src="static/scripts_autoload.js<?= $rand_v ?>"></script>
 
-// Resize and save image
-function resizeAndSaveImage($source, $dest, $maxSize = 200)
-{
-    // get source image size
-    $img_details = getimagesize($source);
-    $w = $img_details[0];
-    $h = $img_details[1];
-    $img_type = $img_details[2];
+    <?php endif; ?>
 
-    // specifying the required image size
-    if ($w > $h) {
-        $new_width = $maxSize;
-        $new_height = ceil($maxSize * $h / $w);
-    } else {
-        $new_height = $maxSize;
-        $new_width = ceil($maxSize * $w / $h);
-    }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
-    if ($img_type == IMAGETYPE_GIF) {
-        $imgt = "ImageGIF";
-        $imgcreatefrom = "ImageCreateFromGIF";
-    } elseif ($img_type == IMAGETYPE_JPEG) {
-        $imgt = "ImageJPEG";
-        $imgcreatefrom = "ImageCreateFromJPEG";
-    } elseif ($img_type == IMAGETYPE_PNG) {
-        $imgt = "ImagePNG";
-        $imgcreatefrom = "ImageCreateFromPNG";
-    }
+    <script src="static/scripts.js<?= $rand_v ?>"></script>
+</body>
 
-    if ($imgt) {
-        $old_image = $imgcreatefrom($source);
-        $new_image = imagecreatetruecolor($new_width, $new_height);
-        imagecopyresized($new_image, $old_image, 0, 0, 0, 0, $new_width, $new_height, $w, $h);
-        $save = $imgt($new_image, $dest);
-    }
-}
+</html>
