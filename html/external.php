@@ -3,8 +3,8 @@
 // Read functions file for helper functions
 require_once("inc/functions.php");
 
-// Cross site requests disabled
-//header("Access-Control-Allow-Origin: *");
+// Cross site requests
+header("Access-Control-Allow-Origin: *");
 
 try {
 
