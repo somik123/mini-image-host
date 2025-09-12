@@ -19,7 +19,7 @@
 : "${ENABLE_EXTERNAL_HOSTS:=false}"
 
 # Initialize mirror list with APP_DOMAIN
-mirror_list="    \"${APP_DOMAIN}\" => \"\""
+mirror_list="    \"${APP_DOMAIN}\" => \"\","
 
 # Only process MIRROR_DOMAINS if it's non-empty
 if [ -n "$MIRROR_DOMAINS" ]; then
@@ -29,11 +29,12 @@ if [ -n "$MIRROR_DOMAINS" ]; then
         mirror_trimmed=$(echo "$mirror" | xargs)
         if [ "$mirror_trimmed" != "$APP_DOMAIN" ] && [ -n "$mirror_trimmed" ]; then
             mirror_list="$mirror_list
-    \"$mirror_trimmed\" => \"$mirror_trimmed\""
+    \"$mirror_trimmed\" => \"$mirror_trimmed\","
         fi
     done
     IFS="$OLD_IFS"
 fi
+
 
 # Build allowed types
 allowed_types=""
