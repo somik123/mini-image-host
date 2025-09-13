@@ -29,3 +29,5 @@ $admin_key = "aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa"; // Change this to a strong key
 
 $enable_external_hosts = false; // Enable hotlinking from other sites
 
+$files_per_page = 20; // Number of images to show per page
+

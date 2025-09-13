@@ -37,6 +37,18 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
         usort($files, function ($a, $b) use ($image_path) {
             return filemtime($image_path . $b) - filemtime($image_path . $a);
         });
+
+        // Pagination setup
+        $total_files = count($files);
+        $total_pages = ceil($total_files / $files_per_page);
+        $current_page = isset($_GET['page']) ? max(1, min($total_pages, (int)$_GET['page'])) : 1;
+        $start_index = ($current_page - 1) * $files_per_page;
+
+        if ($total_files > 0)
+            $files = array_slice($files, $start_index, $files_per_page);
+
+        $has_next_page = $current_page < $total_pages;
+        $has_prev_page = $current_page > 1;
     ?>
 
         <div class="container container-large p-4 bg-white p-3 rounded shadow-sm">
@@ -52,6 +64,21 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     <div class="text-center text-muted">
                         No images uploaded yet.
                     </div>
+                <?php endif; ?>
+                <?php if ($total_pages > 1): ?>
+                    <div class="input-group mb-3 w-auto">
+                        <button class="btn btn-outline-primary <?= $has_prev_page ? '' : 'disabled' ?>" type="button"
+                            onclick="location.href='?gallery&page=<?= max(1, $current_page - 1) ?>';">Prev</button>
+                        <select class="form-select" style="width: auto;"
+                            onchange="location.href='?gallery&page='+this.value;">
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <option value="<?= $i ?>" <?= $i == $current_page ? 'selected' : '' ?>>Page <?= $i ?></option>
+                            <?php endfor; ?>
+                        </select>
+                        <button class="btn btn-outline-primary <?= $has_next_page ? '' : 'disabled' ?>" type="button"
+                            onclick="location.href='?gallery&page=<?= min($total_pages, $current_page + 1) ?>';">Next</button>
+                    </div>
+                    <div class="w-100"></div> <!-- Forces line break -->
                 <?php endif; ?>
                 <div class="row g-2">
                     <?php foreach ($files as $file): ?>

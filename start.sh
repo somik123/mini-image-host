@@ -18,6 +18,8 @@
 
 : "${ENABLE_EXTERNAL_HOSTS:=false}"
 
+: "${FILES_PER_PAGE:=20}"
+
 # Initialize mirror list with APP_DOMAIN
 mirror_list="    \"${APP_DOMAIN}\" => \"\","
 
@@ -73,6 +75,9 @@ $allowed_types
 \$admin_key = "${ADMIN_KEY}"; // Used to delete files
 
 \$enable_external_hosts = ${ENABLE_EXTERNAL_HOSTS}; // Enable hotlinking from other sites
+
+\$files_per_page = ${FILES_PER_PAGE}; // Number of images to show per page
+
 EOF
 
 echo "config.php generated at /var/www/html/inc/config.php"
