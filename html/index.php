@@ -2,7 +2,8 @@
 
 // Read functions file for helper functions
 require_once("inc/functions.php");
-
+// Read config file for settings
+require_once("inc/config.php");
 
 $rand_v = "?v=" . rand(10000, 99999);
 

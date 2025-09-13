@@ -4,9 +4,6 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
     die('Direct access not allowed.');
 }
 
-// Read config file for settings
-require_once("config.php");
-
 
 // Conver byte size to human redable size
 function human_readable_size($raw_size, $return_array = true)

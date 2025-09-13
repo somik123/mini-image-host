@@ -117,26 +117,18 @@ function uploadFile(name) {
     let completeCardHtml = document.getElementById("complete-card-template").innerHTML;
     let errorCardHtml = document.getElementById("error-card-template").innerHTML;
 
-    let external = false;
-
     let mirrorEl = document.getElementById("mirror");
-    if (mirrorEl.value.length > 0) {
-        if (parseInt(mirrorEl.value, 10) > 0) {
-            external = true;
-        } else {
-            mirror = "https://" + mirrorEl.value + "/";
-        }
+    // This is only for external mirrors, internal uploads will ignore this
+    if (mirrorEl.value.length > 0 && parseInt(mirrorEl.value, 10) == 0) {
+        mirror = "https://" + mirrorEl.value + "/";
     }
 
-    if (external) {
-        url = "external.php";
-        data = new FormData();
-        data.append('file', document.getElementById("file").files[0]);
-        data.append('file_host', mirrorEl.value);
-    } else {
-        data = new FormData(form);
-        url = mirror + "internal.php";
-    }
+    url = mirror + "api.php";
+
+    data = new FormData();
+    data.append('file', document.getElementById("file").files[0]);
+    data.append('file_host', mirrorEl.value);
+
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url);
@@ -161,7 +153,7 @@ function uploadFile(name) {
             progressProcessing.style.display = "";
             progressTxt.style.display = "none";
         }
-        else{
+        else {
             progressProcessing.style.display = "none";
             progressTxt.style.display = "";
         }
@@ -172,14 +164,23 @@ function uploadFile(name) {
     });
     xhr.onload = function () {
 
+        progressArea.style.display = "none";
+        progressProcessing.style.display = "none";
+        progressTxt.style.display = "";
+
+        // Upload failed with HTTP error
+        if (xhr.status != 200) {
+            alert("Upload failed. Check console for details.");
+            console.error("Upload error:", xhr.statusText);
+            progressArea.style.display = "none";
+            return;
+        }
+
+        // Parse JSON response
         var api_reply = JSON.parse(xhr.responseText);
-        if (api_reply['status'] == "OK") {
+        if (api_reply['status'] == "OK") { // Upload successful
 
             let url = api_reply['url'];
-
-            progressArea.style.display = "none";
-            progressProcessing.style.display = "none";
-            progressTxt.style.display = "";
 
             let uploadedHTML = completeCardHtml;
             uploadedHTML = uploadedHTML
@@ -189,7 +190,7 @@ function uploadFile(name) {
 
             uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML);
 
-        } else if (api_reply['status'] == "FAIL") {
+        } else if (api_reply['status'] == "FAIL") { // Upload failed with error
 
             let error = api_reply['msg'];
 
@@ -199,8 +200,7 @@ function uploadFile(name) {
                 .replace('[[FILENAME]]', name)
                 .replace('[[FILESIZE]]', fileSize)
                 .replace('[[ERROR_TXT]]', error);
-            uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML); //remove this line if you don't want to show upload history
-
+            uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML);
         }
     }
 
@@ -224,7 +224,7 @@ function text2image(button) {
     var formData = new FormData();
     formData.append("textblk", text);
 
-    fetch('external.php', {
+    fetch('api.php', {
         method: 'POST',
         body: formData
     })
@@ -265,7 +265,7 @@ function txt2imgPreview() {
 
     var formData = new FormData();
     formData.append("textblk", text);
-    fetch('external.php', {
+    fetch('api.php', {
         method: 'POST',
         body: formData
     })
@@ -314,20 +314,20 @@ function showHideContainer() {
 
 // Shorten filename for display
 function shortenFilename(filename, maxLength = 20) {
-  // Split into name and extension
-  const lastDot = filename.lastIndexOf(".");
-  if (lastDot === -1) return filename; // no extension case
-  
-  const name = filename.substring(0, lastDot);
-  const ext = filename.substring(lastDot);
+    // Split into name and extension
+    const lastDot = filename.lastIndexOf(".");
+    if (lastDot === -1) return filename; // no extension case
 
-  if (name.length <= maxLength) {
-    return filename; // nothing to shorten
-  }
+    const name = filename.substring(0, lastDot);
+    const ext = filename.substring(lastDot);
 
-  const keep = Math.floor((maxLength - 4) / 2); // 4 chars for "...."
-  const start = name.substring(0, keep);
-  const end = name.substring(name.length - keep);
+    if (name.length <= maxLength) {
+        return filename; // nothing to shorten
+    }
 
-  return `${start}....${end}${ext}`;
+    const keep = Math.floor((maxLength - 4) / 2); // 4 chars for "...."
+    const start = name.substring(0, keep);
+    const end = name.substring(name.length - keep);
+
+    return `${start}....${end}${ext}`;
 }

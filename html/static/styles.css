@@ -58,7 +58,7 @@ body {
 }
 
 .upload-form {
-    height: 180px;
+    min-height: 180px;
     display: flex;
     cursor: pointer;
     align-items: center;
@@ -68,6 +68,7 @@ body {
     border: 2px dashed #6990F2;
     width: 100%;
     color: #6990F2;
+    padding-bottom: 20px !important;
 }
 
 .text2image {
