@@ -78,7 +78,7 @@ function showDeleteConfirm() {
     var file = document.getElementById("modalPopoutHeader").innerText;
     var ret = prompt("Provide ADMIN_KEY to delete this image " + file + ":", "");
     if (ret != null) {
-        var url = "internal.php?delete=" + file + "&key=" + ret;
+        var url = "api.php?delete=" + file + "&key=" + ret;
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         xhr.onload = function () {

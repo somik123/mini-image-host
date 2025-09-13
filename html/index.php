@@ -119,7 +119,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     <label for="host" class="me-2 fw-semibold">Host:</label>
                     <select id="mirror" class="form-select form-select-sm select-host">
                         <?php foreach ($mirror_list as $mirror => $host): ?>
-                            <option value="<?= $host ?>"><?= $mirror ?></option>";
+                            <option value="<?= $host ?>"><?= $mirror ?></option>
                         <?php endforeach; ?>
                         <?php if ($enable_external_hosts): ?>
                             <option disabled> &dArr; External &dArr; </option>
