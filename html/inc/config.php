@@ -3,6 +3,10 @@
 $protocol = "https://";
 $domain = "example.com";
 
+$site_name = "Mini Image Host"; // Site name
+
+$contact = "mailto:mail@example.com"; // Contact email
+
 $image_path = "./i/"; // path to image upload folder in filesystem
 $image_url = "/i/";   // url to image
 

@@ -54,7 +54,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
         <div class="container container-large p-4 bg-white p-3 rounded shadow-sm">
 
             <h3 class="text-center fw-bold">
-                <a href="." class="header-link">Mini Image Host - Gallery</a>
+                <a href="." class="header-link"><?= $site_name ?> - Gallery</a>
             </h3>
 
 
@@ -96,8 +96,10 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
             </div>
 
             <div class="footer text-center small mt-3 footer-div">
-                Copyright &copy; <?= date("Y") ?> <a href="https://somik.org/" target="_blank">Somik.org</a> |
-                <a href="https://kfels.com/reach-out" target="_blank">Reach out</a>
+                Copyright &copy; <?= date("Y") ?> <a href="https://somik.org/" target="_blank">Somik.org</a>
+                <?php if ($contact && $contact != "#"): ?>
+                    | <a href="<?= $contact ?>" target="_blank">Reach out</a>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -136,7 +138,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
         <div class="container p-4 bg-white p-3 rounded shadow-sm">
 
             <h3 class="text-center fw-bold">
-                <a href="." class="header-link">Mini Image Host</a>
+                <a href="." class="header-link"><?= $site_name ?></a>
             </h3>
 
 
@@ -245,8 +247,10 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
             <div class="footer text-center small mt-3 footer-div">
-                Copyright © <a href="https://somik.org/" target="_blank">Somik.org</a> <?= date("Y") ?> |
-                <a href="https://kfels.com/reach-out" target="_blank">Reach out</a>
+                Copyright © <a href="https://somik.org/" target="_blank">Somik.org</a> <?= date("Y") ?>
+                <?php if ($contact && $contact != "#"): ?>
+                    | <a href="<?= $contact ?>" target="_blank">Reach out</a>
+                <?php endif; ?>
             </div>
         </div>
 

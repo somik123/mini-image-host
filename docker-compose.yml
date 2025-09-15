@@ -19,6 +19,12 @@ services:
       APP_PROTOCOL: "https://"
       APP_DOMAIN: "example.com"
 
+      # Site name
+      SITE_NAME: "My Image Host"
+
+      # Contact email or url like "mailto:admin@example.com" or "https://example.com/contact"
+      CONTACT: "mailto:admin@example.com" # or "https://example.com/contact"
+
       # Paths inside the container match above volumes
       IMAGE_PATH: "/var/www/html/i/"
       IMAGE_URL: "/i/"

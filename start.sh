@@ -4,6 +4,9 @@
 : "${APP_PROTOCOL:=https://}"
 : "${APP_DOMAIN:=example.com}"
 
+: "${SITE_NAME:=My Image Host}"
+: "${CONTACT:=#}"
+
 : "${IMAGE_PATH:=./i/}"
 : "${IMAGE_URL:=/i/}"
 
@@ -51,8 +54,12 @@ IFS="$OLD_IFS"
 cat > /var/www/html/inc/config.php <<EOF
 <?php
 
-\$protocol = "${APP_PROTOCOL}";
-\$domain = "${APP_DOMAIN}";
+\$protocol = "${APP_PROTOCOL}"; // http:// or https://
+\$domain = "${APP_DOMAIN}"; // Domain name of your site like example.com
+
+\$site_name = "${SITE_NAME}"; // Site name
+
+\$contact = "${CONTACT}"; // Contact email or url like "mailto:admin@example.com" or "https://example.com/contact"
 
 \$image_path = "${IMAGE_PATH}"; // path to image upload folder in filesystem
 \$image_url = "${IMAGE_URL}";   // url to image
