@@ -224,7 +224,7 @@ function upload_to_upimg($curlfile)
 // Index 100+ are all chevereto hosts
 function upload_to_chevereto($curlfile, $file_host, $mime_type)
 {
-    global $debug;
+    global $debug, $imgbb_api_key;
 
     // Chevereto-based hosts 
     // (ImgBB, FreeImage.host, HostImage.org, PasteImg, Imgbb.ws, img.in.th, Dodaj.rs, 
@@ -233,6 +233,10 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
     switch ($file_host) {
         case 101:
             // Imgbb
+            if($imgbb_api_key){
+                return upload_to_imgbb($curlfile);
+            }
+            // Fallback to Chevereto if no API key is set
             $url = "https://imgbb.com/";
             $name = "ImgBB";
             break;
@@ -333,4 +337,24 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
         return $hotlink;
     } else
         throw new Exception("Error uploading to {$name}." . $debug ? "\n" . htmlspecialchars($page) : "");
+}
+
+
+function upload_to_imgbb($curlfile){
+    global $debug;
+
+    // Imgbb API upload logic
+    $api_key = "8af21c832df0f748ca001ffa0a3b6d53"; // Free API key from imgbb.com
+    $upload_url = "https://api.imgbb.com/1/upload?key=" . $api_key;
+    $data = array('image' => $curlfile);
+    $page = get_page($upload_url, $data);
+    $response = json_decode($page, true);
+    
+    // Check if upload was successful
+    if ($response['success']) {
+        $hotlink = $response['data']['url'];
+        return $hotlink;
+    } else {
+        throw new Exception("Error uploading to Imgbb via API" . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
 }

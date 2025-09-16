@@ -19,6 +19,8 @@
 
 : "${ADMIN_KEY:=aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa}"
 
+: "${IMGBB_API_KEY:=}"
+
 : "${ENABLE_EXTERNAL_HOSTS:=false}"
 
 : "${FILES_PER_PAGE:=20}"
@@ -80,6 +82,8 @@ $allowed_types
 );
 
 \$admin_key = "${ADMIN_KEY}"; // Used to delete files
+
+\$imgbb_api_key = "${IMGBB_API_KEY}"; // ImgBB API key for remote uploads (optional)
 
 \$enable_external_hosts = ${ENABLE_EXTERNAL_HOSTS}; // Enable hotlinking from other sites
 

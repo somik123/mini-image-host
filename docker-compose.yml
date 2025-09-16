@@ -42,6 +42,9 @@ services:
       # Admin key for deleting files
       ADMIN_KEY: "aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa" # Change this to a strong key
 
+      # ImgBB API key for remote uploads (optional)
+      IMGBB_API_KEY: ""
+
       # Allowed MIME types
       ALLOWED_TYPES: "image/jpeg,image/png,image/gif,image/webp"
 
