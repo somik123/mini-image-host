@@ -90,9 +90,6 @@ try {
             if (!in_array($file['type'], $allowed_types))
                 throw new Exception("Only jpg, jpeg, png, webp, and gif image type supported.");
 
-            // Print debug information if requested
-            $debug = isset($_POST['debug']) ? true : false;
-
             // Add random bytes to the filename to avoid issues with same filename uploads
             file_put_contents($file['tmp_name'], random_bytes(16), FILE_APPEND);
 
@@ -129,6 +126,9 @@ try {
                     break;
                 case 8: // UpImg
                     $hotlink = upload_to_upimg($curlfile);
+                    break;
+                case 9: // ImgBox
+                    $hotlink = upload_to_imgbox($curlfile);
                     break;
                 default:
                     if ($file_host > 100) {

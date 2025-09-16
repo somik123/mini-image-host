@@ -160,6 +160,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                             <option value="6">MyImgs.org</option>
                             <option value="7">ImgHost.cc</option>
                             <option value="8">UpImg</option>
+                            <option value="9">ImgBox</option>
                             <option disabled>──Chevereto──</option>
                             <option value="101">ImgBB</option>
                             <option value="102">FreeImage.host</option>

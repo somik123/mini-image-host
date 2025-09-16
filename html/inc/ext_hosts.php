@@ -74,19 +74,7 @@ function upload_to_0x0_st($curlfile)
     $data = array('file' => $curlfile);
 
     // Using basic curl to handle 0x0.st specific requirements
-    $ch = curl_init($upload_url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'curl/8.5.0');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    $page = curl_exec($ch);
-
-    // Check for curl errors
-    if (curl_errno($ch)) {
-        throw new Exception('Curl error: ' . curl_error($ch));
-    }
-    curl_close($ch);
+    $page = basic_curl_call($upload_url, "post", $data, [], 'curl/8.5.0');
 
     // Check if upload was successful
     if (strpos($page, '0x0.st') !== false) {
@@ -187,27 +175,14 @@ function upload_to_upimg($curlfile)
     $upload_url = "https://api.upimg.com/images";
     $data = array('images' => $curlfile);
 
-    // Using basic curl to handle UpImg specific requirements
-
+    // Set required headers for UpImg
     $headers = [
         'Accept: application/json',
         'Origin: https://upimg.com'
     ];
 
-    $ch = curl_init($upload_url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'curl/8.5.0');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    $page = curl_exec($ch);
-
-    // Check for curl errors
-    if (curl_errno($ch)) {
-        throw new Exception('Curl error: ' . curl_error($ch));
-    }
-    curl_close($ch);
+    // Using basic curl to handle UpImg specific requirements
+    $page = basic_curl_call($upload_url, "post", $data, $headers, 'curl/8.5.0');
 
     $response = json_decode($page, true);
 
@@ -233,7 +208,7 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
     switch ($file_host) {
         case 101:
             // Imgbb
-            if($imgbb_api_key){
+            if ($imgbb_api_key) {
                 return upload_to_imgbb($curlfile);
             }
             // Fallback to Chevereto if no API key is set
@@ -340,7 +315,8 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
 }
 
 
-function upload_to_imgbb($curlfile){
+function upload_to_imgbb($curlfile)
+{
     global $debug;
 
     // Imgbb API upload logic
@@ -349,7 +325,7 @@ function upload_to_imgbb($curlfile){
     $data = array('image' => $curlfile);
     $page = get_page($upload_url, $data);
     $response = json_decode($page, true);
-    
+
     // Check if upload was successful
     if ($response['success']) {
         $hotlink = $response['data']['url'];
@@ -357,4 +333,60 @@ function upload_to_imgbb($curlfile){
     } else {
         throw new Exception("Error uploading to Imgbb via API" . $debug ? "\n" . htmlspecialchars($page) : "");
     }
+}
+
+
+function upload_to_imgbox($curlfile)
+{
+    global $debug, $cookie_file;
+
+    // ImgBox upload logic
+    $url = "https://imgbox.com/";
+    $session_url = $url . "/ajax/token/generate";
+    $upload_url = $url . "/upload/process";
+
+    // Get X-CSRF-Token
+    $page = get_page($url, false, '', true);
+
+    preg_match('#<input name="authenticity_token" type="hidden" value="([^"]+)"#si', $page, $matches);
+    $csrf_token = $matches[1];
+    if (empty($csrf_token)) {
+        throw new Exception("Error retrieving CSRF token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        cleanup();
+    }
+
+    // Set required headers for ImgBox
+    $headers = ['X-CSRF-Token: ' . $csrf_token];
+    // Get session token
+    $page = basic_curl_call($session_url, "post", "", $headers, "", $cookie_file);
+
+    if (stristr($page, "token_secret") === FALSE) {
+        throw new Exception("Error retrieving session token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        cleanup();
+    }
+    $response = json_decode($page, true);
+    $token_id = $response['token_id'];
+    $token_secret = $response['token_secret'];
+
+
+    // Prepare data for upload
+    $data = array(
+        "token_id" => $token_id,
+        "token_secret" => $token_secret,
+        "files[]" => $curlfile,
+        "content_type" => 1,
+        "thumbnail_size" => "100c",
+        "gallery_id" => null,
+        "comments_enabled" => 0
+    );
+    // Upload the file
+    $page = basic_curl_call($upload_url, "post", $data, $headers, "", $cookie_file);
+
+    if (stristr($page, "original_url") === FALSE) {
+        throw new Exception("Error uploading to ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        cleanup();
+    }
+    $response = json_decode($page, true);
+    $hotlink = $response['files'][0]['original_url'];
+    return $hotlink;
 }

@@ -78,7 +78,8 @@ function rand_str($length = 10)
 }
 
 
-// Function to perform HTTP requests using cURL
+// Function to perform HTTP requests using cURL and return the response
+// This mimics a browser request as much as possible
 function get_page($upload_url, $data = false, $reffer = false, $cookie = false, $head = false)
 {
     global $cookie_file;
@@ -134,6 +135,52 @@ function get_page($upload_url, $data = false, $reffer = false, $cookie = false, 
 
     return $response;
 }
+
+
+// Basic cURL function to handle requests with more options
+// This is used for 0x0.st, UpImg and ImgBox, and mimics curl or ajax requests
+function basic_curl_call($url, $request_type = "post", $data = "", $headers = [],  $user_agent = "", $cookie_file = "")
+{
+    // Using basic curl to handle 0x0.st specific requirements
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Set user agent if provided
+    if ($user_agent)
+        curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+    // Set request type
+    if ($request_type == "post")
+        curl_setopt($ch, CURLOPT_POST, true);
+    else
+        curl_setopt($ch, CURLOPT_HTTPGET, true);
+
+    // Set data if provided
+    if ($data)
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+    // Set headers if provided
+    if ($headers)
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    // Set cookie file if provided
+    if ($cookie_file) {
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file);
+    }
+
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    $page = curl_exec($ch);
+
+    // Check for curl errors
+    if (curl_errno($ch)) {
+        throw new Exception('Curl error: ' . curl_error($ch));
+    }
+    curl_close($ch);
+
+    return $page;
+}
+
 
 
 // Function to draw text with custom spacing between characters
@@ -226,3 +273,7 @@ function cleanup()
     @unlink($file['tmp_name']);
     exit;
 }
+
+
+
+
