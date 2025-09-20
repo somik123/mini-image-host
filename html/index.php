@@ -5,6 +5,7 @@ require_once("inc/functions.php");
 // Read config file for settings
 require_once("inc/config.php");
 
+
 $rand_v = "?v=" . rand(10000, 99999);
 
 // To print the max file size in human readable format
@@ -151,29 +152,15 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                             <option value="<?= $host ?>"><?= $mirror ?></option>
                         <?php endforeach; ?>
                         <?php if ($enable_external_hosts): ?>
+                            <?php require_once("inc/ext_hosts.php"); ?>
                             <option disabled> &dArr; External &dArr; </option>
-                            <option value="1">PostImages</option>
-                            <option value="2">CatBox.moe</option>
-                            <option value="3">Pomf2.lain.la</option>
-                            <option value="4">0x0.st</option>
-                            <option value="5">UploadImgur</option>
-                            <option value="6">MyImgs.org</option>
-                            <option value="7">ImgHost.cc</option>
-                            <option value="8">UpImg</option>
-                            <option value="9">ImgBox</option>
+                            <?php foreach ($external_hosts as $host): ?>
+                                <option value="<?= $host['index'] ?>"><?= $host['name'] ?></option>
+                            <?php endforeach; ?>
                             <option disabled>──Chevereto──</option>
-                            <option value="101">ImgBB</option>
-                            <option value="102">FreeImage.host</option>
-                            <option value="103">HostImage.org</option>
-                            <option value="104">PasteImg</option>
-                            <option value="105">ImgBB.ws</option>
-                            <option value="106">img.in.th</option>
-                            <option value="108">Inspirats</option>
-                            <option value="109">FxPics.ru</option>
-                            <option value="110">Poop.pictures</option>
-                            <option value="111">Site.pictures</option>
-                            <option value="112">SnappyPic</option>
-                            <option value="113">Eikona.info</option>
+                            <?php foreach ($chevereto_hosts as $host): ?>
+                                <option value="<?= $host['index'] ?>"><?= $host['name'] ?></option>
+                            <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
                 </div>

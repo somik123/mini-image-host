@@ -67,7 +67,6 @@ try {
 
             // Call the upload image function
             upload_image();
-
         } elseif (intval($file_host) > 0 &&  $enable_external_hosts) {
 
             // Read filehosts file for external file host upload functions
@@ -102,42 +101,18 @@ try {
             $curlfile = new CURLFile($file['tmp_name'], $file['type'], $new_filename);
             $cookie_file = tempnam(sys_get_temp_dir(), 'cookie');
 
-            switch ($file_host) {
-                case 1: // Postimages
-                    $hotlink = upload_to_postimages($curlfile);
-                    break;
-                case 2: // Catbox
-                    $hotlink = upload_to_catbox($curlfile);
-                    break;
-                case 3: // Pomf2.lain.la
-                    $hotlink = upload_to_pomf2_lain_la($curlfile);
-                    break;
-                case 4: // 0x0.st
-                    $hotlink = upload_to_0x0_st($curlfile);
-                    break;
-                case 5: // Imgur
-                    $hotlink = upload_to_imgur($curlfile);
-                    break;
-                case 6: // MyImgs
-                    $hotlink = upload_to_myimgs($curlfile);
-                    break;
-                case 7: // ImgHost
-                    $hotlink = upload_to_imghost($curlfile);
-                    break;
-                case 8: // UpImg
-                    $hotlink = upload_to_upimg($curlfile);
-                    break;
-                case 9: // ImgBox
-                    $hotlink = upload_to_imgbox($curlfile);
-                    break;
-                default:
-                    if ($file_host > 100) {
-                        $hotlink = upload_to_chevereto($curlfile, $file_host, $file['type']);
-                    } else {
-                        throw new Exception("Invalid file host selected.");
+            // Call the appropriate upload function based on the selected host
+            if ($file_host > 100) { // Chevereto-based hosts
+                $hotlink = upload_to_chevereto($curlfile, $file_host, $file['type']);
+            } else { // Other external hosts
+                foreach ($external_hosts as $host) { // Find the host function
+                    if ($host['index'] == $file_host) {
+                        $hotlink = $host['function']($curlfile); // Call the upload function
+                        break;
                     }
-                    break;
+                }
             }
+
 
             // Ensure we have a valid hotlink
             if (empty($hotlink))
