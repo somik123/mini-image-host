@@ -168,7 +168,6 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                             <option value="104">PasteImg</option>
                             <option value="105">ImgBB.ws</option>
                             <option value="106">img.in.th</option>
-                            <option value="107">Dodaj.rs</option>
                             <option value="108">Inspirats</option>
                             <option value="109">FxPics.ru</option>
                             <option value="110">Poop.pictures</option>

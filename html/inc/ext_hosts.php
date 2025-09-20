@@ -1,6 +1,5 @@
 <?php
 
-
 // Index #1
 function upload_to_postimages($curlfile)
 {
@@ -196,13 +195,70 @@ function upload_to_upimg($curlfile)
 }
 
 
+// Index #9
+function upload_to_imgbox($curlfile)
+{
+    global $debug, $cookie_file;
+
+    // ImgBox upload logic
+    $url = "https://imgbox.com/";
+    $session_url = $url . "/ajax/token/generate";
+    $upload_url = $url . "/upload/process";
+
+    // Get X-CSRF-Token
+    $page = get_page($url, false, '', true);
+
+    preg_match('#<input name="authenticity_token" type="hidden" value="([^"]+)"#si', $page, $matches);
+    $csrf_token = $matches[1];
+    if (empty($csrf_token)) {
+        throw new Exception("Error retrieving CSRF token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        cleanup();
+    }
+
+    // Set required headers for ImgBox
+    $headers = ['X-CSRF-Token: ' . $csrf_token];
+    // Get session token
+    $page = basic_curl_call($session_url, "post", "", $headers, "", $cookie_file);
+
+    if (stristr($page, "token_secret") === FALSE) {
+        throw new Exception("Error retrieving session token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        cleanup();
+    }
+    $response = json_decode($page, true);
+    $token_id = $response['token_id'];
+    $token_secret = $response['token_secret'];
+
+
+    // Prepare data for upload
+    $data = array(
+        "token_id" => $token_id,
+        "token_secret" => $token_secret,
+        "files[]" => $curlfile,
+        "content_type" => 1,
+        "thumbnail_size" => "100c",
+        "gallery_id" => null,
+        "comments_enabled" => 0
+    );
+    // Upload the file
+    $page = basic_curl_call($upload_url, "post", $data, $headers, "", $cookie_file);
+
+    if (stristr($page, "original_url") === FALSE) {
+        throw new Exception("Error uploading to ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        cleanup();
+    }
+    $response = json_decode($page, true);
+    $hotlink = $response['files'][0]['original_url'];
+    return $hotlink;
+}
+
+
 // Index 100+ are all chevereto hosts
 function upload_to_chevereto($curlfile, $file_host, $mime_type)
 {
     global $debug, $imgbb_api_key;
 
     // Chevereto-based hosts 
-    // (ImgBB, FreeImage.host, HostImage.org, PasteImg, Imgbb.ws, img.in.th, Dodaj.rs, 
+    // (ImgBB, FreeImage.host, HostImage.org, PasteImg, Imgbb.ws, img.in.th,
     // Inspirats, FxPics.ru, Poop.pictures, Site.pictures, SnappyPic, Eikona.info)
 
     switch ($file_host) {
@@ -239,11 +295,6 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
             // img.in.th
             $url = "https://www.img.in.th/";
             $name = "img.in.th";
-            break;
-        case 107:
-            // Dodaj.rs
-            $url = "https://dodaj.rs/";
-            $name = "Dodaj.rs";
             break;
         case 108:
             // Inspirats
@@ -314,7 +365,7 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
         throw new Exception("Error uploading to {$name}." . $debug ? "\n" . htmlspecialchars($page) : "");
 }
 
-
+// Index #101
 function upload_to_imgbb($curlfile)
 {
     global $debug;
@@ -335,58 +386,3 @@ function upload_to_imgbb($curlfile)
     }
 }
 
-
-function upload_to_imgbox($curlfile)
-{
-    global $debug, $cookie_file;
-
-    // ImgBox upload logic
-    $url = "https://imgbox.com/";
-    $session_url = $url . "/ajax/token/generate";
-    $upload_url = $url . "/upload/process";
-
-    // Get X-CSRF-Token
-    $page = get_page($url, false, '', true);
-
-    preg_match('#<input name="authenticity_token" type="hidden" value="([^"]+)"#si', $page, $matches);
-    $csrf_token = $matches[1];
-    if (empty($csrf_token)) {
-        throw new Exception("Error retrieving CSRF token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
-        cleanup();
-    }
-
-    // Set required headers for ImgBox
-    $headers = ['X-CSRF-Token: ' . $csrf_token];
-    // Get session token
-    $page = basic_curl_call($session_url, "post", "", $headers, "", $cookie_file);
-
-    if (stristr($page, "token_secret") === FALSE) {
-        throw new Exception("Error retrieving session token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
-        cleanup();
-    }
-    $response = json_decode($page, true);
-    $token_id = $response['token_id'];
-    $token_secret = $response['token_secret'];
-
-
-    // Prepare data for upload
-    $data = array(
-        "token_id" => $token_id,
-        "token_secret" => $token_secret,
-        "files[]" => $curlfile,
-        "content_type" => 1,
-        "thumbnail_size" => "100c",
-        "gallery_id" => null,
-        "comments_enabled" => 0
-    );
-    // Upload the file
-    $page = basic_curl_call($upload_url, "post", $data, $headers, "", $cookie_file);
-
-    if (stristr($page, "original_url") === FALSE) {
-        throw new Exception("Error uploading to ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
-        cleanup();
-    }
-    $response = json_decode($page, true);
-    $hotlink = $response['files'][0]['original_url'];
-    return $hotlink;
-}
