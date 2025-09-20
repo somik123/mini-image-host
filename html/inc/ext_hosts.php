@@ -130,6 +130,68 @@ function init_external_hosts()
         "index" => 16
     );
 
+    $external_hosts[] = array(
+        'name' => 'WindyPix',
+        'function' => 'upload_to_windypix',
+        'url' => 'https://windypix.com/',
+        "index" => 17
+    );
+
+    $external_hosts[] = array(
+        'name' => '8upload',
+        'function' => 'upload_to_8upload',
+        'url' => 'https://8upload.com/',
+        "index" => 18
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgLink.io',
+        'function' => 'upload_to_imglink_io',
+        'url' => 'https://imglink.io/',
+        "index" => 19
+    );
+
+    $external_hosts[] = array(
+        'name' => 'BigByte.no',
+        'function' => 'upload_to_bigbyte_no',
+        'url' => 'http://img.bigbyte.no/',
+        "index" => 20
+    );
+
+    $external_hosts[] = array(
+        'name' => 'Image2url',
+        'function' => 'upload_to_image2url',
+        'url' => 'https://image2url.com/',
+        "index" => 21
+    );
+
+    $external_hosts[] = array(
+        'name' => 'DragNdropZ',
+        'function' => 'upload_to_dragndropz',
+        'url' => 'https://dragndropz.com/',
+        "index" => 22
+    );
+
+    $external_hosts[] = array(
+        'name' => 'AnonPic.org',
+        'function' => 'upload_to_anonpic_org',
+        'url' => 'https://anonpic.org/',
+        "index" => 23
+    );
+
+    $external_hosts[] = array(
+        'name' => 'PicSer.Pages.dev',
+        'function' => 'upload_to_picser_pages_dev',
+        'url' => 'https://picser.pages.dev/',
+        "index" => 24
+    );
+
+
+
+
+
+
+
 
 
     // Define Chevereto-based hosts
@@ -245,6 +307,76 @@ function init_external_hosts()
         'url' => 'https://imgkub.com/',
         "index" => 117
     );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgHive',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imghive.com/',
+        "index" => 118
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'JpgJet',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://jpgjet.com/',
+        "index" => 119
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'PostImage.me',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://postimage.me/',
+        "index" => 120
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgTap',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imgtap.com/',
+        "index" => 121
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ZippyImage',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://zippyimage.com/',
+        "index" => 122
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'PixShare.de',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://pixshare.de/',
+        "index" => 123
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'PixelStash.co',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://pixelstash.co/',
+        "index" => 124
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImageCC.net',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imagecc.net/',
+        "index" => 125
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgHit',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://www.imghit.com/',
+        "index" => 126
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'TinyPic.host (1 day)',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://tinypic.host/',
+        "index" => 127
+    );
 }
 
 
@@ -258,13 +390,14 @@ function upload_to_postimages($curlfile)
     // Generate a unique session ID
     $session = (string)(int)(microtime(true) * 1000) . substr((string)mt_rand() / mt_getrandmax(), 1);
     $data = array('file' => $curlfile, 'mode' => 'phpbb3', 'numfiles' => 1, 'upload_session' => $session);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
 
     // Check if upload was successful
     if ($response['status'] == "OK") {
-        $page = get_page($response['url']);
+        $page = mimic_browser($response['url']);
         preg_match_all('#\[img\](.*?)\[\/img\]#si', $page, $matches);
+
         return $matches[1][1]; // Direct link is the second [img] tag
     } else {
         throw new Exception("Error uploading to PostImages" . $debug ? "\n" . htmlspecialchars($page) : "");
@@ -279,7 +412,7 @@ function upload_to_catbox($curlfile)
     // CatBox upload logic
     $upload_url = 'https://catbox.moe/user/api.php';
     $data = array('reqtype' => 'fileupload', 'fileToUpload' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
 
     // Check if upload was successful
     if (strpos($page, 'files.catbox.moe') !== false) {
@@ -297,7 +430,7 @@ function upload_to_pomf2_lain_la($curlfile)
     // pomf2.lain.la upload logic
     $upload_url = 'https://pomf2.lain.la/upload.php';
     $data = array('files[]' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
 
     // Check if upload was successful
@@ -336,7 +469,7 @@ function upload_to_imgur($curlfile)
     // UploadImgur upload logic
     $upload_url = "https://uploadimgur.com/api/upload";
     $data = array('image' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
 
     // Check if upload was successful
@@ -355,7 +488,7 @@ function upload_to_myimgs($curlfile)
     // myimgs.org upload logic
     $url = "http://myimgs.org/";
     $upload_url = "https://myimgs.org/";
-    $page = get_page($url, false, $url, true);
+    $page = mimic_browser($url, false, $url, true);
     preg_match('#name="_token" value="([^"]+)"#si', $page, $matches);
 
     // Check if token was found
@@ -371,7 +504,7 @@ function upload_to_myimgs($curlfile)
         "alt" => "",
         "submit" => "Upload"
     );
-    $page = get_page($upload_url, $data, $url, true);
+    $page = mimic_browser($upload_url, $data, $url, true);
     // Extract the image URL from the response
     preg_match('#"(https\:\/\/myimgs\.org\/storage\/images/.*?)"#si', $page, $matches);
 
@@ -392,7 +525,7 @@ function upload_to_imghost($curlfile)
     // imghost.cc upload logic
     $upload_url = "https://imghost.cc/upload";
     $data = array('file' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
 
     $response = json_decode($page, true);
 
@@ -446,7 +579,7 @@ function upload_to_imgbox($curlfile)
     $upload_url = $url . "/upload/process";
 
     // Get X-CSRF-Token
-    $page = get_page($url, false, '', true);
+    $page = mimic_browser($url, false, '', true);
 
     preg_match('#<input name="authenticity_token" type="hidden" value="([^"]+)"#si', $page, $matches);
     $csrf_token = $matches[1];
@@ -503,7 +636,7 @@ function upload_to_imgbb($curlfile)
     // Imgbb API upload logic
     $upload_url = "https://api.imgbb.com/1/upload?key=" . $imgbb_api_key;
     $data = array('image' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
 
     // Check if upload was successful
@@ -523,7 +656,7 @@ function upload_to_imgpaste($curlfile)
     // ImgPaste upload logic
     $upload_url = 'https://api.imgpaste.net/upload';
     $data = array('image' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
     // Check if upload was successful
     if ($response['url']) {
@@ -542,7 +675,7 @@ function upload_to_pngup($curlfile)
     // PngUp upload logic
     $upload_url = 'https://pngup.com/api/upload';
     $data = array('file' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
     // Check if upload was successful
     if ($response['id']) {
@@ -563,7 +696,7 @@ function upload_to_snipshot($curlfile)
     // Snipshot upload logic
     $upload_url = 'https://snipshot.io/upload';
     $data = array('image' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
     // Check if upload was successful
     if ($response['status'] == 'success') {
@@ -582,7 +715,7 @@ function upload_to_imgiu($curlfile)
     // ImgiU upload logic
     $upload_url = 'https://imgiu.com/upload.php';
     $data = array('file[0]' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
     // Check if upload was successful
     if ($response['success']) {
@@ -605,7 +738,7 @@ function upload_to_fileshare_ing($curlfile)
         'expirationDate' => ''
     );
 
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
     // Check if upload was successful
     if ($response['id']) {
@@ -625,7 +758,7 @@ function upload_to_xilt_net($curlfile)
     // Xilt.net upload logic
     $upload_url = 'https://xilt.net/inc/upload.php';
     $data = array('file[]' => $curlfile);
-    $page = get_page($upload_url, $data);
+    $page = mimic_browser($upload_url, $data);
     $response = json_decode($page, true);
     // Check if upload was successful
     if ($response[0]) {
@@ -634,6 +767,186 @@ function upload_to_xilt_net($curlfile)
         throw new Exception("Error uploading to Xilt.net" . $debug ? "\n" . htmlspecialchars($page) : "");
     }
 }
+
+
+// Index #17
+function upload_to_windypix($curlfile)
+{
+    global $debug;
+
+    // WindyPix upload logic
+    $upload_url = 'https://windypix.com/upload.php';
+    $data = array('file[]' => $curlfile);
+    $page = mimic_browser($upload_url, $data, 'https://windypix.com/', true);
+
+    // Check if upload was successful
+    preg_match_all('#\[IMG\]([^\[]+)\[\/IMG\]#si', $page, $matches);
+
+    foreach ($matches[1] as $match) {
+        if (strpos($match, '?di=') !== false) {
+            return $match; // Return the first direct link without '?di='
+        }
+    }
+    throw new Exception("Error uploading to AnonPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+}
+
+
+// Index #18
+function upload_to_8upload($curlfile)
+{
+    global $debug;
+
+    // 8upload upload logic
+    $upload_url = 'https://8upload.com/upload/mt/';
+    $data = array('upload[]' => $curlfile);
+    $page = mimic_browser($upload_url, $data);
+
+    $parts = explode('\\/', str_replace('"', '', $page));
+
+    // Check if upload was successful
+    if ($parts[1] == "uploaded" && $parts[2]) {
+        $link_url = "https://8upload.com/" . join("/", $parts);
+        $page = mimic_browser($link_url);
+
+        preg_match_all('#\[IMG\]([^\[]+)\[\/IMG\]#si', $page, $matches);
+
+        foreach ($matches[1] as $match) {
+            if (strpos($match, '/image/') !== false) {
+                return $match; // Return the first direct link without '?di='
+            }
+        }
+        throw new Exception("Error uploading to AnonPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+    } else {
+        throw new Exception("Error uploading to 8upload" . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
+}
+
+
+// Index #19
+function upload_to_imglink_io($curlfile)
+{
+    global $debug;
+
+    // Imglink.io upload logic
+    $upload_url = 'https://imglink.io/upload';
+    $data = array('file' => $curlfile);
+    $page = mimic_browser($upload_url, $data);
+    $response = json_decode($page, true);
+    // Check if upload was successful
+    if ($response['success']) {
+        return $response['images'][0]['direct_link'];
+    } else {
+        throw new Exception("Error uploading to Imglink.io" . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
+}
+
+
+// Index #20
+function upload_to_bigbyte_no($curlfile)
+{
+    global $debug;
+
+    // BigByte.no upload logic
+    $upload_url = 'http://img.bigbyte.no/upload.php';
+    $data = array('file[]' => $curlfile, 'imgUrl' => '');
+    $page = mimic_browser($upload_url, $data, 'http://img.bigbyte.no/', true);
+
+    // Check if upload was successful
+    preg_match_all('#\[IMG\]([^\[]+)\[\/IMG\]#si', $page, $matches);
+
+    foreach ($matches[1] as $match) {
+        if (strpos($match, '?di=') !== false) {
+            return $match; // Return the first direct link without '?di='
+        }
+    }
+    throw new Exception("Error uploading to AnonPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+}
+
+
+// Index #21
+function upload_to_image2url($curlfile)
+{
+    global $debug;
+
+    // Image2url upload logic
+    $upload_url = 'https://www.image2url.com/api/upload';
+    $data = array('file' => $curlfile);
+    $page = mimic_browser($upload_url, $data);
+    $response = json_decode($page, true);
+
+    // Check if upload was successful
+    if ($response['success']) {
+        return $response['url'];
+    } else {
+        throw new Exception("Error uploading to Image2url" . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
+}
+
+
+// Index #22
+function upload_to_dragndropz($curlfile)
+{
+    global $debug;
+
+    // DragNdropZ upload logic
+    $upload_url = 'https://serv1.dragndropz.com/image_uploader.php';
+    $data = array('file' => $curlfile);
+    $page = mimic_browser($upload_url, $data);
+    $response = json_decode($page, true);
+
+    // Check if upload was successful
+    if ($response['image_path']) {
+        return $response['image_path'];
+    } else {
+        throw new Exception("Error uploading to DragNdropZ" . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
+}
+
+
+// Index #23
+function upload_to_anonpic_org($curlfile)
+{
+    global $debug;
+
+    // AnonPic.org upload logic
+    $upload_url = 'https://anonpic.org/upload.php';
+    $data = array('file[]' => $curlfile, 'imgUrl' => '');
+    $page = mimic_browser($upload_url, $data, 'https://anonpic.org/', true);
+
+    // Check if upload was successful
+    preg_match_all('#\[IMG\]([^\[]+)\[\/IMG\]#si', $page, $matches);
+
+    foreach ($matches[1] as $match) {
+        if (strpos($match, '?di=') !== false) {
+            return $match; // Return the first direct link without '?di='
+        }
+    }
+    throw new Exception("Error uploading to AnonPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+}
+
+
+// Index #24
+function upload_to_picser_pages_dev($curlfile)
+{
+    global $debug;
+
+    // PicSer.Pages.dev upload logic
+    $upload_url = 'https://picser.pages.dev/api/upload';
+    $data = array('file' => $curlfile);
+    $page = mimic_browser($upload_url, $data);
+    $response = json_decode($page, true);
+
+    // Check if upload was successful
+    if ($response['success']) {
+        return $response['url'];
+    } else {
+        throw new Exception("Error uploading to PicSer.Pages.dev" . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
+}
+
+
+
+
 
 
 
@@ -666,7 +979,7 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
     $upload_url = $url . "json";
 
     // Chevereto upload logic
-    $page = get_page($url, false, $url, true);
+    $page = mimic_browser($url, false, $url, true);
 
     // Extract the auth_token from the page
     preg_match('#auth_token\s?\=\s?"([^"]+)"#si', $page, $matches);
@@ -686,7 +999,7 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
         "mimetype" => $mime_type
     );
 
-    $page = get_page($upload_url, $data, $url, true);
+    $page = mimic_browser($upload_url, $data, $url, true);
     $response = json_decode($page, true);
 
     // Check if upload was successful

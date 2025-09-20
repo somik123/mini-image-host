@@ -80,7 +80,7 @@ function rand_str($length = 10)
 
 // Function to perform HTTP requests using cURL and return the response
 // This mimics a browser request as much as possible
-function get_page($upload_url, $data = false, $reffer = false, $cookie = false, $head = false)
+function mimic_browser($upload_url, $data = false, $reffer = false, $cookie = false, $head = false)
 {
     global $cookie_file;
 
