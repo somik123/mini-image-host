@@ -139,7 +139,7 @@ function mimic_browser($upload_url, $data = false, $reffer = false, $cookie = fa
 
 // Basic cURL function to handle requests with more options
 // This is used for 0x0.st, UpImg and ImgBox, and mimics curl or ajax requests
-function basic_curl_call($url, $request_type = "post", $data = "", $headers = [],  $user_agent = "", $cookie_file = "")
+function basic_curl_call($url, $request_type = "post", $data = "", $headers = [],  $user_agent = "", $cookie_file = "", $ignore_ssl = false)
 {
     // Using basic curl to handle 0x0.st specific requirements
     $ch = curl_init($url);
@@ -167,6 +167,12 @@ function basic_curl_call($url, $request_type = "post", $data = "", $headers = []
     if ($cookie_file) {
         curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
         curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file);
+    }
+
+    // Ignore SSL verification if specified
+    if ($ignore_ssl) {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     }
 
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
@@ -269,11 +275,8 @@ function text2image($text)
 function cleanup()
 {
     global $cookie_file, $file;
-    @unlink($cookie_file);
-    @unlink($file['tmp_name']);
-    exit;
+    if ($cookie_file)
+        @unlink($cookie_file);
+    if ($file && isset($file['tmp_name']) && file_exists($file['tmp_name']))
+        @unlink($file['tmp_name']);
 }
-
-
-
-

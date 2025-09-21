@@ -186,6 +186,27 @@ function init_external_hosts()
         "index" => 24
     );
 
+    $external_hosts[] = array(
+        'name' => 'ImgPx',
+        'function' => 'upload_to_imgpx',
+        'url' => 'https://imgpx.com/',
+        "index" => 25
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgLink.app',
+        'function' => 'upload_to_imglink_app',
+        'url' => 'https://imglink.app/',
+        "index" => 26
+    );
+
+    $external_hosts[] = array(
+        'name' => 'HostPic.org',
+        'function' => 'upload_to_hostpic_org',
+        'url' => 'https://hostpic.org/',
+        "index" => 27
+    );
+
 
 
 
@@ -377,6 +398,20 @@ function init_external_hosts()
         'url' => 'https://tinypic.host/',
         "index" => 127
     );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImageHost.me',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imagehost.me/',
+        "index" => 128
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'PicHost.net',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://pichost.net/',
+        "index" => 129
+    );
 }
 
 
@@ -495,7 +530,6 @@ function upload_to_myimgs($curlfile)
     $token = $matches[1];
     if (empty($token)) {
         throw new Exception("Error retrieving token from myimgs.org." . $debug ? "\n" . htmlspecialchars($page) : "");
-        cleanup();
     }
 
     $data = array(
@@ -585,7 +619,6 @@ function upload_to_imgbox($curlfile)
     $csrf_token = $matches[1];
     if (empty($csrf_token)) {
         throw new Exception("Error retrieving CSRF token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
-        cleanup();
     }
 
     // Set required headers for ImgBox
@@ -595,7 +628,6 @@ function upload_to_imgbox($curlfile)
 
     if (stristr($page, "token_secret") === FALSE) {
         throw new Exception("Error retrieving session token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
-        cleanup();
     }
     $response = json_decode($page, true);
     $token_id = $response['token_id'];
@@ -617,7 +649,6 @@ function upload_to_imgbox($curlfile)
 
     if (stristr($page, "original_url") === FALSE) {
         throw new Exception("Error uploading to ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
-        cleanup();
     }
     $response = json_decode($page, true);
     return $response['files'][0]['original_url'];
@@ -944,6 +975,78 @@ function upload_to_picser_pages_dev($curlfile)
     }
 }
 
+// Index #25
+function upload_to_imgpx($curlfile)
+{
+    global $debug;
+
+    // ImgPx upload logic
+    $url = "https://imgpx.com/";
+    $upload_url = "https://imgpx.com/uploads";
+
+    $page = mimic_browser($url, false, $url, true);
+    preg_match('#name="upload_token" value="([^"]+)"#si', $page, $matches);
+    if (empty($matches[1])) {
+        throw new Exception("Error retrieving upload_token from ImgPx." . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
+    $upload_token = $matches[1];
+    $data = array(
+        "upload_token" => $upload_token,
+        "fileToUpload[]" => $curlfile,
+        "photoSize" => "original"
+    );
+    $page = mimic_browser($upload_url, $data, $url, true);
+
+    // Check if upload was successful
+    preg_match_all('#\[IMG\]([^\[]+)\[\/IMG\]#si', $page, $matches);
+
+    foreach ($matches[1] as $match) {
+        if (strpos($match, '/thumbnail/') === false) {
+            return $match; // Return the first direct link without '/thumbnail/'
+        }
+    }
+}
+
+
+// Index #26
+function upload_to_imglink_app($curlfile)
+{
+    global $debug;
+
+    // Imglink.app upload logic
+    $upload_url = 'https://imglink.app/api/blob-upload';
+    $data = array('file' => $curlfile);
+    $page = mimic_browser($upload_url, $data);
+    $response = json_decode($page, true);
+
+    // Check if upload was successful
+    if ($response['success']) {
+        return $response['links']['direct'];
+    } else {
+        throw new Exception("Error uploading to Imglink.app" . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
+}
+
+
+// Index #27
+function upload_to_hostpic_org($curlfile)
+{
+    global $debug;
+
+    // HostPic.org upload logic
+    $upload_url = 'https://www.hostpic.org/inc/uploader.php';
+    $data = array('thefile0' => $curlfile);
+    $page = basic_curl_call($upload_url, "post", $data, [], 'curl/8.5.0', 0, true);
+
+    $parts = explode("','|", $page);
+
+    // Check if upload was successful
+    if($parts[4]) {
+        return trim($parts[4]);
+    } else {
+        throw new Exception("Error uploading to HostPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+    }
+}
 
 
 

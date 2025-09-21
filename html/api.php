@@ -99,7 +99,7 @@ try {
 
             // Prepare the file and cookie for upload
             $curlfile = new CURLFile($file['tmp_name'], $file['type'], $new_filename);
-            $cookie_file = tempnam(sys_get_temp_dir(), 'cookie');
+            $cookie_file = tempnam(sys_get_temp_dir(), 'php_img_cookie_');
 
             // Call the appropriate upload function based on the selected host
             if ($file_host > 100) { // Chevereto-based hosts
@@ -114,7 +114,7 @@ try {
             }
 
 
-            // Ensure we have a valid hotlink
+            // Check if upload was successful
             if (empty($hotlink))
                 throw new Exception("Error uploading image." . $debug ? "\n" . htmlspecialchars($page) : "");
 
