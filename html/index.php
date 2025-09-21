@@ -19,18 +19,129 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
 
 <head>
     <meta charset="UTF-8">
-    <title><?=$site_name?></title>
+    <title><?= $site_name ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+
     <link rel="stylesheet" href="static/styles.css<?= $rand_v ?>">
 </head>
 
 <body>
 
     <?php
-    // Display the images in gallery
-    if (isset($_REQUEST['gallery'])):
+    if (isset($_REQUEST['links'])): // Display the images in gallery
+
+        require_once("inc/ext_hosts.php");
+
+        // Get all external links sorted by created date
+        $all_links = list_ext_links();
+
+        // Pagination setup
+        $total_links = count($all_links);
+        $total_pages = ceil($total_links / $files_per_page);
+        $current_page = isset($_GET['page']) ? max(1, min($total_pages, (int)$_GET['page'])) : 1;
+        $start_index = ($current_page - 1) * $files_per_page;
+        if ($total_links > 0)
+            $all_links = array_slice($all_links, $start_index, $files_per_page);
+        $has_next_page = $current_page < $total_pages;
+        $has_prev_page = $current_page > 1;
+
+    ?>
+
+        <div class="container container-large p-4 bg-white p-3 rounded shadow-sm">
+
+            <h3 class="text-center fw-bold">
+                <a href="." class="header-link"><?= $site_name ?> - External Links</a>
+            </h3>
+
+
+            <div class="d-flex justify-content-center align-items-center mt-4 flex-wrap popup">
+
+                <?php if (count($all_links) == 0 || $enable_short_links_for_external_hosts == false): ?>
+                    <div class="text-center text-muted">
+                        <?= count($all_links) == 0 ? "No external links have been added yet." : "Short links for external links are disabled in the configuration." ?>
+                    </div>
+                <?php else: ?>
+                    <?php if ($total_pages > 1): ?>
+                        <div class="input-group mb-3 w-auto">
+                            <button class="btn btn-outline-primary <?= $has_prev_page ? '' : 'disabled' ?>" type="button"
+                                onclick="location.href='?links&page=<?= max(1, $current_page - 1) ?>';">Prev</button>
+                            <select class="form-select" style="width: auto;"
+                                onchange="location.href='?links&page='+this.value;">
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <option value="<?= $i ?>" <?= $i == $current_page ? 'selected' : '' ?>>Page <?= $i ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <button class="btn btn-outline-primary <?= $has_next_page ? '' : 'disabled' ?>" type="button"
+                                onclick="location.href='?links&page=<?= min($total_pages, $current_page + 1) ?>';">Next</button>
+                        </div>
+                        <div class="w-100"></div> <!-- Forces line break -->
+                    <?php endif; ?>
+                    <div id="links-container" class="mb-2">
+                        <table class="table table-striped table-sm" id="links-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Short Link</th>
+                                    <th scope="col">External Link</th>
+                                    <th scope="col">Created At</th>
+                                    <th scope="col">Hits</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $count = $start_index + 1; ?>
+                                <?php foreach ($all_links as $link): ?>
+                                    <?php
+                                    $short_code = $link['short_code'];
+                                    $file_ext = $link['file_ext'] ? $link['file_ext'] : "jpg";
+                                    $filename = "{$short_code}.{$file_ext}";
+                                    $hotlink = "{$protocol}{$domain}/ext/{$filename}";
+                                    ?>
+                                    <tr>
+                                        <th scope="row"><?= $count++ ?></th>
+                                        <td>
+                                            <a href="<?= $hotlink ?>" target="_blank"><?= $short_code ?></a>
+                                        </td>
+                                        <td>
+                                            <a href="<?= htmlspecialchars($link['ext_link']) ?>" target="_blank">
+                                                <?= htmlspecialchars($link['ext_link']) ?>
+                                            </a>
+                                        </td>
+                                        <td><?= $link['created'] ?></td>
+                                        <td><?= $link['hits'] ?></td>
+                                        <td>
+                                            <button class="btn btn-link p-1 text-primary" title="Copy Link">
+                                                <i class="bi bi-clipboard"
+                                                    onclick="copyTextToClipboardBtn3('<?= $hotlink ?>',this);"></i>
+                                            </button>
+                                            <button class="btn btn-link p-1 text-danger" title="Delete Link"
+                                                onclick="showDeleteConfirmExt('<?= $short_code ?>');">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                <?php endif; ?>
+
+            </div>
+
+            <?php html_footer($contact); ?>
+
+        </div>
+
+
+    <?php elseif (isset($_REQUEST['gallery'])): // Display the images in gallery
         $files = scandir($image_path);
 
         $files = array_diff($files, array('.', '..'));
@@ -65,43 +176,39 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     <div class="text-center text-muted">
                         No images uploaded yet.
                     </div>
-                <?php endif; ?>
-                <?php if ($total_pages > 1): ?>
-                    <div class="input-group mb-3 w-auto">
-                        <button class="btn btn-outline-primary <?= $has_prev_page ? '' : 'disabled' ?>" type="button"
-                            onclick="location.href='?gallery&page=<?= max(1, $current_page - 1) ?>';">Prev</button>
-                        <select class="form-select" style="width: auto;"
-                            onchange="location.href='?gallery&page='+this.value;">
-                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                                <option value="<?= $i ?>" <?= $i == $current_page ? 'selected' : '' ?>>Page <?= $i ?></option>
-                            <?php endfor; ?>
-                        </select>
-                        <button class="btn btn-outline-primary <?= $has_next_page ? '' : 'disabled' ?>" type="button"
-                            onclick="location.href='?gallery&page=<?= min($total_pages, $current_page + 1) ?>';">Next</button>
-                    </div>
-                    <div class="w-100"></div> <!-- Forces line break -->
-                <?php endif; ?>
-                <div class="row g-2">
-                    <?php foreach ($files as $file): ?>
-                        <?php $img_url = $protocol . $domain . $image_url . $file ?>
-
-                        <div class="col-6 col-md text-center">
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalPopout"
-                                onclick="return expandImage('<?= $img_url ?>', '<?= $file ?>');">
-                                <img src="<?= $img_url ?>" alt="<?= $file ?>" class="gallery-img">
-                            </a>
+                <?php else: ?>
+                    <?php if ($total_pages > 1): ?>
+                        <div class="input-group mb-3 w-auto">
+                            <button class="btn btn-outline-primary <?= $has_prev_page ? '' : 'disabled' ?>" type="button"
+                                onclick="location.href='?gallery&page=<?= max(1, $current_page - 1) ?>';">Prev</button>
+                            <select class="form-select" style="width: auto;"
+                                onchange="location.href='?gallery&page='+this.value;">
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <option value="<?= $i ?>" <?= $i == $current_page ? 'selected' : '' ?>>Page <?= $i ?></option>
+                                <?php endfor; ?>
+                            </select>
+                            <button class="btn btn-outline-primary <?= $has_next_page ? '' : 'disabled' ?>" type="button"
+                                onclick="location.href='?gallery&page=<?= min($total_pages, $current_page + 1) ?>';">Next</button>
                         </div>
+                        <div class="w-100"></div> <!-- Forces line break -->
+                    <?php endif; ?>
+                    <div class="row g-2">
+                        <?php foreach ($files as $file): ?>
+                            <?php $img_url = $protocol . $domain . $image_url . $file ?>
 
-                    <?php endforeach; ?>
-                </div>
-            </div>
+                            <div class="col-6 col-md text-center">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#modalPopout"
+                                    onclick="return expandImage('<?= $img_url ?>', '<?= $file ?>');">
+                                    <img src="<?= $img_url ?>" alt="<?= $file ?>" class="gallery-img">
+                                </a>
+                            </div>
 
-            <div class="footer text-center small mt-3 footer-div">
-                Copyright &copy; <?= date("Y") ?> <a href="https://somik.org/" target="_blank">Somik.org</a>
-                <?php if ($contact && $contact != "#"): ?>
-                    | <a href="<?= $contact ?>" target="_blank">Reach out</a>
+                        <?php endforeach; ?>
+                    </div>
                 <?php endif; ?>
             </div>
+
+            <?php html_footer($contact); ?>
         </div>
 
 
@@ -170,6 +277,11 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     <button class="btn btn-link p-1" title="Text to Image" onclick="showHideContainer();">
                         <i class="bi bi-textarea-t font-20"></i>
                     </button>
+                    <?php if ($enable_short_links_for_external_hosts && $enable_external_hosts): ?>
+                        <a href="?links" class="btn btn-link p-1">
+                            <i class="bi bi-list-ul font-20"></i>
+                        </a>
+                    <?php endif; ?>
                     <a href="?gallery" class="btn btn-link p-1">
                         <i class="bi bi-images font-20"></i>
                     </a>
@@ -229,16 +341,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
             </div>
             <div id="uploaded-area"></div>
 
-
-            <!-- Bootstrap Icons -->
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-            <div class="footer text-center small mt-3 footer-div">
-                Copyright © <a href="https://somik.org/" target="_blank">Somik.org</a> <?= date("Y") ?>
-                <?php if ($contact && $contact != "#"): ?>
-                    | <a href="<?= $contact ?>" target="_blank">Reach out</a>
-                <?php endif; ?>
-            </div>
+            <?php html_footer($contact); ?>
         </div>
 
         <div style="display: none;">

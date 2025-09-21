@@ -3,8 +3,10 @@
 
 $external_hosts = array();
 $chevereto_hosts = array();
+$ext_links_db = dirname(__FILE__) . '/ext_links.db';
 
 init_external_hosts();
+initialize_ext_links_db();
 
 
 // Initialize external hosts
@@ -22,189 +24,156 @@ function init_external_hosts()
         'name' => 'PostImages',
         'function' => 'upload_to_postimages',
         'url' => 'https://postimages.org/',
-        "index" => 1
     );
 
     $external_hosts[] = array(
         'name' => 'CatBox',
         'function' => 'upload_to_catbox',
         'url' => 'https://catbox.moe/',
-        "index" => 2
     );
 
     $external_hosts[] = array(
-        'name' => 'pomf2.lain.la',
+        'name' => 'Pomf2.Lain.la',
         'function' => 'upload_to_pomf2_lain_la',
         'url' => 'https://pomf2.lain.la/',
-        "index" => 3
     );
 
     $external_hosts[] = array(
         'name' => '0x0.st',
         'function' => 'upload_to_0x0_st',
         'url' => 'https://0x0.st/',
-        "index" => 4
     );
 
     $external_hosts[] = array(
         'name' => 'UploadImgur',
         'function' => 'upload_to_imgur',
         'url' => 'https://uploadimgur.com/',
-        "index" => 5
     );
 
     $external_hosts[] = array(
-        'name' => 'myimgs.org',
+        'name' => 'MyImgs.org',
         'function' => 'upload_to_myimgs',
         'url' => 'https://myimgs.org/',
-        "index" => 6
     );
 
     $external_hosts[] = array(
-        'name' => 'imghost.cc',
+        'name' => 'ImgHost.cc',
         'function' => 'upload_to_imghost',
         'url' => 'https://imghost.cc/',
-        "index" => 7
     );
 
     $external_hosts[] = array(
         'name' => 'UpImg',
         'function' => 'upload_to_upimg',
         'url' => 'https://upimg.com/',
-        "index" => 8
     );
 
     $external_hosts[] = array(
         'name' => 'ImgBox',
         'function' => 'upload_to_imgbox',
         'url' => 'https://imgbox.com/',
-        "index" => 9
     );
 
     $external_hosts[] = array(
         'name' => 'ImgBB (API)',
         'function' => 'upload_to_imgbb',
         'url' => 'https://imgbb.com/',
-        "index" => 10
     );
 
     $external_hosts[] = array(
         'name' => 'ImgPaste',
         'function' => 'upload_to_imgpaste',
         'url' => 'https://imgpaste.net/',
-        "index" => 11
     );
 
     $external_hosts[] = array(
         'name' => 'PngUp',
         'function' => 'upload_to_pngup',
         'url' => 'https://pngup.org/',
-        "index" => 12
     );
 
     $external_hosts[] = array(
         'name' => 'SnipShot.io',
         'function' => 'upload_to_snipshot',
         'url' => 'https://snipshot.io/',
-        "index" => 13
     );
 
     $external_hosts[] = array(
         'name' => 'ImgIU',
         'function' => 'upload_to_imgiu',
         'url' => 'https://imgiu.com/',
-        "index" => 14
     );
 
     $external_hosts[] = array(
         'name' => 'FileShare.ing',
         'function' => 'upload_to_fileshare_ing',
         'url' => 'https://fileshare.ing/',
-        "index" => 15
     );
 
     $external_hosts[] = array(
         'name' => 'Xilt.net',
         'function' => 'upload_to_xilt_net',
         'url' => 'https://xilt.net/',
-        "index" => 16
     );
 
     $external_hosts[] = array(
         'name' => 'WindyPix',
         'function' => 'upload_to_windypix',
         'url' => 'https://windypix.com/',
-        "index" => 17
-    );
-
-    $external_hosts[] = array(
-        'name' => '8upload',
-        'function' => 'upload_to_8upload',
-        'url' => 'https://8upload.com/',
-        "index" => 18
     );
 
     $external_hosts[] = array(
         'name' => 'ImgLink.io',
         'function' => 'upload_to_imglink_io',
         'url' => 'https://imglink.io/',
-        "index" => 19
     );
 
     $external_hosts[] = array(
         'name' => 'BigByte.no',
         'function' => 'upload_to_bigbyte_no',
         'url' => 'http://img.bigbyte.no/',
-        "index" => 20
     );
 
     $external_hosts[] = array(
         'name' => 'Image2url',
         'function' => 'upload_to_image2url',
         'url' => 'https://image2url.com/',
-        "index" => 21
     );
 
     $external_hosts[] = array(
         'name' => 'DragNdropZ',
         'function' => 'upload_to_dragndropz',
         'url' => 'https://dragndropz.com/',
-        "index" => 22
     );
 
     $external_hosts[] = array(
         'name' => 'AnonPic.org',
         'function' => 'upload_to_anonpic_org',
         'url' => 'https://anonpic.org/',
-        "index" => 23
     );
 
     $external_hosts[] = array(
         'name' => 'PicSer.Pages.dev',
         'function' => 'upload_to_picser_pages_dev',
         'url' => 'https://picser.pages.dev/',
-        "index" => 24
     );
 
     $external_hosts[] = array(
         'name' => 'ImgPx',
         'function' => 'upload_to_imgpx',
         'url' => 'https://imgpx.com/',
-        "index" => 25
     );
 
     $external_hosts[] = array(
         'name' => 'ImgLink.app',
         'function' => 'upload_to_imglink_app',
         'url' => 'https://imglink.app/',
-        "index" => 26
     );
 
     $external_hosts[] = array(
         'name' => 'HostPic.org',
         'function' => 'upload_to_hostpic_org',
         'url' => 'https://hostpic.org/',
-        "index" => 27
     );
 
 
@@ -221,201 +190,190 @@ function init_external_hosts()
         'function' => 'upload_to_imgbb',
         'function_alt' => 'upload_to_chevereto',
         'url' => 'https://imgbb.com/',
-        "index" => 101,
     );
 
     $chevereto_hosts[] = array(
         'name' => 'FreeImage.host',
         'function' => 'upload_to_chevereto',
         'url' => 'https://freeimage.host/',
-        "index" => 102
     );
 
     $chevereto_hosts[] = array(
         'name' => 'HostImage.org',
         'function' => 'upload_to_chevereto',
         'url' => 'https://hostimage.org/',
-        "index" => 103
     );
 
     $chevereto_hosts[] = array(
         'name' => 'PasteImg',
         'function' => 'upload_to_chevereto',
         'url' => 'https://pasteimg.com/',
-        "index" => 104
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImgBB.ws',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imgbb.ws/',
-        "index" => 105
     );
 
     $chevereto_hosts[] = array(
         'name' => 'Img.in.th',
         'function' => 'upload_to_chevereto',
         'url' => 'https://www.img.in.th/',
-        "index" => 106
     );
 
     $chevereto_hosts[] = array(
         'name' => 'Inspirats',
         'function' => 'upload_to_chevereto',
         'url' => 'https://inspirats.com/',
-        "index" => 108
     );
 
     $chevereto_hosts[] = array(
         'name' => 'FxPics.ru',
         'function' => 'upload_to_chevereto',
         'url' => 'https://fxpics.ru/',
-        "index" => 109
     );
 
     $chevereto_hosts[] = array(
         'name' => 'Poop.pictures',
         'function' => 'upload_to_chevereto',
         'url' => 'https://poop.pictures/',
-        "index" => 110
     );
 
     $chevereto_hosts[] = array(
         'name' => 'Site.pictures',
         'function' => 'upload_to_chevereto',
         'url' => 'https://site.pictures/',
-        "index" => 111
     );
 
     $chevereto_hosts[] = array(
         'name' => 'SnappyPic',
         'function' => 'upload_to_chevereto',
         'url' => 'https://snappypic.com/',
-        "index" => 112
     );
 
     $chevereto_hosts[] = array(
         'name' => 'Eikona.info',
         'function' => 'upload_to_chevereto',
         'url' => 'https://eikona.info/',
-        "index" => 113
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImgCDN.dev',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imgcdn.dev/',
-        "index" => 114
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImgUh',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imguh.com/',
-        "index" => 115
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImgShare.pl',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imgshare.pl/',
-        "index" => 116
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImgKub',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imgkub.com/',
-        "index" => 117
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImgHive',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imghive.com/',
-        "index" => 118
     );
 
     $chevereto_hosts[] = array(
         'name' => 'JpgJet',
         'function' => 'upload_to_chevereto',
         'url' => 'https://jpgjet.com/',
-        "index" => 119
     );
 
     $chevereto_hosts[] = array(
         'name' => 'PostImage.me',
         'function' => 'upload_to_chevereto',
         'url' => 'https://postimage.me/',
-        "index" => 120
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImgTap',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imgtap.com/',
-        "index" => 121
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ZippyImage',
         'function' => 'upload_to_chevereto',
         'url' => 'https://zippyimage.com/',
-        "index" => 122
     );
 
     $chevereto_hosts[] = array(
         'name' => 'PixShare.de',
         'function' => 'upload_to_chevereto',
         'url' => 'https://pixshare.de/',
-        "index" => 123
     );
 
     $chevereto_hosts[] = array(
         'name' => 'PixelStash.co',
         'function' => 'upload_to_chevereto',
         'url' => 'https://pixelstash.co/',
-        "index" => 124
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImageCC.net',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imagecc.net/',
-        "index" => 125
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImgHit',
         'function' => 'upload_to_chevereto',
         'url' => 'https://www.imghit.com/',
-        "index" => 126
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'TinyPic.host (1 day)',
+        'name' => 'TinyPic.host [1D]',
         'function' => 'upload_to_chevereto',
         'url' => 'https://tinypic.host/',
-        "index" => 127
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImageHost.me',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imagehost.me/',
-        "index" => 128
     );
 
     $chevereto_hosts[] = array(
         'name' => 'PicHost.net',
         'function' => 'upload_to_chevereto',
         'url' => 'https://pichost.net/',
-        "index" => 129
     );
+
+
+
+    // Sort hosts alphabetically by name and add index
+    usort($external_hosts, function ($a, $b) {
+        return strcmp($a['name'], $b['name']);
+    });
+    foreach ($external_hosts as $index => &$host) {
+        $host['index'] = $index + 1; // Start external hosts index from 1
+    }
+
+    usort($chevereto_hosts, function ($a, $b) {
+        return strcmp($a['name'], $b['name']);
+    });
+    foreach ($chevereto_hosts as $index => &$host) {
+        $host['index'] = $index + 101; // Start Chevereto hosts index from 101
+    }
 }
 
 
-// Index #1
+
 function upload_to_postimages($curlfile)
 {
     global $debug;
@@ -439,7 +397,7 @@ function upload_to_postimages($curlfile)
     }
 }
 
-// Index #2
+
 function upload_to_catbox($curlfile)
 {
     global $debug;
@@ -457,7 +415,7 @@ function upload_to_catbox($curlfile)
     }
 }
 
-// Index #3
+
 function upload_to_pomf2_lain_la($curlfile)
 {
     global $debug;
@@ -476,7 +434,7 @@ function upload_to_pomf2_lain_la($curlfile)
     }
 }
 
-// Index #4
+
 function upload_to_0x0_st($curlfile)
 {
     global $debug;
@@ -496,7 +454,7 @@ function upload_to_0x0_st($curlfile)
     }
 }
 
-// Index #5
+
 function upload_to_imgur($curlfile)
 {
     global $debug;
@@ -515,7 +473,7 @@ function upload_to_imgur($curlfile)
     }
 }
 
-// Index #6
+
 function upload_to_myimgs($curlfile)
 {
     global $debug;
@@ -551,7 +509,7 @@ function upload_to_myimgs($curlfile)
 }
 
 
-// Index #7
+
 function upload_to_imghost($curlfile)
 {
     global $debug;
@@ -572,7 +530,7 @@ function upload_to_imghost($curlfile)
 }
 
 
-// Index #8
+
 function upload_to_upimg($curlfile)
 {
     global $debug;
@@ -602,7 +560,7 @@ function upload_to_upimg($curlfile)
 }
 
 
-// Index #9
+
 function upload_to_imgbox($curlfile)
 {
     global $debug, $cookie_file;
@@ -655,7 +613,7 @@ function upload_to_imgbox($curlfile)
 }
 
 
-// Index #10
+
 function upload_to_imgbb($curlfile)
 {
     global $debug, $imgbb_api_key;
@@ -679,7 +637,7 @@ function upload_to_imgbb($curlfile)
 }
 
 
-// Index #11
+
 function upload_to_imgpaste($curlfile)
 {
     global $debug;
@@ -698,7 +656,7 @@ function upload_to_imgpaste($curlfile)
 }
 
 
-// Index #12
+
 function upload_to_pngup($curlfile)
 {
     global $debug;
@@ -719,7 +677,7 @@ function upload_to_pngup($curlfile)
 }
 
 
-// Index #13
+
 function upload_to_snipshot($curlfile)
 {
     global $debug;
@@ -738,7 +696,7 @@ function upload_to_snipshot($curlfile)
 }
 
 
-// Index #14
+
 function upload_to_imgiu($curlfile)
 {
     global $debug;
@@ -757,7 +715,7 @@ function upload_to_imgiu($curlfile)
 }
 
 
-// Index #15
+
 function upload_to_fileshare_ing($curlfile)
 {
     global $debug;
@@ -781,7 +739,7 @@ function upload_to_fileshare_ing($curlfile)
     }
 }
 
-// Index #16
+
 function upload_to_xilt_net($curlfile)
 {
     global $debug;
@@ -800,7 +758,7 @@ function upload_to_xilt_net($curlfile)
 }
 
 
-// Index #17
+
 function upload_to_windypix($curlfile)
 {
     global $debug;
@@ -822,38 +780,6 @@ function upload_to_windypix($curlfile)
 }
 
 
-// Index #18
-function upload_to_8upload($curlfile)
-{
-    global $debug;
-
-    // 8upload upload logic
-    $upload_url = 'https://8upload.com/upload/mt/';
-    $data = array('upload[]' => $curlfile);
-    $page = mimic_browser($upload_url, $data);
-
-    $parts = explode('\\/', str_replace('"', '', $page));
-
-    // Check if upload was successful
-    if ($parts[1] == "uploaded" && $parts[2]) {
-        $link_url = "https://8upload.com/" . join("/", $parts);
-        $page = mimic_browser($link_url);
-
-        preg_match_all('#\[IMG\]([^\[]+)\[\/IMG\]#si', $page, $matches);
-
-        foreach ($matches[1] as $match) {
-            if (strpos($match, '/image/') !== false) {
-                return $match; // Return the first direct link without '?di='
-            }
-        }
-        throw new Exception("Error uploading to AnonPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
-    } else {
-        throw new Exception("Error uploading to 8upload" . $debug ? "\n" . htmlspecialchars($page) : "");
-    }
-}
-
-
-// Index #19
 function upload_to_imglink_io($curlfile)
 {
     global $debug;
@@ -872,7 +798,6 @@ function upload_to_imglink_io($curlfile)
 }
 
 
-// Index #20
 function upload_to_bigbyte_no($curlfile)
 {
     global $debug;
@@ -894,7 +819,7 @@ function upload_to_bigbyte_no($curlfile)
 }
 
 
-// Index #21
+
 function upload_to_image2url($curlfile)
 {
     global $debug;
@@ -914,7 +839,7 @@ function upload_to_image2url($curlfile)
 }
 
 
-// Index #22
+
 function upload_to_dragndropz($curlfile)
 {
     global $debug;
@@ -934,7 +859,7 @@ function upload_to_dragndropz($curlfile)
 }
 
 
-// Index #23
+
 function upload_to_anonpic_org($curlfile)
 {
     global $debug;
@@ -956,7 +881,7 @@ function upload_to_anonpic_org($curlfile)
 }
 
 
-// Index #24
+
 function upload_to_picser_pages_dev($curlfile)
 {
     global $debug;
@@ -975,7 +900,7 @@ function upload_to_picser_pages_dev($curlfile)
     }
 }
 
-// Index #25
+
 function upload_to_imgpx($curlfile)
 {
     global $debug;
@@ -1008,7 +933,7 @@ function upload_to_imgpx($curlfile)
 }
 
 
-// Index #26
+
 function upload_to_imglink_app($curlfile)
 {
     global $debug;
@@ -1028,7 +953,7 @@ function upload_to_imglink_app($curlfile)
 }
 
 
-// Index #27
+
 function upload_to_hostpic_org($curlfile)
 {
     global $debug;
@@ -1041,7 +966,7 @@ function upload_to_hostpic_org($curlfile)
     $parts = explode("','|", $page);
 
     // Check if upload was successful
-    if($parts[4]) {
+    if ($parts[4]) {
         return trim($parts[4]);
     } else {
         throw new Exception("Error uploading to HostPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
@@ -1111,4 +1036,157 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
         return $hotlink;
     } else
         throw new Exception("Error uploading to {$name}." . $debug ? "\n" . htmlspecialchars($page) : "");
+}
+
+
+// Initialize sqlite database for external links if not exists
+function initialize_ext_links_db()
+{
+    global $ext_links_db;
+
+    if (!file_exists($ext_links_db)) {
+        $db = new SQLite3($ext_links_db);
+        $db->exec("CREATE TABLE IF NOT EXISTS links (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ext_link TEXT NOT NULL,
+            short_code TEXT NOT NULL UNIQUE,
+            file_ext TEXT NOT NULL,
+            delete_code TEXT NOT NULL UNIQUE,
+            created DATETIME DEFAULT CURRENT_TIMESTAMP,
+            creator_ip TEXT NOT NULL,
+            hits INTEGER DEFAULT 0,
+            last_accessed DATETIME,
+            enabled INTEGER DEFAULT 1
+        )");
+        $db->close();
+    }
+}
+
+
+// Add new external link to the database
+function add_ext_link($ext_link, $short_code = "", $file_ext = "")
+{
+    global $ext_links_db;
+
+    $db = new SQLite3($ext_links_db, SQLITE3_OPEN_READWRITE);
+    $db->busyTimeout(5000); // Set busy timeout to 5 seconds
+
+    // Generate a random delete code (not used for now)
+    $delete_code = rand_str(15);
+
+    // If no file extension provided, default to jpg
+    if(empty($file_ext))
+        $file_ext = "jpg";
+
+    // If no short_code provided, generate a unique one
+    if (empty($short_code)) {
+        // Generate unique short_code and delete_code
+        do {
+            $short_code = rand_str(10);
+            $stmt = $db->prepare("SELECT COUNT(*) as count FROM links WHERE short_code = :short_code");
+            $stmt->bindValue(':short_code', $short_code, SQLITE3_TEXT);
+            $result = $stmt->execute();
+            $row = $result->fetchArray(SQLITE3_ASSOC);
+        } while ($row['count'] > 0);
+    }
+
+    $created = date('Y-m-d H:i:s');
+    $creator_ip = get_client_ip();
+
+    $stmt = $db->prepare("INSERT INTO links (ext_link, short_code, file_ext, delete_code, created, creator_ip) 
+                          VALUES (:ext_link, :short_code, :file_ext, :delete_code, :created, :creator_ip)");
+    $stmt->bindValue(':file_ext', $file_ext, SQLITE3_TEXT);
+    $stmt->bindValue(':ext_link', $ext_link, SQLITE3_TEXT);
+    $stmt->bindValue(':short_code', $short_code, SQLITE3_TEXT);
+    $stmt->bindValue(':delete_code', $delete_code, SQLITE3_TEXT);
+    $stmt->bindValue(':created', $created, SQLITE3_TEXT);
+    $stmt->bindValue(':creator_ip', $creator_ip, SQLITE3_TEXT);
+    $stmt->execute();
+    $db->close();
+    return array('short_code' => $short_code, 'delete_code' => $delete_code);
+}
+
+
+// Retrieve external link details by short code
+function get_ext_link($short_code)
+{
+    global $ext_links_db;
+
+    $db = new SQLite3($ext_links_db, SQLITE3_OPEN_READWRITE);
+    $db->busyTimeout(5000); // Set busy timeout to 5 seconds
+
+    $stmt = $db->prepare("SELECT * FROM links WHERE short_code = :short_code AND enabled = 1");
+    $stmt->bindValue(':short_code', $short_code, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $link = $result->fetchArray(SQLITE3_ASSOC);
+
+    if ($link) {
+        // Update hit count and last accessed time
+        $stmt = $db->prepare("UPDATE links SET hits = hits + 1, last_accessed = :last_accessed WHERE id = :id");
+        $stmt->bindValue(':last_accessed', date('Y-m-d H:i:s'), SQLITE3_TEXT);
+        $stmt->bindValue(':id', $link['id'], SQLITE3_INTEGER);
+        $stmt->execute();
+    }
+    $db->close();
+
+    return $link ? $link : null;
+}
+
+
+// Delete external link by short code as Admin
+function delete_ext_link($short_code)
+{
+    global $ext_links_db;
+
+    $db = new SQLite3($ext_links_db, SQLITE3_OPEN_READWRITE);
+    $db->busyTimeout(5000); // Set busy timeout to 5 seconds
+
+    $stmt = $db->prepare("DELETE FROM links WHERE short_code = :short_code");
+    $stmt->bindValue(':short_code', $short_code, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $changes = $db->changes();
+    $db->close();
+    return $changes > 0;
+}
+
+
+
+// Show all external links
+function list_ext_links()
+{
+    global $ext_links_db;
+
+    $db = new SQLite3($ext_links_db, SQLITE3_OPEN_READONLY);
+    $db->busyTimeout(5000); // Set busy timeout to 5 seconds
+
+    $results = $db->query("SELECT * FROM links ORDER BY created DESC");
+    $links = [];
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+        $links[] = $row;
+    }
+    $db->close();
+    return $links;
+}
+
+
+
+// Get client IP address
+function get_client_ip()
+{
+    $ipaddress = '';
+    if (getenv('HTTP_CLIENT_IP'))
+        $ipaddress = getenv('HTTP_CLIENT_IP');
+    else if (getenv('HTTP_X_FORWARDED_FOR'))
+        $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+    else if (getenv('HTTP_X_FORWARDED'))
+        $ipaddress = getenv('HTTP_X_FORWARDED');
+    else if (getenv('HTTP_FORWARDED_FOR'))
+        $ipaddress = getenv('HTTP_FORWARDED_FOR');
+    else if (getenv('HTTP_FORWARDED'))
+        $ipaddress = getenv('HTTP_FORWARDED');
+    else if (getenv('REMOTE_ADDR'))
+        $ipaddress = getenv('REMOTE_ADDR');
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
 }

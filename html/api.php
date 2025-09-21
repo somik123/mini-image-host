@@ -14,44 +14,73 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
 
 try {
 
-    if ($_POST['textblk']) {
+    if ($_REQUEST['textblk']) {
         // Convert text block to image
-        $text = $_POST['textblk'];
+        $text = $_REQUEST['textblk'];
         text2image($text);
         exit;
-    } elseif ($_REQUEST['delete'] && $_REQUEST['key']) {
-        // Delete image and thumbnail if admin key is correct
-        $file = $_REQUEST['delete'];
+    } elseif ($_REQUEST['code'] && $_REQUEST['f']) {
+        require_once("inc/ext_hosts.php");
+        // Get the external link and redirect
+        $short_code = $_REQUEST['code'];
+        $link = get_ext_link($short_code);
+
+        $ext_link = $link['ext_link'];
+
+        if ($ext_link) {
+            header("Location: $ext_link");
+            exit;
+        } else {
+            echo "Link for code '$short_code' not found.";
+            exit;
+        }
+    } elseif (isset($_REQUEST['delete']) && $_REQUEST['key'] && ($_REQUEST['file'] || $_REQUEST['short_code'])) {
+
         $key = $_REQUEST['key'];
         if ($key === $admin_key) {
 
-            // Normalize and resolve paths
-            $base_dir   = realpath($image_path);      // your safe directory
-            $file_path  = realpath($base_dir . DIRECTORY_SEPARATOR . $file);
+            if ($_REQUEST['file']) { // Delete image and thumbnail if admin key is correct
+                $file = $_REQUEST['file'];
 
-            if ($file_path === false) {
-                die("Invalid file path.");
-            }
+                // Normalize and resolve paths
+                $base_dir   = realpath($image_path);      // your safe directory
+                $file_path  = realpath($base_dir . DIRECTORY_SEPARATOR . $file);
 
-            // Ensure file is inside baseDir (prevent traversal attacks)
-            if (strpos($file_path, $base_dir) !== 0) {
-                echo $base_dir . "\n";
-                echo $file_path . "\n";
-                echo strpos($file_path, $base_dir) . "\n";
-                die("Access denied.");
-            }
-
-            if (file_exists($file_path) && !is_dir($file_path)) {
-                @unlink($file_path);
-                $parts = explode(".", $file);
-                $thumb_name = $parts[0] . "_thumb." . $parts[1];
-                $thumb_path_full = $thumb_path . $thumb_name;
-                if (file_exists($thumb_path_full) && !is_dir($thumb_path_full)) {
-                    @unlink($thumb_path_full);
+                if ($file_path === false) {
+                    die("Invalid file path.");
                 }
-                echo "Image and thumbnail deleted.";
+
+                // Ensure file is inside baseDir (prevent traversal attacks)
+                if (strpos($file_path, $base_dir) !== 0) {
+                    echo $base_dir . "\n";
+                    echo $file_path . "\n";
+                    echo strpos($file_path, $base_dir) . "\n";
+                    die("Access denied.");
+                }
+
+                if (file_exists($file_path) && !is_dir($file_path)) {
+                    @unlink($file_path);
+                    $parts = explode(".", $file);
+                    $thumb_name = $parts[0] . "_thumb." . $parts[1];
+                    $thumb_path_full = $thumb_path . $thumb_name;
+                    if (file_exists($thumb_path_full) && !is_dir($thumb_path_full)) {
+                        @unlink($thumb_path_full);
+                    }
+                    echo "Image and thumbnail deleted.";
+                } else {
+                    echo "Image not found.";
+                }
+            } elseif ($_REQUEST['short_code']) { // Delete external link if admin key is correct
+                $short_code = $_REQUEST['short_code'];
+                require_once("inc/ext_hosts.php");
+                $res = delete_ext_link($short_code);
+                if ($res) {
+                    echo "External link deleted.";
+                } else {
+                    echo "External link not found.";
+                }
             } else {
-                echo "Image not found.";
+                echo "Nothing to delete.";
             }
         } else {
             echo "Invalid ADMIN_KEY.";
@@ -117,6 +146,17 @@ try {
             // Check if upload was successful
             if (empty($hotlink))
                 throw new Exception("Error uploading image." . $debug ? "\n" . htmlspecialchars($page) : "");
+
+            if ($enable_short_links_for_external_hosts) {
+                // Create a short link for the external link
+                $link_data = add_ext_link($hotlink, $file_id, $file_ext);
+                $short_code = $link_data['short_code'];
+                $dirname = dirname($image_url);
+
+                // Generate the hotlink URL
+
+                $hotlink = "{$protocol}{$domain}/ext/{$short_code}.{$file_ext}";
+            }
 
             // Reply with JSON
             header('Content-Type: application/json');

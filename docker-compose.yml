@@ -51,5 +51,8 @@ services:
       # Enable hotlinking from other sites
       ENABLE_EXTERNAL_HOSTS: "false"
 
+      # Enable short links for external hosts
+      ENABLE_SHORT_LINKS_FOR_EXTERNAL_HOSTS: "false"
+
       # Number of images to show per page
       FILES_PER_PAGE: "20"

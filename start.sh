@@ -23,6 +23,8 @@
 
 : "${ENABLE_EXTERNAL_HOSTS:=false}"
 
+: "${ENABLE_SHORT_LINKS_FOR_EXTERNAL_HOSTS:=false}"
+
 : "${FILES_PER_PAGE:=20}"
 
 # Initialize mirror list with APP_DOMAIN
@@ -86,6 +88,8 @@ $allowed_types
 \$imgbb_api_key = "${IMGBB_API_KEY}"; // ImgBB API key for remote uploads (optional)
 
 \$enable_external_hosts = ${ENABLE_EXTERNAL_HOSTS}; // Enable hotlinking from other sites
+
+\$enable_short_links_for_external_hosts = ${ENABLE_SHORT_LINKS_FOR_EXTERNAL_HOSTS}; // Enable short links for external hosts
 
 \$files_per_page = ${FILES_PER_PAGE}; // Number of images to show per page
 

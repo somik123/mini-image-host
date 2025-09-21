@@ -48,6 +48,10 @@ RUN chmod +x /start.sh \
         } \n\
         return 403; \n\
     } \n\
+    # Redirect ext to api.php for short links \n\
+    location ~ ^/ext/([a-zA-Z0-9]+)/([^/]+)$ { \n\
+        rewrite ^/ext/([a-zA-Z0-9]+)/([^/]+)$ /api.php?code=\$1&f=\$2 last; \n\
+    } \n\
     location ~ \.php$ { \n\
            include snippets/fastcgi-php.conf; \n\
            fastcgi_pass unix:/run/php/php${PHP_VERSION}-fpm.sock; \n\

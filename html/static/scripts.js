@@ -22,6 +22,15 @@ function copyTextToClipboardBtn2(textId, elBtn) {
 }
 
 
+function copyTextToClipboardBtn3(text, elBtn) {
+    copyToClipboard(text);
+    elBtn.className = "bi bi-check2 text-success";
+    setTimeout(() => {
+        elBtn.className = "bi bi-clipboard";
+    }, 3000);
+}
+
+
 // Enhanced function to handle both modern and fallback methods
 function copyToClipboard(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -73,12 +82,35 @@ function expandImage(src, filename) {
 }
 
 
-// Show delete confirmation prompt
+// Show delete confirmation prompt for gallery image deletion
 function showDeleteConfirm() {
     var file = document.getElementById("modalPopoutHeader").innerText;
     var ret = prompt("Provide ADMIN_KEY to delete this image " + file + ":", "");
     if (ret != null) {
-        var url = "api.php?delete=" + file + "&key=" + ret;
+        var url = "api.php?delete&file=" + file + "&key=" + ret;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.onload = function () {
+            console.log("Response: " + xhr.responseText);
+            if (xhr.responseText == "" || xhr.status != 200) {
+                alert("Delete failed. Check console for details.");
+            } else {
+                alert(xhr.responseText);
+                location.reload();
+            }
+        }
+        xhr.send();
+    }
+    return false;
+}
+
+
+
+// Show delete confirmation prompt for external host short link deletion
+function showDeleteConfirmExt(short_code) {
+    var ret = prompt("Provide ADMIN_KEY to delete this short_code " + short_code + ":", "");
+    if (ret != null) {
+        var url = "api.php?delete&short_code=" + short_code + "&key=" + ret;
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         xhr.onload = function () {

@@ -280,3 +280,25 @@ function cleanup()
     if ($file && isset($file['tmp_name']) && file_exists($file['tmp_name']))
         @unlink($file['tmp_name']);
 }
+
+
+
+function html_footer($contact)
+{
+    global $enable_short_links_for_external_hosts, $enable_external_hosts;
+?>
+    <div class="footer text-center small mt-3 footer-div">
+        <a href="./">Home</a>
+        <?php if ($enable_short_links_for_external_hosts && $enable_external_hosts): ?>
+            | <a href="?links">Ext Links</a>
+        <?php endif; ?>
+        | <a href="?gallery">Gallery</a>
+        <?php if ($contact && $contact != "#"): ?>
+            | <a href="<?= $contact ?>" target="_blank">Reach out</a>
+        <?php endif; ?>
+        <br />
+
+        Copyright &copy; <?= date("Y") ?> <a href="https://somik.org/" target="_blank">Somik.org</a>
+    </div>
+<?php
+}
