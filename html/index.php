@@ -103,15 +103,20 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                                     $file_ext = $link['file_ext'] ? $link['file_ext'] : "jpg";
                                     $filename = "{$short_code}.{$file_ext}";
                                     $hotlink = "{$protocol}{$domain}/ext/{$filename}";
+                                    $ext_link = htmlspecialchars($link['ext_link']);
                                     ?>
                                     <tr>
-                                        <th scope="row"><?= $count++ ?></th>
+                                        <th scope="row" class="status-icon" data-url="<?= $ext_link ?>">
+                                            <?= $count++ ?>
+                                        </th>
                                         <td>
-                                            <a href="<?= $hotlink ?>" target="_blank"><?= $short_code ?></a>
+                                            <a href="<?= $hotlink ?>" target="_blank">
+                                                <?= $short_code ?>
+                                            </a>
                                         </td>
                                         <td>
-                                            <a href="<?= htmlspecialchars($link['ext_link']) ?>" target="_blank">
-                                                <?= htmlspecialchars($link['ext_link']) ?>
+                                            <a href="<?= $ext_link ?>" target="_blank">
+                                                <?= $ext_link ?>
                                             </a>
                                         </td>
                                         <td><?= $link['created'] ?></td>
@@ -135,6 +140,17 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                 <?php endif; ?>
 
             </div>
+
+            <script type="text/javascript">
+                // Loop through all icons
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.querySelectorAll('.status-icon').forEach(icon => {
+                        checkUrlStatus(icon); // your fetch logic here
+                    });
+                });
+            </script>
+
+
 
             <?php html_footer($contact); ?>
 

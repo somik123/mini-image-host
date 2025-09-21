@@ -139,8 +139,16 @@ function mimic_browser($upload_url, $data = false, $reffer = false, $cookie = fa
 
 // Basic cURL function to handle requests with more options
 // This is used for 0x0.st, UpImg and ImgBox, and mimics curl or ajax requests
-function basic_curl_call($url, $request_type = "post", $data = "", $headers = [],  $user_agent = "", $cookie_file = "", $ignore_ssl = false)
-{
+function basic_curl_call(
+    $url,
+    $request_type = "post",
+    $data = "",
+    $headers = [],
+    $user_agent = "",
+    $cookie_file = "",
+    $ignore_ssl = false,
+    $headonly = false
+) {
     // Using basic curl to handle 0x0.st specific requirements
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -174,6 +182,13 @@ function basic_curl_call($url, $request_type = "post", $data = "", $headers = []
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     }
+
+    // If headonly is true, set to fetch headers only
+    if ($headonly){
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+    }
+
 
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     $page = curl_exec($ch);

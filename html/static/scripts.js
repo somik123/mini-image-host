@@ -363,3 +363,40 @@ function shortenFilename(filename, maxLength = 20) {
 
     return `${start}....${end}${ext}`;
 }
+
+
+// Check URL status (for external hosts)
+function checkUrlStatus(el) {
+    try {
+        const ext_url = el.dataset.url;
+        if (!ext_url) {
+            console.error("No URL found in data-url attribute.");
+            el.classList.remove('text-success', 'text-danger');
+            el.classList.add('text-secondary'); // Gray for no URL
+            return;
+        }
+        
+        const url = 'status.php?url='+btoa(ext_url);
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    el.classList.remove('text-secondary', 'text-danger');
+                    el.classList.add('text-success'); // Green for live
+                } else {
+                    el.classList.remove('text-secondary', 'text-success');
+                    el.classList.add('text-danger'); // Red for dead
+                    console.warn("URL is not reachable:", data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error checking URL status:", error);
+                el.classList.remove('text-success', 'text-secondary');
+                el.classList.add('text-danger'); // Red for error
+            });
+    } catch (error) {
+        console.error("Exception in checkUrlStatus:", error);
+        el.classList.remove('text-success', 'text-secondary');
+        el.classList.add('text-danger'); // Red for exception
+    }
+}
