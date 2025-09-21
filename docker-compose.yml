@@ -1,8 +1,10 @@
 volumes:
-  imagehost_image:
+  imagehost_image: # For uploaded images
       name: imagehost_image
-  imagehost_thumbnail:
+  imagehost_thumbnail: # For resized thumbnails
       name: imagehost_thumbnail
+  ext_links_db: # For external links database
+      name: ext_links_db
 
 services:
   app:
@@ -14,6 +16,7 @@ services:
     volumes:
       - imagehost_image:/var/www/html/i
       - imagehost_thumbnail:/var/www/html/t
+      - ext_links_db:/var/www/db
     environment:
       # Site base settings
       APP_PROTOCOL: "https://"

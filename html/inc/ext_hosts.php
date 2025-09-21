@@ -3,7 +3,8 @@
 
 $external_hosts = array();
 $chevereto_hosts = array();
-$ext_links_db = dirname(__FILE__) . '/ext_links.db';
+$ext_links_db = '../db/ext_links.db';
+
 
 init_external_hosts();
 initialize_ext_links_db();
