@@ -224,9 +224,12 @@ function uploadFile(name) {
 
         } else if (api_reply['status'] == "FAIL") { // Upload failed with error
 
-            let error = api_reply['msg'];
+            let error = api_reply['msg'] || "Unknown error occurred";
+            console.error("Upload failed:\n", error);
 
-            progressArea.innerHTML = "";
+            let parts = error.split("\n\nDebug info: \n"); // Split to remove debug info if present
+            error = parts[0]; // Only show the main error message
+
             let uploadedHTML = errorCardHtml;
             uploadedHTML = uploadedHTML
                 .replace('[[FILENAME]]', name)
@@ -368,15 +371,15 @@ function shortenFilename(filename, maxLength = 20) {
 // Check URL status (for external hosts)
 function checkUrlStatus(el) {
     try {
-        const ext_url = el.dataset.url;
-        if (!ext_url) {
+        const short_code = el.dataset.shortCode; // Get short code from data attribute
+        if (!short_code) {
             console.error("No URL found in data-url attribute.");
             el.classList.remove('text-success', 'text-danger');
             el.classList.add('text-secondary'); // Gray for no URL
             return;
         }
-        
-        const url = 'status.php?url='+btoa(ext_url);
+
+        const url = 'status.php?short_code=' + short_code;
         fetch(url)
             .then(response => response.json())
             .then(data => {

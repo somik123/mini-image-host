@@ -110,7 +110,7 @@ body {
     color: #6990F2;
 }
 
-#mirror{
+#mirror {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -123,15 +123,15 @@ body {
     min-width: 750px;
 }
 
-#links-table th, #links-table td {
+#links-table th,
+#links-table td {
     vertical-align: middle;
     word-break: break-all;
     max-width: 250px;
 }
 
-#links-container{
+#links-container {
     max-height: 600px;
     overflow-y: auto;
     overflow-x: auto;
 }
-

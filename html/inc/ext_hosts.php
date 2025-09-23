@@ -338,12 +338,6 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'TinyPic.host [1D]',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://tinypic.host/',
-    );
-
-    $chevereto_hosts[] = array(
         'name' => 'ImageHost.me',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imagehost.me/',
@@ -377,8 +371,6 @@ function init_external_hosts()
 
 function upload_to_postimages($curlfile)
 {
-    global $debug;
-
     // PostImages upload logic
     $upload_url = 'https://postimages.org/json/upload';
     // Generate a unique session ID
@@ -394,15 +386,13 @@ function upload_to_postimages($curlfile)
 
         return $matches[1][1]; // Direct link is the second [img] tag
     } else {
-        throw new Exception("Error uploading to PostImages" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to PostImages" . add_full_error_info($page));
     }
 }
 
 
 function upload_to_catbox($curlfile)
 {
-    global $debug;
-
     // CatBox upload logic
     $upload_url = 'https://catbox.moe/user/api.php';
     $data = array('reqtype' => 'fileupload', 'fileToUpload' => $curlfile);
@@ -412,15 +402,13 @@ function upload_to_catbox($curlfile)
     if (strpos($page, 'files.catbox.moe') !== false) {
         return trim($page);
     } else {
-        throw new Exception("Error uploading to CatBox" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to CatBox" . add_full_error_info($page));
     }
 }
 
 
 function upload_to_pomf2_lain_la($curlfile)
 {
-    global $debug;
-
     // pomf2.lain.la upload logic
     $upload_url = 'https://pomf2.lain.la/upload.php';
     $data = array('files[]' => $curlfile);
@@ -431,15 +419,13 @@ function upload_to_pomf2_lain_la($curlfile)
     if ($response['success'] == "true") {
         return $response['files'][0]['url'];
     } else {
-        throw new Exception("Error uploading to pomf2.lain.la" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to pomf2.lain.la" . add_full_error_info($page));
     }
 }
 
 
 function upload_to_0x0_st($curlfile)
 {
-    global $debug;
-
     // 0x0.st upload logic
     $upload_url = 'https://0x0.st';
     $data = array('file' => $curlfile);
@@ -451,15 +437,13 @@ function upload_to_0x0_st($curlfile)
     if (strpos($page, '0x0.st') !== false) {
         return trim($page);
     } else {
-        throw new Exception("Error uploading to 0x0.st" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to 0x0.st" . add_full_error_info($page));
     }
 }
 
 
 function upload_to_imgur($curlfile)
 {
-    global $debug;
-
     // UploadImgur upload logic
     $upload_url = "https://uploadimgur.com/api/upload";
     $data = array('image' => $curlfile);
@@ -470,15 +454,13 @@ function upload_to_imgur($curlfile)
     if ($response['link']) {
         return $response['link'];
     } else {
-        throw new Exception("Error uploading to UploadImgur" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to UploadImgur" . add_full_error_info($page));
     }
 }
 
 
 function upload_to_myimgs($curlfile)
 {
-    global $debug;
-
     // myimgs.org upload logic
     $url = "http://myimgs.org/";
     $upload_url = "https://myimgs.org/";
@@ -488,7 +470,7 @@ function upload_to_myimgs($curlfile)
     // Check if token was found
     $token = $matches[1];
     if (empty($token)) {
-        throw new Exception("Error retrieving token from myimgs.org." . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error retrieving token from myimgs.org." . add_full_error_info($page));
     }
 
     $data = array(
@@ -505,7 +487,7 @@ function upload_to_myimgs($curlfile)
     if ($matches[1]) {
         return $matches[1];
     } else {
-        throw new Exception("Error uploading to myimgs.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to myimgs.org" . add_full_error_info($page));
     }
 }
 
@@ -513,8 +495,6 @@ function upload_to_myimgs($curlfile)
 
 function upload_to_imghost($curlfile)
 {
-    global $debug;
-
     // imghost.cc upload logic
     $upload_url = "https://imghost.cc/upload";
     $data = array('file' => $curlfile);
@@ -526,7 +506,7 @@ function upload_to_imghost($curlfile)
     if ($response['filename']) {
         return "https://i.imghost.cc/" . $response['filename'];
     } else {
-        throw new Exception("Error uploading to imghost.cc" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to imghost.cc" . add_full_error_info($page));
     }
 }
 
@@ -534,8 +514,6 @@ function upload_to_imghost($curlfile)
 
 function upload_to_upimg($curlfile)
 {
-    global $debug;
-
     // UpImg upload logic
     $url = "https://upimg.com/";
     $upload_url = "https://api.upimg.com/images";
@@ -556,7 +534,7 @@ function upload_to_upimg($curlfile)
     if (!empty($response['images'])) {
         return $response['images'][0]['url'];
     } else {
-        throw new Exception("Error uploading to upimg.com" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to upimg.com" . add_full_error_info($page));
     }
 }
 
@@ -564,7 +542,7 @@ function upload_to_upimg($curlfile)
 
 function upload_to_imgbox($curlfile)
 {
-    global $debug, $cookie_file;
+    global $cookie_file;
 
     // ImgBox upload logic
     $url = "https://imgbox.com/";
@@ -577,7 +555,7 @@ function upload_to_imgbox($curlfile)
     preg_match('#<input name="authenticity_token" type="hidden" value="([^"]+)"#si', $page, $matches);
     $csrf_token = $matches[1];
     if (empty($csrf_token)) {
-        throw new Exception("Error retrieving CSRF token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error retrieving CSRF token from ImgBox." . add_full_error_info($page));
     }
 
     // Set required headers for ImgBox
@@ -586,7 +564,7 @@ function upload_to_imgbox($curlfile)
     $page = basic_curl_call($session_url, "post", "", $headers, "", $cookie_file);
 
     if (stristr($page, "token_secret") === FALSE) {
-        throw new Exception("Error retrieving session token from ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error retrieving session token from ImgBox." . add_full_error_info($page));
     }
     $response = json_decode($page, true);
     $token_id = $response['token_id'];
@@ -607,7 +585,7 @@ function upload_to_imgbox($curlfile)
     $page = basic_curl_call($upload_url, "post", $data, $headers, "", $cookie_file);
 
     if (stristr($page, "original_url") === FALSE) {
-        throw new Exception("Error uploading to ImgBox." . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to ImgBox." . add_full_error_info($page));
     }
     $response = json_decode($page, true);
     return $response['files'][0]['original_url'];
@@ -617,7 +595,7 @@ function upload_to_imgbox($curlfile)
 
 function upload_to_imgbb($curlfile)
 {
-    global $debug, $imgbb_api_key;
+    global $imgbb_api_key;
 
     if (empty($imgbb_api_key)) {
         throw new Exception("ImgBB API key not configured.");
@@ -633,7 +611,7 @@ function upload_to_imgbb($curlfile)
     if ($response['success']) {
         return $response['data']['url'];
     } else {
-        throw new Exception("Error uploading to Imgbb via API" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to Imgbb via API" . add_full_error_info($page));
     }
 }
 
@@ -641,8 +619,6 @@ function upload_to_imgbb($curlfile)
 
 function upload_to_imgpaste($curlfile)
 {
-    global $debug;
-
     // ImgPaste upload logic
     $upload_url = 'https://api.imgpaste.net/upload';
     $data = array('image' => $curlfile);
@@ -652,7 +628,7 @@ function upload_to_imgpaste($curlfile)
     if ($response['url']) {
         return $response['url'];
     } else {
-        throw new Exception("Error uploading to ImgPaste" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to ImgPaste" . add_full_error_info($page));
     }
 }
 
@@ -660,8 +636,6 @@ function upload_to_imgpaste($curlfile)
 
 function upload_to_pngup($curlfile)
 {
-    global $debug;
-
     // PngUp upload logic
     $upload_url = 'https://pngup.com/api/upload';
     $data = array('file' => $curlfile);
@@ -673,7 +647,7 @@ function upload_to_pngup($curlfile)
         $name = $curlfile->getPostFilename();
         return "https://pngup.com/" . $response['id'] . "/" . $name;
     } else {
-        throw new Exception("Error uploading to PngUp" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to PngUp" . add_full_error_info($page));
     }
 }
 
@@ -681,8 +655,6 @@ function upload_to_pngup($curlfile)
 
 function upload_to_snipshot($curlfile)
 {
-    global $debug;
-
     // Snipshot upload logic
     $upload_url = 'https://snipshot.io/upload';
     $data = array('image' => $curlfile);
@@ -692,7 +664,7 @@ function upload_to_snipshot($curlfile)
     if ($response['status'] == 'success') {
         return $response['image_path'];
     } else {
-        throw new Exception("Error uploading to Snipshot" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to Snipshot" . add_full_error_info($page));
     }
 }
 
@@ -700,8 +672,6 @@ function upload_to_snipshot($curlfile)
 
 function upload_to_imgiu($curlfile)
 {
-    global $debug;
-
     // ImgiU upload logic
     $upload_url = 'https://imgiu.com/upload.php';
     $data = array('file[0]' => $curlfile);
@@ -711,7 +681,7 @@ function upload_to_imgiu($curlfile)
     if ($response['success']) {
         return $response['files'][0]['url'];
     } else {
-        throw new Exception("Error uploading to ImgiU" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to ImgiU" . add_full_error_info($page));
     }
 }
 
@@ -719,8 +689,6 @@ function upload_to_imgiu($curlfile)
 
 function upload_to_fileshare_ing($curlfile)
 {
-    global $debug;
-
     // fileshare.ing upload logic
     $upload_url = 'https://api.fileshare.ing/upload';
     $data = array(
@@ -736,15 +704,13 @@ function upload_to_fileshare_ing($curlfile)
         $ext = pathinfo($curlfile->getPostFilename(), PATHINFO_EXTENSION);
         return "https://cdn.fileshare.ing/production/{$response['id']}.{$ext}";
     } else {
-        throw new Exception("Error uploading to fileshare.ing" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to fileshare.ing" . add_full_error_info($page));
     }
 }
 
 
 function upload_to_xilt_net($curlfile)
 {
-    global $debug;
-
     // Xilt.net upload logic
     $upload_url = 'https://xilt.net/inc/upload.php';
     $data = array('file[]' => $curlfile);
@@ -754,7 +720,7 @@ function upload_to_xilt_net($curlfile)
     if ($response[0]) {
         return $response[0];
     } else {
-        throw new Exception("Error uploading to Xilt.net" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to Xilt.net" . add_full_error_info($page));
     }
 }
 
@@ -762,8 +728,6 @@ function upload_to_xilt_net($curlfile)
 
 function upload_to_windypix($curlfile)
 {
-    global $debug;
-
     // WindyPix upload logic
     $upload_url = 'https://windypix.com/upload.php';
     $data = array('file[]' => $curlfile);
@@ -777,14 +741,12 @@ function upload_to_windypix($curlfile)
             return $match; // Return the first direct link without '?di='
         }
     }
-    throw new Exception("Error uploading to AnonPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+    throw new Exception("Error uploading to AnonPic.org" . add_full_error_info($page));
 }
 
 
 function upload_to_imglink_io($curlfile)
 {
-    global $debug;
-
     // Imglink.io upload logic
     $upload_url = 'https://imglink.io/upload';
     $data = array('file' => $curlfile);
@@ -794,15 +756,13 @@ function upload_to_imglink_io($curlfile)
     if ($response['success']) {
         return $response['images'][0]['direct_link'];
     } else {
-        throw new Exception("Error uploading to Imglink.io" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to Imglink.io" . add_full_error_info($page));
     }
 }
 
 
 function upload_to_bigbyte_no($curlfile)
 {
-    global $debug;
-
     // BigByte.no upload logic
     $upload_url = 'http://img.bigbyte.no/upload.php';
     $data = array('file[]' => $curlfile, 'imgUrl' => '');
@@ -816,15 +776,13 @@ function upload_to_bigbyte_no($curlfile)
             return $match; // Return the first direct link without '?di='
         }
     }
-    throw new Exception("Error uploading to AnonPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+    throw new Exception("Error uploading to AnonPic.org" . add_full_error_info($page));
 }
 
 
 
 function upload_to_image2url($curlfile)
 {
-    global $debug;
-
     // Image2url upload logic
     $upload_url = 'https://www.image2url.com/api/upload';
     $data = array('file' => $curlfile);
@@ -835,7 +793,7 @@ function upload_to_image2url($curlfile)
     if ($response['success']) {
         return $response['url'];
     } else {
-        throw new Exception("Error uploading to Image2url" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to Image2url" . add_full_error_info($page));
     }
 }
 
@@ -843,8 +801,6 @@ function upload_to_image2url($curlfile)
 
 function upload_to_dragndropz($curlfile)
 {
-    global $debug;
-
     // DragNdropZ upload logic
     $upload_url = 'https://serv1.dragndropz.com/image_uploader.php';
     $data = array('file' => $curlfile);
@@ -855,7 +811,7 @@ function upload_to_dragndropz($curlfile)
     if ($response['image_path']) {
         return $response['image_path'];
     } else {
-        throw new Exception("Error uploading to DragNdropZ" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to DragNdropZ" . add_full_error_info($page));
     }
 }
 
@@ -863,8 +819,6 @@ function upload_to_dragndropz($curlfile)
 
 function upload_to_anonpic_org($curlfile)
 {
-    global $debug;
-
     // AnonPic.org upload logic
     $upload_url = 'https://anonpic.org/upload.php';
     $data = array('file[]' => $curlfile, 'imgUrl' => '');
@@ -878,15 +832,13 @@ function upload_to_anonpic_org($curlfile)
             return $match; // Return the first direct link without '?di='
         }
     }
-    throw new Exception("Error uploading to AnonPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+    throw new Exception("Error uploading to AnonPic.org" . add_full_error_info($page));
 }
 
 
 
 function upload_to_picser_pages_dev($curlfile)
 {
-    global $debug;
-
     // PicSer.Pages.dev upload logic
     $upload_url = 'https://picser.pages.dev/api/upload';
     $data = array('file' => $curlfile);
@@ -897,15 +849,13 @@ function upload_to_picser_pages_dev($curlfile)
     if ($response['success']) {
         return $response['url'];
     } else {
-        throw new Exception("Error uploading to PicSer.Pages.dev" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to PicSer.Pages.dev" . add_full_error_info($page));
     }
 }
 
 
 function upload_to_imgpx($curlfile)
 {
-    global $debug;
-
     // ImgPx upload logic
     $url = "https://imgpx.com/";
     $upload_url = "https://imgpx.com/uploads";
@@ -913,7 +863,7 @@ function upload_to_imgpx($curlfile)
     $page = mimic_browser($url, false, $url, true);
     preg_match('#name="upload_token" value="([^"]+)"#si', $page, $matches);
     if (empty($matches[1])) {
-        throw new Exception("Error retrieving upload_token from ImgPx." . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error retrieving token from ImgPx." . add_full_error_info($page));
     }
     $upload_token = $matches[1];
     $data = array(
@@ -937,8 +887,6 @@ function upload_to_imgpx($curlfile)
 
 function upload_to_imglink_app($curlfile)
 {
-    global $debug;
-
     // Imglink.app upload logic
     $upload_url = 'https://imglink.app/api/blob-upload';
     $data = array('file' => $curlfile);
@@ -949,7 +897,7 @@ function upload_to_imglink_app($curlfile)
     if ($response['success']) {
         return $response['links']['direct'];
     } else {
-        throw new Exception("Error uploading to Imglink.app" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to Imglink.app" . add_full_error_info($page));
     }
 }
 
@@ -957,8 +905,6 @@ function upload_to_imglink_app($curlfile)
 
 function upload_to_hostpic_org($curlfile)
 {
-    global $debug;
-
     // HostPic.org upload logic
     $upload_url = 'https://www.hostpic.org/inc/uploader.php';
     $data = array('thefile0' => $curlfile);
@@ -970,7 +916,7 @@ function upload_to_hostpic_org($curlfile)
     if ($parts[4]) {
         return trim($parts[4]);
     } else {
-        throw new Exception("Error uploading to HostPic.org" . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to HostPic.org" . add_full_error_info($page));
     }
 }
 
@@ -984,7 +930,7 @@ function upload_to_hostpic_org($curlfile)
 // Index 100+ are all chevereto hosts
 function upload_to_chevereto($curlfile, $file_host, $mime_type)
 {
-    global $debug, $chevereto_hosts;
+    global $chevereto_hosts;
 
     // Chevereto-based hosts 
     // (ImgBB, FreeImage.host, HostImage.org, PasteImg, Imgbb.ws, img.in.th,
@@ -1014,7 +960,7 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
     preg_match('#auth_token\s?\=\s?"([^"]+)"#si', $page, $matches);
     $auth_token = $matches[1];
     if (empty($auth_token))
-        throw new Exception("Error retrieving auth_token from {$name}." . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error retrieving token from {$name}." . add_full_error_info($page));
 
     // Prepare data for upload
     $data = array(
@@ -1036,7 +982,7 @@ function upload_to_chevereto($curlfile, $file_host, $mime_type)
         $hotlink = $response['image']['url'];
         return $hotlink;
     } else
-        throw new Exception("Error uploading to {$name}." . $debug ? "\n" . htmlspecialchars($page) : "");
+        throw new Exception("Error uploading to {$name}." . add_full_error_info($page));
 }
 
 
@@ -1076,7 +1022,7 @@ function add_ext_link($ext_link, $short_code = "", $file_ext = "")
     $delete_code = rand_str(15);
 
     // If no file extension provided, default to jpg
-    if(empty($file_ext))
+    if (empty($file_ext))
         $file_ext = "jpg";
 
     // If no short_code provided, generate a unique one
@@ -1130,7 +1076,7 @@ function get_ext_link($short_code)
     }
     $db->close();
 
-    return $link ? $link : null;
+    return $link ? $link['ext_link'] : null;
 }
 
 
@@ -1190,4 +1136,16 @@ function get_client_ip()
     else
         $ipaddress = 'UNKNOWN';
     return $ipaddress;
+}
+
+
+function add_full_error_info($page)
+{
+    global $debug;
+
+    if ($debug) {
+        return "\n\nDebug info: \n" . htmlspecialchars($page);
+    } else {
+        return "";
+    }
 }

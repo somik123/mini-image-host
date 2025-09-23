@@ -25,8 +25,6 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 
     <link rel="stylesheet" href="static/styles.css<?= $rand_v ?>">
@@ -55,12 +53,13 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
     ?>
 
         <div class="container container-large p-4 bg-white p-3 rounded shadow-sm">
-
+            <!-- Links Header Start -->
             <h3 class="text-center fw-bold">
                 <a href="." class="header-link"><?= $site_name ?> - External Links</a>
             </h3>
+            <!-- Links Header End -->
 
-
+            <!-- Main Content Start -->
             <div class="d-flex justify-content-center align-items-center mt-4 flex-wrap popup">
 
                 <?php if (count($all_links) == 0 || $enable_short_links_for_external_hosts == false): ?>
@@ -69,6 +68,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     </div>
                 <?php else: ?>
                     <?php if ($total_pages > 1): ?>
+                        <!-- Pagination Controls Start -->
                         <div class="input-group mb-3 w-auto">
                             <button class="btn btn-outline-primary <?= $has_prev_page ? '' : 'disabled' ?>" type="button"
                                 onclick="location.href='?links&page=<?= max(1, $current_page - 1) ?>';">Prev</button>
@@ -81,8 +81,10 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                             <button class="btn btn-outline-primary <?= $has_next_page ? '' : 'disabled' ?>" type="button"
                                 onclick="location.href='?links&page=<?= min($total_pages, $current_page + 1) ?>';">Next</button>
                         </div>
+                        <!-- Pagination Controls End -->
                         <div class="w-100"></div> <!-- Forces line break -->
                     <?php endif; ?>
+                    <!-- Links Table Start -->
                     <div id="links-container" class="mb-2">
                         <table class="table table-striped table-sm" id="links-table">
                             <thead>
@@ -106,7 +108,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                                     $ext_link = htmlspecialchars($link['ext_link']);
                                     ?>
                                     <tr>
-                                        <th scope="row" class="status-icon" data-url="<?= $ext_link ?>">
+                                        <th scope="row" class="status-icon" data-short-code="<?= $short_code ?>">
                                             <?= $count++ ?>
                                         </th>
                                         <td>
@@ -136,10 +138,11 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                             </tbody>
                         </table>
                     </div>
+                    <!-- Links Table End -->
 
                 <?php endif; ?>
-
             </div>
+            <!-- Main Content End -->
 
             <script type="text/javascript">
                 // Loop through all icons
@@ -150,10 +153,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                 });
             </script>
 
-
-
             <?php html_footer($contact); ?>
-
         </div>
 
 
@@ -181,11 +181,13 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
 
         <div class="container container-large p-4 bg-white p-3 rounded shadow-sm">
 
+            <!-- Gallery Header Start -->
             <h3 class="text-center fw-bold">
                 <a href="." class="header-link"><?= $site_name ?> - Gallery</a>
             </h3>
+            <!-- Gallery Header End -->
 
-
+            <!-- Main Content Start -->
             <div class="d-flex justify-content-center align-items-center mt-4 flex-wrap popup">
 
                 <?php if (count($files) == 0): ?>
@@ -194,6 +196,7 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     </div>
                 <?php else: ?>
                     <?php if ($total_pages > 1): ?>
+                        <!-- Pagination Controls Start -->
                         <div class="input-group mb-3 w-auto">
                             <button class="btn btn-outline-primary <?= $has_prev_page ? '' : 'disabled' ?>" type="button"
                                 onclick="location.href='?gallery&page=<?= max(1, $current_page - 1) ?>';">Prev</button>
@@ -206,8 +209,10 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                             <button class="btn btn-outline-primary <?= $has_next_page ? '' : 'disabled' ?>" type="button"
                                 onclick="location.href='?gallery&page=<?= min($total_pages, $current_page + 1) ?>';">Next</button>
                         </div>
+                        <!-- Pagination Controls End -->
                         <div class="w-100"></div> <!-- Forces line break -->
                     <?php endif; ?>
+                    <!-- Gallery Images Start -->
                     <div class="row g-2">
                         <?php foreach ($files as $file): ?>
                             <?php $img_url = $protocol . $domain . $image_url . $file ?>
@@ -221,21 +226,26 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
 
                         <?php endforeach; ?>
                     </div>
+                    <!-- Gallery Images End -->
                 <?php endif; ?>
             </div>
+            <!-- Main Content End -->
 
             <?php html_footer($contact); ?>
         </div>
 
 
-        <!-- Expand Message Modal -->
+        <!-- Image Modal Start -->
         <div class="modal fade" id="modalPopout" tabindex="-1" aria-labelledby="modalPopoutHeader" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
+                    <!-- Modal Header -->
                     <div class="modal-header">
                         <div class="modal-title fs-6">Share <span id="modalPopoutHeader"></span></div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
+                    <!-- Modal Body -->
                     <div class="modal-body text-center" id="modalPopoutBody">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" readonly aria-describedby="copyBtn" id="modalImageLink">
@@ -245,6 +255,8 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                         <img id="modalImage" src="" alt="Image" class="img-fluid"
                             style="max-height: 70vh; object-fit: contain;">
                     </div>
+
+                    <!-- Modal Footer -->
                     <div class="modal-footer d-flex justify-content-between">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="showDeleteConfirm();">
                             Delete
@@ -254,20 +266,25 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                 </div>
             </div>
         </div>
+        <!-- Image Modal End -->
 
 
     <?php else: ?>
 
 
+        <!-- Main Upload Container Start -->
         <div class="container p-4 bg-white p-3 rounded shadow-sm">
 
+            <!-- Header Start -->
             <h3 class="text-center fw-bold">
                 <a href="." class="header-link"><?= $site_name ?></a>
             </h3>
+            <!-- Header End -->
 
 
+            <!-- Upload Form Start -->
             <div class="d-flex justify-content-between align-items-center">
-                <!-- Host selector -->
+                <!-- Host Selection Dropdown Start -->
                 <div class="d-flex align-items-center">
                     <label for="host" class="me-2 fw-semibold">Host:</label>
                     <select id="mirror" class="form-select form-select-sm select-host">
@@ -287,8 +304,9 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                         <?php endif; ?>
                     </select>
                 </div>
+                <!-- Host Selection Dropdown End -->
 
-                <!-- Icon buttons -->
+                <!-- Navigation Buttons Start -->
                 <div class="d-flex">
                     <button class="btn btn-link p-1" title="Text to Image" onclick="showHideContainer();">
                         <i class="bi bi-textarea-t font-20"></i>
@@ -302,8 +320,11 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                         <i class="bi bi-images font-20"></i>
                     </a>
                 </div>
+                <!-- Navigation Buttons End -->
             </div>
+            <!-- Upload Form End -->
 
+            <!-- Upload Area Start -->
             <div class="d-flex justify-content-between align-items-center">
                 <form class="p-2 upload-form" action="#" id="upload-form">
                     <i class="bi bi-cloud-arrow-up-fill font-45"></i>
@@ -316,7 +337,9 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     <input type="file" name="file" id="file" hidden accept="image/*" />
                 </form>
             </div>
+            <!-- Upload Area End -->
 
+            <!-- Text to Image Area Start -->
             <div class="flex justify-content-between align-items-center" id="text2image-div" style="display: none;">
                 <textarea class="px-2 py-1 text2image mb-2" id="text2image" onchange="txt2imgPreview();"></textarea>
                 <button class="form-control btn btn-sm btn-primary" id="text2imageBtn" onclick="text2image(this)">
@@ -326,9 +349,13 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     <img id="text2imageView" src="" alt="blank" />
                 </a>
             </div>
+            <!-- Text to Image Area End -->
 
+            <!-- Upload progress Area Start -->
             <div id="progress-area" style="display: none;">
+                <!-- Progress Card Template Start -->
                 <div id="progress-card-template">
+                    <!-- Progress Card Start -->
                     <div class="card d-flex flex-row align-items-center p-2 mt-3">
                         <!-- File icon -->
                         <div class="me-2 text-primary">
@@ -353,14 +380,20 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                             <i class="bi bi-cpu font-20" id="progress-processing" style="display: none;"></i>
                         </div>
                     </div>
+                    <!-- Progress Card End -->
                 </div>
+                <!-- Progress Card Template End -->
             </div>
+            <!-- Upload progress Area End -->
+
             <div id="uploaded-area"></div>
 
             <?php html_footer($contact); ?>
         </div>
 
+        <!-- Upload Complete and Error Card Templates Start -->
         <div style="display: none;">
+            <!-- Upload Complete Card Template Start -->
             <div id="complete-card-template">
                 <div class="card d-flex flex-row align-items-center p-2 mt-3">
                     <!-- File icon -->
@@ -387,7 +420,9 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     </div>
                 </div>
             </div>
+            <!-- Upload Complete Card Template End -->
 
+            <!-- Upload Error Card Template Start -->
             <div id="error-card-template">
                 <div class="card d-flex flex-row align-items-center p-2 mt-3">
                     <!-- File icon -->
@@ -410,15 +445,21 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     </div>
                 </div>
             </div>
+            <!-- Upload Error Card Template End -->
         </div>
 
         <script src="static/scripts_autoload.js<?= $rand_v ?>"></script>
 
     <?php endif; ?>
 
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
+    <!-- Custom JS -->
     <script src="static/scripts.js<?= $rand_v ?>"></script>
 </body>
 

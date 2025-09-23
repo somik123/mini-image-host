@@ -13,20 +13,18 @@ header("Access-Control-Allow-Origin: *");
 $max_filesize_msg = human_readable_size($max_file_size, 0);
 
 try {
-
-    if ($_REQUEST['textblk']) {
+    if ($_REQUEST['textblk']) { // Convert text block to image
         // Convert text block to image
         $text = $_REQUEST['textblk'];
         text2image($text);
         exit;
-    } elseif ($_REQUEST['code'] && $_REQUEST['f']) {
+    } elseif ($_REQUEST['code'] && $_REQUEST['f']) { // Redirect to external link
         require_once("inc/ext_hosts.php");
         // Get the external link and redirect
         $short_code = $_REQUEST['code'];
-        $link = get_ext_link($short_code);
+        $ext_link = get_ext_link($short_code);
 
-        $ext_link = $link['ext_link'];
-
+        // Redirect to the external link if found
         if ($ext_link) {
             header("Location: $ext_link");
             exit;
@@ -36,6 +34,7 @@ try {
         }
     } elseif (isset($_REQUEST['delete']) && $_REQUEST['key'] && ($_REQUEST['file'] || $_REQUEST['short_code'])) {
 
+        // If admin key is provided, delete the image or external link
         $key = $_REQUEST['key'];
         if ($key === $admin_key) {
 
@@ -58,13 +57,14 @@ try {
                     die("Access denied.");
                 }
 
+                // Delete the file and its thumbnail
                 if (file_exists($file_path) && !is_dir($file_path)) {
-                    @unlink($file_path);
-                    $parts = explode(".", $file);
-                    $thumb_name = $parts[0] . "_thumb." . $parts[1];
-                    $thumb_path_full = $thumb_path . $thumb_name;
+                    @unlink($file_path); // Delete main file
+                    $parts = explode(".", $file); // Split filename and extension
+                    $thumb_name = $parts[0] . "_thumb." . $parts[1]; // Construct thumbnail name
+                    $thumb_path_full = $thumb_path . $thumb_name; // Full path to thumbnail
                     if (file_exists($thumb_path_full) && !is_dir($thumb_path_full)) {
-                        @unlink($thumb_path_full);
+                        @unlink($thumb_path_full); // Delete thumbnail if it exists
                     }
                     echo "Image and thumbnail deleted.";
                 } else {
@@ -72,8 +72,9 @@ try {
                 }
             } elseif ($_REQUEST['short_code']) { // Delete external link if admin key is correct
                 $short_code = $_REQUEST['short_code'];
+                // Read filehosts file for external file host functions
                 require_once("inc/ext_hosts.php");
-                $res = delete_ext_link($short_code);
+                $res = delete_ext_link($short_code); // Delete the external link
                 if ($res) {
                     echo "External link deleted.";
                 } else {
@@ -111,6 +112,7 @@ try {
             // Ensure the file has image size parameters
             $image_info = @getimagesize($file['tmp_name']);
 
+            // Validate file upload
             if ($image_info == false)
                 throw new Exception('Please upload valid image file.');
 
@@ -147,14 +149,13 @@ try {
             if (empty($hotlink))
                 throw new Exception("Error uploading image." . $debug ? "\n" . htmlspecialchars($page) : "");
 
+            // Create a short link for the external link if enabled
             if ($enable_short_links_for_external_hosts) {
-                // Create a short link for the external link
                 $link_data = add_ext_link($hotlink, $file_id, $file_ext);
                 $short_code = $link_data['short_code'];
                 $dirname = dirname($image_url);
 
                 // Generate the hotlink URL
-
                 $hotlink = "{$protocol}{$domain}/ext/{$short_code}.{$file_ext}";
             }
 
