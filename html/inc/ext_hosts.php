@@ -94,12 +94,6 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
-        'name' => 'SnipShot.io',
-        'function' => 'upload_to_snipshot',
-        'url' => 'https://snipshot.io/',
-    );
-
-    $external_hosts[] = array(
         'name' => 'ImgIU',
         'function' => 'upload_to_imgiu',
         'url' => 'https://imgiu.com/',
@@ -293,12 +287,6 @@ function init_external_hosts()
         'name' => 'JpgJet',
         'function' => 'upload_to_chevereto',
         'url' => 'https://jpgjet.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'PostImage.me',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://postimage.me/',
     );
 
     $chevereto_hosts[] = array(
@@ -648,23 +636,6 @@ function upload_to_pngup($curlfile)
         return "https://pngup.com/" . $response['id'] . "/" . $name;
     } else {
         throw new Exception("Error uploading to PngUp" . add_full_error_info($page));
-    }
-}
-
-
-
-function upload_to_snipshot($curlfile)
-{
-    // Snipshot upload logic
-    $upload_url = 'https://snipshot.io/upload';
-    $data = array('image' => $curlfile);
-    $page = mimic_browser($upload_url, $data);
-    $response = json_decode($page, true);
-    // Check if upload was successful
-    if ($response['status'] == 'success') {
-        return $response['image_path'];
-    } else {
-        throw new Exception("Error uploading to Snipshot" . add_full_error_info($page));
     }
 }
 
