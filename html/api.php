@@ -29,7 +29,8 @@ try {
             header("Location: $ext_link");
             exit;
         } else {
-            echo "Link for code '$short_code' not found.";
+            $img_404 = $protocol . $domain . dirname($image_url) . "/static/image_404.png";
+            header("Location: $img_404");
             exit;
         }
     } elseif (isset($_REQUEST['delete']) && $_REQUEST['key'] && ($_REQUEST['file'] || $_REQUEST['short_code'])) {
@@ -86,55 +87,124 @@ try {
         } else {
             echo "Invalid ADMIN_KEY.";
         }
+    } elseif ($_REQUEST['delete_code']) { // Delete external link with delete code
+        require_once("inc/ext_hosts.php");
+        $delete_code = $_REQUEST['delete_code'];
+        $res = delete_ext_link_by_delete_code($delete_code); // Delete the external link
+        if ($res) {
+            text2image("External link deleted.");
+        } else {
+            text2image("External link not found or invalid delete code.");
+        }
     } elseif ($_FILES['file']['error'] === UPLOAD_ERR_OK) { // If file has been posted
+
+        // Get the original name of the file from the client
+        $file_name = $_FILES['file']['name'];
+
+        // Temporary name of the file in the server
+        $tmp_name = $_FILES['file']['tmp_name'];
+
+        // Ensure the file has image size parameters
+        $image_info = @getimagesize($tmp_name);
+
+        // Validate it's a real image
+        if ($image_info == false)
+            throw new Exception('Please upload valid image file.');
+
+        // Validate file type is allowed
+        $type = $_FILES['file']['type'];
+        if (!in_array($type, $allowed_types))
+            throw new Exception("Only jpg, jpeg, png, webp, and gif image type supported.");
+
+        // Check the file size is acceptable
+        if (filesize($tmp_name) > $max_file_size)
+            throw new Exception("File over allowed size of {$max_filesize_msg}");
+
+        // Get the extension of the file
+        $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
+        $file_id = rand_str(10);
 
         $file_host = isset($_POST['file_host']) ? $_POST['file_host'] : "internal";
 
         // If internal host selected, save file to local server
-        if (!is_numeric($file_host)) { // internal host
-            // Upload image to internal host
-            require_once("inc/int_host.php");
+        if (!is_numeric($file_host)) { // Upload image to internal host
 
-            // Call the upload image function
-            upload_image();
+            // Check if upload directory exists, if not create it
+            if (!file_exists($image_path))
+                mkdir($image_path, 0777, true);
+            // Check if thumbnail directory exists, if not create it
+            if (!file_exists($thumb_path))
+                mkdir($thumb_path, 0777, true);
+
+            // Convert webp files into jpg image
+            if ($type == 'image/webp') {
+                $new_file_name = "{$file_id}.jpg";
+                $new_thumb_name = "{$file_id}_thumb.jpg";
+
+                // Convert webp to jpeg with 80% quality and save to save path
+                $im = imagecreatefromwebp($tmp_name);
+                imagejpeg($im, $image_path . $new_file_name, 80);
+                imagedestroy($im);
+            }
+            // Resize image if it's JPEG and more then max_image_size in any side
+            elseif ($type == 'image/jpeg' && ($image_info[0] > $max_image_size || $image_info[1] > $max_image_size)) {
+                $new_file_name = "{$file_id}.jpg";
+                $new_thumb_name = "{$file_id}_thumb.jpg";
+
+                // Resize image to a smaller size
+                $source = $tmp_name;
+                $dest = $image_path . $new_file_name;
+                resizeAndSaveImage($source, $dest, $max_image_size);
+            }
+            // Move the uploaded file to save path
+            else {
+                $new_file_name = "{$file_id}.{$file_ext}";
+                $new_thumb_name = "{$file_id}_thumb.{$file_ext}";
+
+                // Move the uploaded file to save path (for all other formats)
+                move_uploaded_file($tmp_name, $image_path . $new_file_name);
+            }
+
+            // Generate thumbnails for all image types
+            $source = $image_path . $new_file_name;
+            $dest = $thumb_path . $new_thumb_name;
+            resizeAndSaveImage($source, $dest, 150);
+
+            // Return the image URL to the client
+            $url = $protocol . $domain . $image_url . $new_file_name;
+            $out = array("status" => "OK", "url" => $url);
+
+            // Reply with JSON
+            header('Content-Type: application/json');
+            echo json_encode($out);
+
+            // Clean up the temporary file and exit
+            cleanup();
         } elseif (intval($file_host) > 0 &&  $enable_external_hosts) {
 
             // Read filehosts file for external file host upload functions
             require_once("inc/ext_hosts.php");
 
-            // Upload image to external host
+            // Initialize variables
             $hotlink = "";
-
-            // Move the uploaded file to a temporary location
-            $file = $_FILES['file'];
-            $file_host = isset($_POST['file_host']) ? intval($_POST['file_host']) : 1;
-
-            // Ensure the file has image size parameters
-            $image_info = @getimagesize($file['tmp_name']);
-
-            // Validate file upload
-            if ($image_info == false)
-                throw new Exception('Please upload valid image file.');
-
-            // Validate file type is allowed
-            if (!in_array($file['type'], $allowed_types))
-                throw new Exception("Only jpg, jpeg, png, webp, and gif image type supported.");
-
-            // Add random bytes to the filename to avoid issues with same filename uploads
-            file_put_contents($file['tmp_name'], random_bytes(16), FILE_APPEND);
+            $delete_link = "";
 
             // Generate a new filename
-            $file_ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $file_id = rand_str(6);
             $new_filename = "{$file_id}.{$file_ext}";
 
+            // Add random bytes to the filename to avoid issues with same filename uploads
+            file_put_contents($tmp_name, random_bytes(16), FILE_APPEND);
+
+            // Get the selected file host
+            $file_host = isset($_POST['file_host']) ? intval($_POST['file_host']) : 1;
+
             // Prepare the file and cookie for upload
-            $curlfile = new CURLFile($file['tmp_name'], $file['type'], $new_filename);
+            $curlfile = new CURLFile($tmp_name, $type, $new_filename);
             $cookie_file = tempnam(sys_get_temp_dir(), 'php_img_cookie_');
 
             // Call the appropriate upload function based on the selected host
             if ($file_host > 100) { // Chevereto-based hosts
-                $hotlink = upload_to_chevereto($curlfile, $file_host, $file['type']);
+                $hotlink = upload_to_chevereto($curlfile, $file_host, $type);
             } else { // Other external hosts
                 foreach ($external_hosts as $host) { // Find the host function
                     if ($host['index'] == $file_host) {
@@ -144,24 +214,24 @@ try {
                 }
             }
 
-
             // Check if upload was successful
             if (empty($hotlink))
                 throw new Exception("Error uploading image." . $debug ? "\n" . htmlspecialchars($page) : "");
 
             // Create a short link for the external link if enabled
             if ($enable_short_links_for_external_hosts) {
-                $link_data = add_ext_link($hotlink, $file_id, $file_ext);
-                $short_code = $link_data['short_code'];
-                $dirname = dirname($image_url);
+                $delete_code = add_ext_link($hotlink, $file_id, $file_ext);
 
                 // Generate the hotlink URL
-                $hotlink = "{$protocol}{$domain}/ext/{$short_code}.{$file_ext}";
+                $hotlink = "{$protocol}{$domain}/ext/{$new_filename}";
+
+                // Generate the delete link URL
+                $delete_link = "{$protocol}{$domain}/del/{$delete_code}";
             }
 
             // Reply with JSON
             header('Content-Type: application/json');
-            echo json_encode(array('status' => 'OK', 'url' => $hotlink));
+            echo json_encode(array('status' => 'OK', 'url' => $hotlink, 'delete_link' => $delete_link));
 
             // Clean up the temporary file and exit
             cleanup();

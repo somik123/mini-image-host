@@ -17,12 +17,6 @@ fileInput.onchange = ({
     let file = target.files[0];
     if (file) {
         let fileName = file.name;
-        if (fileName.length >= 12) {
-            let lastIndex = fileName.lastIndexOf('.');
-            let name = fileName.slice(0, lastIndex);
-            let ext = fileName.slice(lastIndex + 1);
-            fileName = name.substring(0, 13) + "... ." + ext;
-        }
         uploadFile(fileName);
     }
 }

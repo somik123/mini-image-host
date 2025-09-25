@@ -15,7 +15,7 @@ if ($_REQUEST['short_code']) {
             throw new Exception("No short code provided");
 
         // Read filehosts file for external file host functions
-        $ext_link = get_ext_link($short_code);
+        $ext_link = get_ext_link($short_code, false);
         if (!$ext_link)
             throw new Exception("Short code not found in database");
 

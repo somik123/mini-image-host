@@ -981,6 +981,36 @@ function initialize_ext_links_db()
 }
 
 
+function generate_short_code($length = 10)
+{
+    global $ext_links_db;
+
+    $short_code = "";
+
+    if ($length < 10) {
+        // For length less than 10, ensure uniqueness by checking the database
+        $db = new SQLite3($ext_links_db, SQLITE3_OPEN_READONLY);
+        $db->busyTimeout(5000); // Set busy timeout to 5 seconds
+
+        // Generate until a unique code is found
+        do {
+            $short_code = rand_str($length);
+            $stmt = $db->prepare("SELECT COUNT(*) as count FROM links WHERE short_code = :short_code");
+            $stmt->bindValue(':short_code', $short_code, SQLITE3_TEXT);
+            $result = $stmt->execute();
+            $row = $result->fetchArray(SQLITE3_ASSOC);
+        } while ($row['count'] > 0);
+        $db->close();
+    } else {
+        // For length 10 or more, use a simpler approach
+        $short_code = rand_str($length);
+    }
+
+    return $short_code;
+}
+
+
+
 // Add new external link to the database
 function add_ext_link($ext_link, $short_code = "", $file_ext = "")
 {
@@ -996,37 +1026,27 @@ function add_ext_link($ext_link, $short_code = "", $file_ext = "")
     if (empty($file_ext))
         $file_ext = "jpg";
 
-    // If no short_code provided, generate a unique one
-    if (empty($short_code)) {
-        // Generate unique short_code and delete_code
-        do {
-            $short_code = rand_str(10);
-            $stmt = $db->prepare("SELECT COUNT(*) as count FROM links WHERE short_code = :short_code");
-            $stmt->bindValue(':short_code', $short_code, SQLITE3_TEXT);
-            $result = $stmt->execute();
-            $row = $result->fetchArray(SQLITE3_ASSOC);
-        } while ($row['count'] > 0);
-    }
-
-    $created = date('Y-m-d H:i:s');
-    $creator_ip = get_client_ip();
-
+    // Prepare values for insertion
     $stmt = $db->prepare("INSERT INTO links (ext_link, short_code, file_ext, delete_code, created, creator_ip) 
                           VALUES (:ext_link, :short_code, :file_ext, :delete_code, :created, :creator_ip)");
     $stmt->bindValue(':file_ext', $file_ext, SQLITE3_TEXT);
     $stmt->bindValue(':ext_link', $ext_link, SQLITE3_TEXT);
     $stmt->bindValue(':short_code', $short_code, SQLITE3_TEXT);
     $stmt->bindValue(':delete_code', $delete_code, SQLITE3_TEXT);
-    $stmt->bindValue(':created', $created, SQLITE3_TEXT);
-    $stmt->bindValue(':creator_ip', $creator_ip, SQLITE3_TEXT);
-    $stmt->execute();
+    $stmt->bindValue(':created', date('Y-m-d H:i:s'), SQLITE3_TEXT);
+    $stmt->bindValue(':creator_ip', get_client_ip(), SQLITE3_TEXT);
+    $result = $stmt->execute();
     $db->close();
-    return array('short_code' => $short_code, 'delete_code' => $delete_code);
+
+    if (!$result) {
+        throw new Exception("Error adding external link to database.");
+    }
+    return  $delete_code;
 }
 
 
-// Retrieve external link details by short code
-function get_ext_link($short_code)
+// Retrieve external link details by short code and optionally update hit count
+function get_ext_link($short_code, $hit=true)
 {
     global $ext_links_db;
 
@@ -1038,7 +1058,7 @@ function get_ext_link($short_code)
     $result = $stmt->execute();
     $link = $result->fetchArray(SQLITE3_ASSOC);
 
-    if ($link) {
+    if ($hit && $link) {
         // Update hit count and last accessed time
         $stmt = $db->prepare("UPDATE links SET hits = hits + 1, last_accessed = :last_accessed WHERE id = :id");
         $stmt->bindValue(':last_accessed', date('Y-m-d H:i:s'), SQLITE3_TEXT);
@@ -1061,7 +1081,25 @@ function delete_ext_link($short_code)
 
     $stmt = $db->prepare("DELETE FROM links WHERE short_code = :short_code");
     $stmt->bindValue(':short_code', $short_code, SQLITE3_TEXT);
-    $result = $stmt->execute();
+    $stmt->execute();
+    $changes = $db->changes();
+    $db->close();
+    return $changes > 0;
+}
+
+
+
+// Delete external link by delete code
+function delete_ext_link_by_delete_code($delete_code)
+{
+    global $ext_links_db;
+
+    $db = new SQLite3($ext_links_db, SQLITE3_OPEN_READWRITE);
+    $db->busyTimeout(5000); // Set busy timeout to 5 seconds
+
+    $stmt = $db->prepare("DELETE FROM links WHERE delete_code = :delete_code");
+    $stmt->bindValue(':delete_code', $delete_code, SQLITE3_TEXT);
+    $stmt->execute();
     $changes = $db->changes();
     $db->close();
     return $changes > 0;

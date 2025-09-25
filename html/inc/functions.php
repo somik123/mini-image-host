@@ -63,19 +63,16 @@ function resizeAndSaveImage($source, $dest, $maxSize = 200)
 }
 
 
-
-
 // Function used to generate a random string for filename
 function rand_str($length = 10)
 {
-    $characters = '23456789abcdefghjkmnpqrtuvwxyzABCDEFGHJKLMNPQRTUVWXYZ';
-    $charactersLength = strlen($characters);
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[mt_rand(0, $charactersLength - 1)];
-    }
-    return $randomString;
+    $char_set = '23456789abcdefghjkmnpqrtuvwxyzABCDEFGHJKLMNPQRTUVWXYZ';
+    $repeat_count = ceil($length / strlen($char_set));
+    $long_string = str_repeat($char_set, $repeat_count);
+    $shuffled = str_shuffle($long_string);
+    return substr($shuffled, 0, $length);
 }
+
 
 
 // Function to perform HTTP requests using cURL and return the response

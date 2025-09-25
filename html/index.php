@@ -407,9 +407,11 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                             [[FILENAME]]
                             <span class="text-muted">[[[FILESIZE]]]</span>
                         </div>
+                        <span class="small">Share:</span>
                         <a href="[[FILELINK]]" target="_blank" class="small">
                             [[FILELINK]]
                         </a>
+                        [[DELETE_HTML]]
                     </div>
 
                     <!-- Action buttons -->
@@ -446,6 +448,14 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                 </div>
             </div>
             <!-- Upload Error Card Template End -->
+
+            <div id="delete-ext-link-template">
+                <br />
+                <span class="small">Delete:</span>
+                <a href="[[DELETELINK]]" target="_blank" class="small text-danger">
+                    [[DELETELINK]]
+                </a>
+            </div>
         </div>
 
         <script src="static/scripts_autoload.js<?= $rand_v ?>"></script>

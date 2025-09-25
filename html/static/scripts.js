@@ -136,8 +136,9 @@ function uploadFile(name) {
     let url;
     let data;
 
-    name = shortenFilename(name, 20); // Shorten filename for display
+    name = shortenFilename(name, 30); // Shorten filename for display
 
+    // Get references to UI elements
     let progressArea = document.getElementById("progress-area");
     let progressFilename = document.getElementById("progress-filename");
     let progressBar = document.getElementById("progress-bar");
@@ -148,6 +149,8 @@ function uploadFile(name) {
     let uploadedArea = document.getElementById("uploaded-area");
     let completeCardHtml = document.getElementById("complete-card-template").innerHTML;
     let errorCardHtml = document.getElementById("error-card-template").innerHTML;
+
+    let deleteExtLinkTemplate = document.getElementById("delete-ext-link-template").innerHTML;
 
     let mirrorEl = document.getElementById("mirror");
     // This is only for external mirrors, internal uploads will ignore this
@@ -213,12 +216,21 @@ function uploadFile(name) {
         if (api_reply['status'] == "OK") { // Upload successful
 
             let url = api_reply['url'];
+            let delete_link = api_reply['delete_link'] || "";
+
+            console.log("Upload successful. File URL:", url);
+
+            let delete_html = "";
+            if (delete_link.length > 0) {
+                delete_html = deleteExtLinkTemplate.replaceAll('[[DELETELINK]]', delete_link);
+            }
 
             let uploadedHTML = completeCardHtml;
             uploadedHTML = uploadedHTML
                 .replace('[[FILENAME]]', name)
                 .replace('[[FILESIZE]]', fileSize)
-                .replaceAll('[[FILELINK]]', url);
+                .replaceAll('[[FILELINK]]', url)
+                .replace('[[DELETE_HTML]]', delete_html);
 
             uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML);
 
@@ -349,23 +361,20 @@ function showHideContainer() {
 
 // Shorten filename for display
 function shortenFilename(filename, maxLength = 20) {
-    // Split into name and extension
+    if (filename.length <= maxLength) return filename;
+
     const lastDot = filename.lastIndexOf(".");
-    if (lastDot === -1) return filename; // no extension case
+    const hasExt = lastDot > 0;
+    const name = hasExt ? filename.slice(0, lastDot) : filename;
+    const ext = hasExt ? filename.slice(lastDot) : "";
 
-    const name = filename.substring(0, lastDot);
-    const ext = filename.substring(lastDot);
+    if (name.length <= maxLength - ext.length) return filename;
 
-    if (name.length <= maxLength) {
-        return filename; // nothing to shorten
-    }
-
-    const keep = Math.floor((maxLength - 4) / 2); // 4 chars for "...."
-    const start = name.substring(0, keep);
-    const end = name.substring(name.length - keep);
-
-    return `${start}....${end}${ext}`;
+    const keep = Math.floor((maxLength - ext.length - 4) / 2);
+    return name.slice(0, keep) + "...." + name.slice(name.length - keep) + ext;
 }
+
+
 
 
 // Check URL status (for external hosts)
