@@ -327,14 +327,19 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
             <!-- Upload Area Start -->
             <div class="d-flex justify-content-between align-items-center">
                 <form class="p-2 upload-form" action="#" id="upload-form">
-                    <i class="bi bi-cloud-arrow-up-fill font-45"></i>
-                    <div>
-                        Click or drag or paste image to upload
+                    <div style="margin: auto;">
+                        <i class="bi bi-cloud-arrow-up-fill font-55"></i>
+                        <div style="font-size: 14pt;">
+                            Click or drag or paste image to upload
+                        </div>
+                        <div class="text-muted small mt-2">
+                            Accepts: JPG, JPEG, PNG, WebP, and GIF
+                        </div>
+                        <div class="text-muted small">
+                            Max file size: <?= $max_filesize_msg ?>
+                        </div>
+                        <input type="file" name="file" id="file" hidden accept="image/*" />
                     </div>
-                    <div class="text-muted small">
-                        JPG, JPEG, PNG, WebP, and GIF up to <?= $max_filesize_msg ?>
-                    </div>
-                    <input type="file" name="file" id="file" hidden accept="image/*" />
                 </form>
             </div>
             <!-- Upload Area End -->

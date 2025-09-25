@@ -300,7 +300,7 @@ function html_footer($contact)
     global $enable_short_links_for_external_hosts, $enable_external_hosts;
 ?>
     <!-- Footer Start -->
-    <div class="footer text-center small mt-3 footer-div">
+    <div class="footer text-center small mt-4 footer-div">
         <a href="./">Home</a>
         <?php if ($enable_short_links_for_external_hosts && $enable_external_hosts): ?>
             | <a href="?links">Ext Links</a>

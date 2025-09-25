@@ -11,7 +11,7 @@ body {
 }
 
 .container {
-    max-width: 500px;
+    max-width: 550px;
 }
 
 .container-large {
@@ -29,7 +29,7 @@ body {
 
 
 #uploaded-area {
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: auto;
 }
 
@@ -46,8 +46,8 @@ body {
     font-size: 20pt;
 }
 
-.font-45 {
-    font-size: 45pt;
+.font-55 {
+    font-size: 55pt;
 }
 
 .select-host {
@@ -58,7 +58,7 @@ body {
 }
 
 .upload-form {
-    min-height: 180px;
+    min-height: 220px;
     display: flex;
     cursor: pointer;
     align-items: center;
