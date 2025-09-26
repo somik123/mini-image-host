@@ -11,16 +11,13 @@ form.addEventListener("click", () => {
 
 
 // file input change event
-fileInput.onchange = ({
-    target
-}) => {
-    let file = target.files[0];
-    if (file) {
-        let fileName = file.name;
-        uploadFile(fileName);
+fileInput.addEventListener("change", () => {
+    // Call uploadFile function when a file is selected
+    if (fileInput.files.length > 0) {
+        let file = fileInput.files[0];
+        uploadFile(file.name);
     }
-}
-
+});
 
 
 // form dragover or drop event
@@ -39,8 +36,13 @@ document.addEventListener('drop', (e) => {
     if (dt.files && dt.files.length > 0) {
         console.log('File(s) dropped');
         console.log(dt.files);
-        const file = dt.files[0];
-        setFileInput(file);
+        // Process all dropped files as long as they are images
+        for (let i = 0; i < dt.files.length; i++) {
+            const file = dt.files[i];
+            if (file.type.startsWith('image/')) {
+                setFileInput(file);
+            }
+        }
     }
 });
 
@@ -50,7 +52,7 @@ document.addEventListener('drop', (e) => {
 document.addEventListener('paste', function (e) {
     const items = (event.clipboardData || event.originalEvent.clipboardData || window.clipboardData).items;
     for (let i = 0; i < items.length; i++) {
-        if ((items[i].kind === 'file' && items[i].type.startsWith('image/')) || (items[i].type.indexOf("image") !== -1)) {
+        if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
             console.log('Pasted image');
             console.log(items[i]);
             const file = items[i].getAsFile();

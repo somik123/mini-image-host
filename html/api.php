@@ -13,7 +13,31 @@ header("Access-Control-Allow-Origin: *");
 $max_filesize_msg = human_readable_size($max_file_size, 0);
 
 try {
-    if ($_REQUEST['textblk']) { // Convert text block to image
+    if (isset($_REQUEST['cleanup']) && $debug) {
+
+        // Cleanup image directories
+        $files = scandir($image_path);
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..' && strpos($file, 'screenshot') === false) {
+                @unlink($image_path . $file);
+            }
+        }
+
+        // Cleanup thumbnail directories
+        $files = scandir($thumb_path);
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..' && strpos($file, 'screenshot') === false) {
+                @unlink($thumb_path . $file);
+            }
+        }
+
+        // Cleanup internal file hash database
+        require_once("inc/int_host_functions.php");
+        delete_file_hash_db();
+
+        echo "Cleanup done.";
+        exit;
+    } elseif ($_REQUEST['textblk']) { // Convert text block to image
         // Convert text block to image
         $text = $_REQUEST['textblk'];
         text2image($text);
@@ -67,7 +91,12 @@ try {
                     if (file_exists($thumb_path_full) && !is_dir($thumb_path_full)) {
                         @unlink($thumb_path_full); // Delete thumbnail if it exists
                     }
-                    echo "Image and thumbnail deleted.";
+
+                    // Remove the file hash entry from the database
+                    require_once("inc/int_host_functions.php");
+                    delete_hash_entry($file_path);
+
+                    echo "Image and thumbnail deleted, and hash entry removed.";
                 } else {
                     echo "Image not found.";
                 }
@@ -135,6 +164,29 @@ try {
             // Check if thumbnail directory exists, if not create it
             if (!file_exists($thumb_path))
                 mkdir($thumb_path, 0777, true);
+
+
+            // Require internal file hash functions
+            require_once("inc/int_host_functions.php");
+
+            // Check for duplicate file by hash
+            $duplicate_file = is_duplicate_file($tmp_name, $file_id, $file_ext);
+
+            // If duplicate found, return the existing image URL and exit
+            if ($duplicate_file) {
+                // If duplicate found, return the existing image URL
+                $existing_file_name = $duplicate_file['file_name'] . '.' . $duplicate_file['file_ext'];
+                $url = $protocol . $domain . $image_url . $existing_file_name;
+
+                // Reply with JSON
+                header('Content-Type: application/json');
+                echo json_encode(array("status" => "OK", "url" => $url));
+
+                // Clean up the temporary file and exit
+                cleanup();
+                exit;
+            }
+
 
             // Convert webp files into jpg image
             if ($type == 'image/webp') {

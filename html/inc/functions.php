@@ -25,44 +25,6 @@ function human_readable_size($raw_size, $return_array = true)
 
 
 
-// Resize and save image
-function resizeAndSaveImage($source, $dest, $maxSize = 200)
-{
-    // get source image size
-    $img_details = getimagesize($source);
-    $w = $img_details[0];
-    $h = $img_details[1];
-    $img_type = $img_details[2];
-
-    // specifying the required image size
-    if ($w > $h) {
-        $new_width = $maxSize;
-        $new_height = ceil($maxSize * $h / $w);
-    } else {
-        $new_height = $maxSize;
-        $new_width = ceil($maxSize * $w / $h);
-    }
-
-    if ($img_type == IMAGETYPE_GIF) {
-        $imgt = "ImageGIF";
-        $imgcreatefrom = "ImageCreateFromGIF";
-    } elseif ($img_type == IMAGETYPE_JPEG) {
-        $imgt = "ImageJPEG";
-        $imgcreatefrom = "ImageCreateFromJPEG";
-    } elseif ($img_type == IMAGETYPE_PNG) {
-        $imgt = "ImagePNG";
-        $imgcreatefrom = "ImageCreateFromPNG";
-    }
-
-    if ($imgt) {
-        $old_image = $imgcreatefrom($source);
-        $new_image = imagecreatetruecolor($new_width, $new_height);
-        imagecopyresized($new_image, $old_image, 0, 0, 0, 0, $new_width, $new_height, $w, $h);
-        $save = $imgt($new_image, $dest);
-    }
-}
-
-
 // Function used to generate a random string for filename
 function rand_str($length = 10)
 {
@@ -294,7 +256,7 @@ function cleanup()
 }
 
 
-
+// HTML Footer
 function html_footer($contact)
 {
     global $enable_short_links_for_external_hosts, $enable_external_hosts;

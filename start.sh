@@ -77,7 +77,7 @@ $mirror_list
 
 \$max_file_size = ${MAX_FILE_SIZE}; // In bytes, for file uploads
 
-\$max_image_size = ${MAX_IMAGE_SIZE}; // In Pixles, images bigger then this will be resized
+\$max_image_size = ${MAX_IMAGE_SIZE}; // In Pixels, jpeg images bigger then this will be resized
 
 \$allowed_types = array(
 $allowed_types

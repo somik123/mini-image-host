@@ -3,8 +3,8 @@ volumes:
       name: imagehost_image
   imagehost_thumbnail: # For resized thumbnails
       name: imagehost_thumbnail
-  ext_links_db: # For external links database
-      name: ext_links_db
+  imagehost_db: # For sqlite database
+      name: imagehost_db
 
 services:
   app:
@@ -16,7 +16,7 @@ services:
     volumes:
       - imagehost_image:/var/www/html/i
       - imagehost_thumbnail:/var/www/html/t
-      - ext_links_db:/var/www/db
+      - imagehost_db:/var/www/db
     environment:
       # Site base settings
       APP_PROTOCOL: "https://"
@@ -39,8 +39,8 @@ services:
       MIRROR_DOMAINS: "example.net,example2.net,example3.net"
 
       # Upload limits
-      MAX_FILE_SIZE: "26214400" # 25MB in bytes
-      MAX_IMAGE_SIZE: "800" # 800px
+      MAX_FILE_SIZE: 26214400 # 25MB in bytes
+      MAX_IMAGE_SIZE: 800 # 800px
 
       # Admin key for deleting files
       ADMIN_KEY: "aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa" # Change this to a strong key
@@ -52,10 +52,10 @@ services:
       ALLOWED_TYPES: "image/jpeg,image/png,image/gif,image/webp"
 
       # Enable hotlinking from other sites
-      ENABLE_EXTERNAL_HOSTS: "false"
+      ENABLE_EXTERNAL_HOSTS: false
 
       # Enable short links for external hosts
-      ENABLE_SHORT_LINKS_FOR_EXTERNAL_HOSTS: "false"
+      ENABLE_SHORT_LINKS_FOR_EXTERNAL_HOSTS: false
 
       # Number of images to show per page
-      FILES_PER_PAGE: "20"
+      FILES_PER_PAGE: 20
