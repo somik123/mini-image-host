@@ -22,13 +22,13 @@ function init_external_hosts()
 
     // Define external hosts
     $external_hosts[] = array(
-        'name' => 'PostImages',
+        'name' => 'PostImages.org',
         'function' => 'upload_to_postimages',
         'url' => 'https://postimages.org/',
     );
 
     $external_hosts[] = array(
-        'name' => 'CatBox',
+        'name' => 'CatBox.moe',
         'function' => 'upload_to_catbox',
         'url' => 'https://catbox.moe/',
     );
@@ -46,7 +46,7 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
-        'name' => 'UploadImgur',
+        'name' => 'UploadImgur.com',
         'function' => 'upload_to_imgur',
         'url' => 'https://uploadimgur.com/',
     );
@@ -64,37 +64,37 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
-        'name' => 'UpImg',
+        'name' => 'UpImg.com',
         'function' => 'upload_to_upimg',
         'url' => 'https://upimg.com/',
     );
 
     $external_hosts[] = array(
-        'name' => 'ImgBox',
+        'name' => 'ImgBox.com',
         'function' => 'upload_to_imgbox',
         'url' => 'https://imgbox.com/',
     );
 
     $external_hosts[] = array(
-        'name' => 'ImgBB (API)',
+        'name' => 'ImgBB.com (API)',
         'function' => 'upload_to_imgbb',
         'url' => 'https://imgbb.com/',
     );
 
     $external_hosts[] = array(
-        'name' => 'ImgPaste',
+        'name' => 'ImgPaste.net',
         'function' => 'upload_to_imgpaste',
         'url' => 'https://imgpaste.net/',
     );
 
     $external_hosts[] = array(
-        'name' => 'PngUp',
+        'name' => 'PngUp.org',
         'function' => 'upload_to_pngup',
         'url' => 'https://pngup.org/',
     );
 
     $external_hosts[] = array(
-        'name' => 'ImgIU',
+        'name' => 'ImgIU.com',
         'function' => 'upload_to_imgiu',
         'url' => 'https://imgiu.com/',
     );
@@ -112,7 +112,7 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
-        'name' => 'WindyPix',
+        'name' => 'WindyPix.com',
         'function' => 'upload_to_windypix',
         'url' => 'https://windypix.com/',
     );
@@ -130,21 +130,15 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
-        'name' => 'Image2url',
+        'name' => 'Image2url.com',
         'function' => 'upload_to_image2url',
         'url' => 'https://image2url.com/',
     );
 
     $external_hosts[] = array(
-        'name' => 'DragNdropZ',
+        'name' => 'DragNdropZ.com',
         'function' => 'upload_to_dragndropz',
         'url' => 'https://dragndropz.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'AnonPic.org',
-        'function' => 'upload_to_anonpic_org',
-        'url' => 'https://anonpic.org/',
     );
 
     $external_hosts[] = array(
@@ -154,7 +148,7 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
-        'name' => 'ImgPx',
+        'name' => 'ImgPx.com',
         'function' => 'upload_to_imgpx',
         'url' => 'https://imgpx.com/',
     );
@@ -181,7 +175,7 @@ function init_external_hosts()
 
     // Define Chevereto-based hosts
     $chevereto_hosts[] = array(
-        'name' => 'ImgBB',
+        'name' => 'ImgBB.com',
         'function' => 'upload_to_imgbb',
         'function_alt' => 'upload_to_chevereto',
         'url' => 'https://imgbb.com/',
@@ -200,7 +194,7 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'PasteImg',
+        'name' => 'PasteImg.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://pasteimg.com/',
     );
@@ -218,7 +212,7 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'Inspirats',
+        'name' => 'Inspirats.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://inspirats.com/',
     );
@@ -242,7 +236,7 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'SnappyPic',
+        'name' => 'SnappyPic.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://snappypic.com/',
     );
@@ -260,7 +254,7 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ImgUh',
+        'name' => 'ImgUh.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imguh.com/',
     );
@@ -272,31 +266,31 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ImgKub',
+        'name' => 'ImgKub.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imgkub.com/',
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ImgHive',
+        'name' => 'ImgHive.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imghive.com/',
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'JpgJet',
+        'name' => 'JpgJet.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://jpgjet.com/',
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ImgTap',
+        'name' => 'ImgTap.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imgtap.com/',
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ZippyImage',
+        'name' => 'ZippyImage.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://zippyimage.com/',
     );
@@ -320,7 +314,7 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ImgHit',
+        'name' => 'ImgHit.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://www.imghit.com/',
     );
@@ -712,7 +706,7 @@ function upload_to_windypix($curlfile)
             return $match; // Return the first direct link without '?di='
         }
     }
-    throw new Exception("Error uploading to AnonPic.org" . add_full_error_info($page));
+    throw new Exception("Error uploading to WindyPix.com" . add_full_error_info($page));
 }
 
 
@@ -747,7 +741,7 @@ function upload_to_bigbyte_no($curlfile)
             return $match; // Return the first direct link without '?di='
         }
     }
-    throw new Exception("Error uploading to AnonPic.org" . add_full_error_info($page));
+    throw new Exception("Error uploading to Img.BigByte.no" . add_full_error_info($page));
 }
 
 
@@ -784,26 +778,6 @@ function upload_to_dragndropz($curlfile)
     } else {
         throw new Exception("Error uploading to DragNdropZ" . add_full_error_info($page));
     }
-}
-
-
-
-function upload_to_anonpic_org($curlfile)
-{
-    // AnonPic.org upload logic
-    $upload_url = 'https://anonpic.org/upload.php';
-    $data = array('file[]' => $curlfile, 'imgUrl' => '');
-    $page = mimic_browser($upload_url, $data, 'https://anonpic.org/', true);
-
-    // Check if upload was successful
-    preg_match_all('#\[IMG\]([^\[]+)\[\/IMG\]#si', $page, $matches);
-
-    foreach ($matches[1] as $match) {
-        if (strpos($match, '?di=') !== false) {
-            return $match; // Return the first direct link without '?di='
-        }
-    }
-    throw new Exception("Error uploading to AnonPic.org" . add_full_error_info($page));
 }
 
 
