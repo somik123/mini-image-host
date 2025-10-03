@@ -25,6 +25,8 @@
 
 : "${ENABLE_SHORT_LINKS_FOR_EXTERNAL_HOSTS:=false}"
 
+: "${IMAGEPERL_API_KEY:=}"
+
 : "${FILES_PER_PAGE:=20}"
 
 # Initialize mirror list with APP_DOMAIN
@@ -92,6 +94,8 @@ $allowed_types
 \$enable_short_links_for_external_hosts = ${ENABLE_SHORT_LINKS_FOR_EXTERNAL_HOSTS}; // Enable short links for external hosts
 
 \$files_per_page = ${FILES_PER_PAGE}; // Number of images to show per page
+
+\$imageperl_api_key = "${IMAGEPERL_API_KEY}"; // ImagePerl CDN API key (optional)
 
 EOF
 

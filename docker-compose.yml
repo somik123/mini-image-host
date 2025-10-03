@@ -57,5 +57,8 @@ services:
       # Enable short links for external hosts
       ENABLE_SHORT_LINKS_FOR_EXTERNAL_HOSTS: false
 
+      # cdn.imageperl.com API key (optional)
+      IMAGEPERL_API_KEY: ""
+
       # Number of images to show per page
       FILES_PER_PAGE: 20

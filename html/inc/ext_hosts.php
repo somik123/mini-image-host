@@ -165,6 +165,12 @@ function init_external_hosts()
         'url' => 'https://hostpic.org/',
     );
 
+    $external_hosts[] = array(
+        'name' => 'Cdn.ImagePerl.com',
+        'function' => 'upload_to_cdn_imageperl_com',
+        'url' => 'https://cdn.imageperl.com/',
+    );
+
 
 
 
@@ -866,6 +872,31 @@ function upload_to_hostpic_org($curlfile)
 }
 
 
+function upload_to_cdn_imageperl_com($curlfile)
+{
+    global $imageperl_api_key;
+    if (empty($imageperl_api_key)) {
+        throw new Exception("ImagePerl API key not configured.");
+    }
+
+    // cdn.imageperl.com upload logic
+    $upload_url = "https://cdn.imageperl.com/upload";
+    $data = array(
+        'file' => $curlfile,
+        'api_key' => $imageperl_api_key
+    );
+
+    $page = basic_curl_call($upload_url, "post", $data);
+    $response = json_decode($page, true);
+    // Check if upload was successful
+    if ($response['success']) {
+        return $response['url'];
+    } else {
+        throw new Exception("Error uploading to cdn.imageperl.com" . add_full_error_info($page));
+    }
+}
+
+
 
 
 
@@ -1020,7 +1051,7 @@ function add_ext_link($ext_link, $short_code = "", $file_ext = "")
 
 
 // Retrieve external link details by short code and optionally update hit count
-function get_ext_link($short_code, $hit=true)
+function get_ext_link($short_code, $hit = true)
 {
     global $ext_links_db;
 
