@@ -22,158 +22,179 @@ function init_external_hosts()
 
     // Define external hosts
     $external_hosts[] = array(
-        'name' => 'PostImages.org',
-        'function' => 'upload_to_postimages',
-        'url' => 'https://postimages.org/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'CatBox.moe',
-        'function' => 'upload_to_catbox',
-        'url' => 'https://catbox.moe/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'Pomf2.Lain.la',
-        'function' => 'upload_to_pomf2_lain_la',
-        'url' => 'https://pomf2.lain.la/',
-    );
-
-    $external_hosts[] = array(
         'name' => '0x0.st',
         'function' => 'upload_to_0x0_st',
         'url' => 'https://0x0.st/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'UploadImgur.com',
-        'function' => 'upload_to_imgur',
-        'url' => 'https://uploadimgur.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'MyImgs.org',
-        'function' => 'upload_to_myimgs',
-        'url' => 'https://myimgs.org/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'ImgHost.cc',
-        'function' => 'upload_to_imghost',
-        'url' => 'https://imghost.cc/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'UpImg.com',
-        'function' => 'upload_to_upimg',
-        'url' => 'https://upimg.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'ImgBox.com',
-        'function' => 'upload_to_imgbox',
-        'url' => 'https://imgbox.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'ImgBB.com (API)',
-        'function' => 'upload_to_imgbb',
-        'url' => 'https://imgbb.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'ImgPaste.net',
-        'function' => 'upload_to_imgpaste',
-        'url' => 'https://imgpaste.net/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'PngUp.org',
-        'function' => 'upload_to_pngup',
-        'url' => 'https://pngup.org/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'ImgIU.com',
-        'function' => 'upload_to_imgiu',
-        'url' => 'https://imgiu.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'FileShare.ing',
-        'function' => 'upload_to_fileshare_ing',
-        'url' => 'https://fileshare.ing/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'Xilt.net',
-        'function' => 'upload_to_xilt_net',
-        'url' => 'https://xilt.net/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'WindyPix.com',
-        'function' => 'upload_to_windypix',
-        'url' => 'https://windypix.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'ImgLink.io',
-        'function' => 'upload_to_imglink_io',
-        'url' => 'https://imglink.io/',
+        'index' => 1
     );
 
     $external_hosts[] = array(
         'name' => 'BigByte.no',
         'function' => 'upload_to_bigbyte_no',
         'url' => 'http://img.bigbyte.no/',
+        'index' => 2
     );
 
     $external_hosts[] = array(
-        'name' => 'Image2url.com',
-        'function' => 'upload_to_image2url',
-        'url' => 'https://image2url.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'DragNdropZ.com',
-        'function' => 'upload_to_dragndropz',
-        'url' => 'https://dragndropz.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'PicSer.Pages.dev',
-        'function' => 'upload_to_picser_pages_dev',
-        'url' => 'https://picser.pages.dev/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'ImgPx.com',
-        'function' => 'upload_to_imgpx',
-        'url' => 'https://imgpx.com/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'ImgLink.app',
-        'function' => 'upload_to_imglink_app',
-        'url' => 'https://imglink.app/',
-    );
-
-    $external_hosts[] = array(
-        'name' => 'HostPic.org',
-        'function' => 'upload_to_hostpic_org',
-        'url' => 'https://hostpic.org/',
+        'name' => 'CatBox.moe',
+        'function' => 'upload_to_catbox',
+        'url' => 'https://catbox.moe/',
+        'index' => 3
     );
 
     $external_hosts[] = array(
         'name' => 'Cdn.ImagePerl.com',
         'function' => 'upload_to_cdn_imageperl_com',
         'url' => 'https://cdn.imageperl.com/',
+        'index' => 4
     );
 
+    $external_hosts[] = array(
+        'name' => 'DragNdropZ.com',
+        'function' => 'upload_to_dragndropz',
+        'url' => 'https://dragndropz.com/',
+        'index' => 5
+    );
 
+    $external_hosts[] = array(
+        'name' => 'FileShare.ing',
+        'function' => 'upload_to_fileshare_ing',
+        'url' => 'https://fileshare.ing/',
+        'index' => 6
+    );
 
+    $external_hosts[] = array(
+        'name' => 'HostPic.org',
+        'function' => 'upload_to_hostpic_org',
+        'url' => 'https://hostpic.org/',
+        'index' => 7
+    );
 
+    $external_hosts[] = array(
+        'name' => 'Image2url.com',
+        'function' => 'upload_to_image2url',
+        'url' => 'https://image2url.com/',
+        'index' => 8
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgBB.com (API)',
+        'function' => 'upload_to_imgbb',
+        'url' => 'https://imgbb.com/',
+        'index' => 9
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgBox.com',
+        'function' => 'upload_to_imgbox',
+        'url' => 'https://imgbox.com/',
+        'index' => 10
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgHost.cc',
+        'function' => 'upload_to_imghost',
+        'url' => 'https://imghost.cc/',
+        'index' => 11
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgIU.com',
+        'function' => 'upload_to_imgiu',
+        'url' => 'https://imgiu.com/',
+        'index' => 12
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgLink.app',
+        'function' => 'upload_to_imglink_app',
+        'url' => 'https://imglink.app/',
+        'index' => 13
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgLink.io',
+        'function' => 'upload_to_imglink_io',
+        'url' => 'https://imglink.io/',
+        'index' => 14
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgPaste.net',
+        'function' => 'upload_to_imgpaste',
+        'url' => 'https://imgpaste.net/',
+        'index' => 15
+    );
+
+    $external_hosts[] = array(
+        'name' => 'ImgPx.com',
+        'function' => 'upload_to_imgpx',
+        'url' => 'https://imgpx.com/',
+        'index' => 16
+    );
+
+    $external_hosts[] = array(
+        'name' => 'MyImgs.org',
+        'function' => 'upload_to_myimgs',
+        'url' => 'https://myimgs.org/',
+        'index' => 17
+    );
+
+    $external_hosts[] = array(
+        'name' => 'PicSer.Pages.dev',
+        'function' => 'upload_to_picser_pages_dev',
+        'url' => 'https://picser.pages.dev/',
+        'index' => 18
+    );
+
+    $external_hosts[] = array(
+        'name' => 'PngUp.org',
+        'function' => 'upload_to_pngup',
+        'url' => 'https://pngup.org/',
+        'index' => 19
+    );
+
+    $external_hosts[] = array(
+        'name' => 'Pomf2.Lain.la',
+        'function' => 'upload_to_pomf2_lain_la',
+        'url' => 'https://pomf2.lain.la/',
+        'index' => 20
+    );
+
+    $external_hosts[] = array(
+        'name' => 'PostImages.org',
+        'function' => 'upload_to_postimages',
+        'url' => 'https://postimages.org/',
+        'index' => 21
+    );
+
+    $external_hosts[] = array(
+        'name' => 'UpImg.com',
+        'function' => 'upload_to_upimg',
+        'url' => 'https://upimg.com/',
+        'index' => 22
+    );
+
+    $external_hosts[] = array(
+        'name' => 'UploadImgur.com',
+        'function' => 'upload_to_imgur',
+        'url' => 'https://uploadimgur.com/',
+        'index' => 23
+    );
+
+    $external_hosts[] = array(
+        'name' => 'WindyPix.com',
+        'function' => 'upload_to_windypix',
+        'url' => 'https://windypix.com/',
+        'index' => 24
+    );
+
+    $external_hosts[] = array(
+        'name' => 'Xilt.net',
+        'function' => 'upload_to_xilt_net',
+        'url' => 'https://xilt.net/',
+        'index' => 25
+    );
 
 
 
@@ -181,164 +202,191 @@ function init_external_hosts()
 
     // Define Chevereto-based hosts
     $chevereto_hosts[] = array(
-        'name' => 'ImgBB.com',
-        'function' => 'upload_to_imgbb',
-        'function_alt' => 'upload_to_chevereto',
-        'url' => 'https://imgbb.com/',
+        'name' => 'Eikona.info',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://eikona.info/',
+        'index' => 101
     );
 
     $chevereto_hosts[] = array(
         'name' => 'FreeImage.host',
         'function' => 'upload_to_chevereto',
         'url' => 'https://freeimage.host/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'HostImage.org',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://hostimage.org/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'PasteImg.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://pasteimg.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgBB.ws',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imgbb.ws/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'Img.in.th',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://www.img.in.th/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'Inspirats.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://inspirats.com/',
+        'index' => 102
     );
 
     $chevereto_hosts[] = array(
         'name' => 'FxPics.ru',
         'function' => 'upload_to_chevereto',
         'url' => 'https://fxpics.ru/',
+        'index' => 103
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'Poop.pictures',
+        'name' => 'HostImage.org',
         'function' => 'upload_to_chevereto',
-        'url' => 'https://poop.pictures/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'Site.pictures',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://site.pictures/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'SnappyPic.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://snappypic.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'Eikona.info',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://eikona.info/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgCDN.dev',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imgcdn.dev/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgUh.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imguh.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgShare.pl',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imgshare.pl/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgKub.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imgkub.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgHive.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imghive.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'JpgJet.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://jpgjet.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgTap.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imgtap.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ZippyImage.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://zippyimage.com/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'PixShare.de',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://pixshare.de/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'PixelStash.co',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://pixelstash.co/',
+        'url' => 'https://hostimage.org/',
+        'index' => 104
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImageCC.net',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imagecc.net/',
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgHit.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://www.imghit.com/',
+        'index' => 105
     );
 
     $chevereto_hosts[] = array(
         'name' => 'ImageHost.me',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imagehost.me/',
+        'index' => 106
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'Img.in.th',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://www.img.in.th/',
+        'index' => 107
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgBB.com',
+        'function' => 'upload_to_imgbb',
+        'function_alt' => 'upload_to_chevereto',
+        'url' => 'https://imgbb.com/',
+        'index' => 108
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgBB.ws',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imgbb.ws/',
+        'index' => 109
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgCDN.dev',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imgcdn.dev/',
+        'index' => 110
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgHit.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://www.imghit.com/',
+        'index' => 111
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgHive.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imghive.com/',
+        'index' => 112
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgKub.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imgkub.com/',
+        'index' => 113
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgShare.pl',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imgshare.pl/',
+        'index' => 114
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgTap.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imgtap.com/',
+        'index' => 115
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ImgUh.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://imguh.com/',
+        'index' => 116
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'Inspirats.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://inspirats.com/',
+        'index' => 117
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'JpgJet.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://jpgjet.com/',
+        'index' => 118
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'PasteImg.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://pasteimg.com/',
+        'index' => 119
     );
 
     $chevereto_hosts[] = array(
         'name' => 'PicHost.net',
         'function' => 'upload_to_chevereto',
         'url' => 'https://pichost.net/',
+        'index' => 120
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'PixShare.de',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://pixshare.de/',
+        'index' => 121
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'PixelStash.co',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://pixelstash.co/',
+        'index' => 122
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'Poop.pictures',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://poop.pictures/',
+        'index' => 123
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'Site.pictures',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://site.pictures/',
+        'index' => 124
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'SnappyPic.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://snappypic.com/',
+        'index' => 125
+    );
+
+    $chevereto_hosts[] = array(
+        'name' => 'ZippyImage.com',
+        'function' => 'upload_to_chevereto',
+        'url' => 'https://zippyimage.com/',
+        'index' => 126
     );
 
 
 
+    /*
     // Sort hosts alphabetically by name and add index
     usort($external_hosts, function ($a, $b) {
         return strcmp($a['name'], $b['name']);
@@ -353,6 +401,7 @@ function init_external_hosts()
     foreach ($chevereto_hosts as $index => &$host) {
         $host['index'] = $index + 101; // Start Chevereto hosts index from 101
     }
+    */
 }
 
 
