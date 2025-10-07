@@ -180,69 +180,74 @@ function imagettftextSpaced($im, $size, $angle, $x, $y, $color, $font, $text, $s
     }
 }
 
-// Convert hex color to RGB array
-function hex2rgb($hex)
-{
-    $hex = ltrim($hex, '#');
-    if (strlen($hex) === 3) {
-        $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-    }
-    return [
-        hexdec(substr($hex, 0, 2)),
-        hexdec(substr($hex, 2, 2)),
-        hexdec(substr($hex, 4, 2))
-    ];
-}
 
 
-// Convert text block to image
+// Generate an image from text using Imagick
 function text2image($text)
 {
     // Settings
-    $font_size = 14;
-    $font_file = __DIR__ . "/calibri-regular.ttf"; // Make sure this font file exists
+    $font_size = 24;
+    $font_file = __DIR__ . "/calibri-regular.ttf"; // Ensure this font exists
     $max_width = 800;
-    $line_height = 20;
+    $line_height = 30;
+    $background_color = "#303030";
+    $text_color = "#FFFFFF";
+    $padding_top = 30;
+    $padding_left = 20;
 
-    // Word wrap text to fit max width
-    $wrapped = '';
-    $width = intval($max_width / 10); // Approximate character width
+    // Prepare ImagickDraw for metrics and drawing
+    $draw = new ImagickDraw();
+    $draw->setFont($font_file);
+    $draw->setFontSize($font_size);
+    $draw->setTextAntialias(true); // Enable anti-aliasing for text
+
+    // Word wrap the text
+    $wrapped_lines = [];
     foreach (explode("\n", $text) as $line) {
-        $wrapped .= wordwrap($line, $width, "\n", true) . "\n";
+        $words = explode(' ', $line);
+        $current_line = '';
+        foreach ($words as $word) {
+            $test_line = $current_line === '' ? $word : $current_line . ' ' . $word;
+            $metrics = (new Imagick())->queryFontMetrics($draw, $test_line);
+            if ($metrics['textWidth'] > $max_width - 2 * $padding_left) {
+                if ($current_line !== '') {
+                    $wrapped_lines[] = $current_line;
+                }
+                $current_line = $word;
+            } else {
+                $current_line = $test_line;
+            }
+        }
+        if ($current_line !== '') {
+            $wrapped_lines[] = $current_line;
+        }
     }
 
-    $lines = explode("\n", trim($wrapped));
-    $height = max(100, count($lines) * $line_height + 20);
+    $height = max(100, count($wrapped_lines) * $line_height + $padding_top + 10);
 
     // Create image
-    $im = imagecreatetruecolor($max_width, $height);
+    $image = new Imagick();
+    $image->newImage($max_width, $height, new ImagickPixel($background_color));
+    $image->setImageFormat('png');
 
-    // Colors
-    list($r, $g, $b) = hex2rgb("#303030"); // Dark gray background
-    $background = imagecolorallocate($im, $r, $g, $b);
+    // Prepare for drawing text
+    $draw->setFillColor(new ImagickPixel($text_color));
+    $draw->setTextAlignment(Imagick::ALIGN_LEFT);
 
-    $white = imagecolorallocate($im, 255, 255, 255); // White text
-
-    imagefill($im, 0, 0, $background);
-
-
-    // Draw text line by line
-    $y = 30;
-    foreach ($lines as $line) {
-        //imagettftext($im, $font_size, 0, 10, $y, $black, $font_file, $line);
-        imagettftextSpaced($im, $font_size, 10, 10, $y, $white, $font_file, $line, 2.5); // spacing = 2px
-
+    // Draw each line
+    $y = $padding_top;
+    foreach ($wrapped_lines as $line) {
+        $image->annotateImage($draw, $padding_left, $y, 0, $line);
         $y += $line_height;
     }
 
-    // Output image
-    $output_file = __DIR__ . "/output.png";
-    header('Content-Type: image/png');
-    imagepng($im);
-    imagedestroy($im);
-
+    // Output the image
+    header("Content-Type: image/png");
+    echo $image;
+    $image->destroy();
     exit;
 }
+
 
 
 // Clean up temporary files and exit

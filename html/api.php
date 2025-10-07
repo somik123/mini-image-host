@@ -188,15 +188,16 @@ try {
             }
 
 
-            // Convert webp files into jpg image
-            if ($type == 'image/webp') {
+            if ($type == 'image/webp' || $type == 'image/avif') {
                 $new_file_name = "{$file_id}.jpg";
                 $new_thumb_name = "{$file_id}_thumb.jpg";
 
-                // Convert webp to jpeg with 80% quality and save to save path
-                $im = imagecreatefromwebp($tmp_name);
-                imagejpeg($im, $image_path . $new_file_name, 80);
-                imagedestroy($im);
+                // Convert avif to jpeg with 80% quality and save to save path
+                $im = new Imagick($tmp_name);
+                $im->setImageFormat('jpeg');
+                $im->setImageCompressionQuality(80);
+                $im->writeImage($image_path . $new_file_name);
+                $im->destroy();
             }
             // Resize image if it's JPEG and more then max_image_size in any side
             elseif ($type == 'image/jpeg' && ($image_info[0] > $max_image_size || $image_info[1] > $max_image_size)) {

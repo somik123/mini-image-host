@@ -15,7 +15,7 @@
 
 : "${MAX_FILE_SIZE:=26214400}"
 : "${MAX_IMAGE_SIZE:=800}"
-: "${ALLOWED_TYPES:=image/jpeg,image/png,image/gif,image/webp}"
+: "${ALLOWED_TYPES:=image/jpeg,image/png,image/gif,image/webp,image/avif}"
 
 : "${ADMIN_KEY:=aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa}"
 

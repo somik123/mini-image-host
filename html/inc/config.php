@@ -26,12 +26,20 @@ $allowed_types = array(
     'image/jpeg',
     'image/png',
     'image/gif',
-    'image/webp'
+    'image/webp',
+    'image/avif'
 );
 
 $admin_key = "aQqpJghcYS9Q6T3Lqw3vhQj6dQRHmcCa"; // Change this to a strong key
 
+$imgbb_api_key = ""; // ImgBB API key for remote uploads (optional)
+
 $enable_external_hosts = false; // Enable hotlinking from other sites
+
+$enable_short_links_for_external_hosts = true; // Enable short links for external links
 
 $files_per_page = 20; // Number of images to show per page
 
+$imageperl_api_key = ""; // ImagePerl CDN API key (optional)
+
+$debug = false; // Enable debug mode

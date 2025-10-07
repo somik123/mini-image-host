@@ -49,7 +49,7 @@ services:
       IMGBB_API_KEY: ""
 
       # Allowed MIME types
-      ALLOWED_TYPES: "image/jpeg,image/png,image/gif,image/webp"
+      ALLOWED_TYPES: "image/jpeg,image/png,image/gif,image/webp,image/avif"
 
       # Enable hotlinking from other sites
       ENABLE_EXTERNAL_HOSTS: false

@@ -110,42 +110,21 @@ function delete_file_hash_db()
 }
 
 
-
-// Resize and save image
+// Resize and save image using Imagick
 function resizeAndSaveImage($source, $dest, $maxSize = 200)
 {
-    // get source image size
-    $img_details = getimagesize($source);
-    $w = $img_details[0];
-    $h = $img_details[1];
-    $img_type = $img_details[2];
-
-    // specifying the required image size
-    if ($w > $h) {
-        $new_width = $maxSize;
-        $new_height = ceil($maxSize * $h / $w);
-    } else {
-        $new_height = $maxSize;
-        $new_width = ceil($maxSize * $w / $h);
+    if (!file_exists($source)) {
+        return false;
     }
 
-    if ($img_type == IMAGETYPE_GIF) {
-        $imgt = "ImageGIF";
-        $imgcreatefrom = "ImageCreateFromGIF";
-    } elseif ($img_type == IMAGETYPE_JPEG) {
-        $imgt = "ImageJPEG";
-        $imgcreatefrom = "ImageCreateFromJPEG";
-    } elseif ($img_type == IMAGETYPE_PNG) {
-        $imgt = "ImagePNG";
-        $imgcreatefrom = "ImageCreateFromPNG";
+    try {
+        $im = new Imagick($source);
+        $im->thumbnailImage($maxSize, $maxSize, true); // maintain aspect ratio
+        $im->writeImage($dest);
+        $im->destroy();
+        return true;
+    } catch (ImagickException $e) {
+        error_log("Image resizing failed: " . $e->getMessage());
+        return false;
     }
-
-    if ($imgt) {
-        $old_image = $imgcreatefrom($source);
-        $new_image = imagecreatetruecolor($new_width, $new_height);
-        imagecopyresized($new_image, $old_image, 0, 0, 0, 0, $new_width, $new_height, $w, $h);
-        return $imgt($new_image, $dest);
-    }
-
-    return false;
 }

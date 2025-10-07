@@ -8,15 +8,11 @@ ENV PHP_VERSION=8.3
 
 # Install dependencies
 RUN apt update \
-    && apt install -y software-properties-common curl zip nginx nano sqlite3 \
+    && apt install -y curl nginx nano sqlite3 \
     && apt install -y \
-        php${PHP_VERSION}-gd \
         php${PHP_VERSION}-imagick \
-        php${PHP_VERSION}-xmlrpc \
         php${PHP_VERSION}-sqlite3 \
         php${PHP_VERSION}-curl \
-        php${PHP_VERSION}-xml \
-        php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-fpm \
     && apt clean all \
     && rm -rf /var/lib/apt/lists/* /var/tmp/*
