@@ -169,6 +169,13 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
+        'name' => 'Prnt.sc',
+        'function' => 'upload_to_prnt_sc',
+        'url' => 'https://prnt.sc/',
+        'index' => 26
+    );
+
+    $external_hosts[] = array(
         'name' => 'UpImg.com',
         'function' => 'upload_to_upimg',
         'url' => 'https://upimg.com/',
@@ -944,6 +951,26 @@ function upload_to_cdn_imageperl_com($curlfile)
         throw new Exception("Error uploading to cdn.imageperl.com" . add_full_error_info($page));
     }
 }
+
+
+
+function upload_to_prnt_sc($curlfile)
+{
+    // prnt.sc upload logic
+    $upload_url = 'https://prntscr.com/upload.php';
+    $data = array('image' => $curlfile);
+    $page = mimic_browser($upload_url, $data);
+    $response = json_decode($page, true);
+
+    // Check if upload was successful
+    if ($response['status'] == "success") {
+        return $response['data'];
+    } else {
+        throw new Exception("Error uploading to prnt.sc" . add_full_error_info($page));
+    }
+}
+
+
 
 
 
