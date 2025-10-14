@@ -29,13 +29,6 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
-        'name' => 'BigByte.no',
-        'function' => 'upload_to_bigbyte_no',
-        'url' => 'http://img.bigbyte.no/',
-        'index' => 2
-    );
-
-    $external_hosts[] = array(
         'name' => 'CatBox.moe',
         'function' => 'upload_to_catbox',
         'url' => 'https://catbox.moe/',
@@ -148,13 +141,6 @@ function init_external_hosts()
     );
 
     $external_hosts[] = array(
-        'name' => 'PngUp.org',
-        'function' => 'upload_to_pngup',
-        'url' => 'https://pngup.org/',
-        'index' => 19
-    );
-
-    $external_hosts[] = array(
         'name' => 'Pomf2.Lain.la',
         'function' => 'upload_to_pomf2_lain_la',
         'url' => 'https://pomf2.lain.la/',
@@ -230,13 +216,6 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ImageCC.net',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imagecc.net/',
-        'index' => 105
-    );
-
-    $chevereto_hosts[] = array(
         'name' => 'ImageHost.me',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imagehost.me/',
@@ -266,13 +245,6 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ImgCDN.dev',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imgcdn.dev/',
-        'index' => 110
-    );
-
-    $chevereto_hosts[] = array(
         'name' => 'ImgHit.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://www.imghit.com/',
@@ -294,24 +266,10 @@ function init_external_hosts()
     );
 
     $chevereto_hosts[] = array(
-        'name' => 'ImgShare.pl',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imgshare.pl/',
-        'index' => 114
-    );
-
-    $chevereto_hosts[] = array(
         'name' => 'ImgTap.com',
         'function' => 'upload_to_chevereto',
         'url' => 'https://imgtap.com/',
         'index' => 115
-    );
-
-    $chevereto_hosts[] = array(
-        'name' => 'ImgUh.com',
-        'function' => 'upload_to_chevereto',
-        'url' => 'https://imguh.com/',
-        'index' => 116
     );
 
     $chevereto_hosts[] = array(
@@ -467,8 +425,10 @@ function upload_to_0x0_st($curlfile)
     $upload_url = 'https://0x0.st';
     $data = array('file' => $curlfile);
 
+    $user_agent = "curl/".rand(1, 99).".".rand(1, 99).".".rand(1, 99);
+
     // Using basic curl to handle 0x0.st specific requirements
-    $page = basic_curl_call($upload_url, "post", $data, [], 'curl/8.5.0');
+    $page = basic_curl_call($upload_url, "post", $data, [], $user_agent);
 
     // Check if upload was successful
     if (strpos($page, '0x0.st') !== false) {
@@ -671,25 +631,6 @@ function upload_to_imgpaste($curlfile)
 
 
 
-function upload_to_pngup($curlfile)
-{
-    // PngUp upload logic
-    $upload_url = 'https://pngup.com/api/upload';
-    $data = array('file' => $curlfile);
-    $page = mimic_browser($upload_url, $data);
-    $response = json_decode($page, true);
-    // Check if upload was successful
-    if ($response['id']) {
-        // Get file name from $curlfile
-        $name = $curlfile->getPostFilename();
-        return "https://pngup.com/" . $response['id'] . "/" . $name;
-    } else {
-        throw new Exception("Error uploading to PngUp" . add_full_error_info($page));
-    }
-}
-
-
-
 function upload_to_imgiu($curlfile)
 {
     // ImgiU upload logic
@@ -778,25 +719,6 @@ function upload_to_imglink_io($curlfile)
     } else {
         throw new Exception("Error uploading to Imglink.io" . add_full_error_info($page));
     }
-}
-
-
-function upload_to_bigbyte_no($curlfile)
-{
-    // BigByte.no upload logic
-    $upload_url = 'http://img.bigbyte.no/upload.php';
-    $data = array('file[]' => $curlfile, 'imgUrl' => '');
-    $page = mimic_browser($upload_url, $data, 'http://img.bigbyte.no/', true);
-
-    // Check if upload was successful
-    preg_match_all('#\[IMG\]([^\[]+)\[\/IMG\]#si', $page, $matches);
-
-    foreach ($matches[1] as $match) {
-        if (strpos($match, '?di=') !== false) {
-            return $match; // Return the first direct link without '?di='
-        }
-    }
-    throw new Exception("Error uploading to Img.BigByte.no" . add_full_error_info($page));
 }
 
 
