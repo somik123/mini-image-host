@@ -22,13 +22,6 @@ function init_external_hosts()
 
     // Define external hosts
     $external_hosts[] = array(
-        'name' => '0x0.st',
-        'function' => 'upload_to_0x0_st',
-        'url' => 'https://0x0.st/',
-        'index' => 1
-    );
-
-    $external_hosts[] = array(
         'name' => 'CatBox.moe',
         'function' => 'upload_to_catbox',
         'url' => 'https://catbox.moe/',
@@ -61,6 +54,13 @@ function init_external_hosts()
         'function' => 'upload_to_hostpic_org',
         'url' => 'https://hostpic.org/',
         'index' => 7
+    );
+
+    $external_hosts[] = array(
+        'name' => 'iImg.live',
+        'function' => 'upload_to_iimg_live',
+        'url' => 'https://iimg.live/',
+        'index' => 26
     );
 
     $external_hosts[] = array(
@@ -841,6 +841,24 @@ function upload_to_hostpic_org($curlfile)
         throw new Exception("Error uploading to HostPic.org" . add_full_error_info($page));
     }
 }
+
+
+
+function upload_to_iimg_live($curlfile){
+    // iImg.live upload logic
+    $upload_url = 'https://iimg.live/upload.php';
+    $data = array('file' => $curlfile);
+    $page = mimic_browser($upload_url, $data);
+    $response = json_decode($page, true);
+
+    // Check if upload was successful
+    if ($response['url']) {
+        return $response['url'];
+    } else {
+        throw new Exception("Error uploading to iImg.live" . add_full_error_info($page));
+    }
+}
+
 
 
 function upload_to_cdn_imageperl_com($curlfile)
