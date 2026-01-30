@@ -25,6 +25,15 @@ function human_readable_size($raw_size, $return_array = true)
 
 
 
+// Get thumbnail path for a given image
+function get_thumbnail_path($image_path)
+{
+    $path_info = pathinfo($image_path);
+    return $path_info['filename'] . '_thumb.' . $path_info['extension'];
+}
+
+
+
 // Function used to generate a random string for filename
 function rand_str($length = 10)
 {
@@ -156,7 +165,6 @@ function basic_curl_call(
     if (curl_errno($ch)) {
         throw new Exception('Curl error: ' . curl_error($ch));
     }
-    curl_close($ch);
 
     return $page;
 }

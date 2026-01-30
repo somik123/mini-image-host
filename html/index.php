@@ -216,11 +216,12 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
                     <div class="row g-2">
                         <?php foreach ($files as $file): ?>
                             <?php $img_url = $protocol . $domain . $image_url . $file ?>
+                            <?php $tmb_url = $protocol . $domain . $thumb_url . get_thumbnail_path($file) ?>
 
                             <div class="col-6 col-md text-center">
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#modalPopout"
                                     onclick="return expandImage('<?= $img_url ?>', '<?= $file ?>');">
-                                    <img src="<?= $img_url ?>" alt="<?= $file ?>" class="gallery-img">
+                                    <img src="<?= $tmb_url ?>" alt="<?= $file ?>" class="gallery-img">
                                 </a>
                             </div>
 

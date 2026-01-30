@@ -41,7 +41,7 @@ function upload_image()
     // Convert webp files into jpg image
     if ($type == 'image/webp') {
         $new_file_name = "{$file_id}.jpg";
-        $new_thumb_name = "{$file_id}_thumb.jpg";
+        $new_thumb_name = get_thumbnail_path($new_file_name);
 
         // Convert webp to jpeg with 80% quality and save to save path
         $im = imagecreatefromwebp($tmp_name);
@@ -51,7 +51,7 @@ function upload_image()
     // Resize image if it's JPEG and more then max_image_size in any side
     elseif ($type == 'image/jpeg' && ($image_info[0] > $max_image_size || $image_info[1] > $max_image_size)) {
         $new_file_name = "{$file_id}.jpg";
-        $new_thumb_name = "{$file_id}_thumb.jpg";
+        $new_thumb_name = get_thumbnail_path($new_file_name);
 
         // Resize image to a smaller size
         $source = $tmp_name;
@@ -61,7 +61,7 @@ function upload_image()
     // Move the uploaded file to save path
     else {
         $new_file_name = "{$file_id}.{$file_ext}";
-        $new_thumb_name = "{$file_id}_thumb.{$file_ext}";
+        $new_thumb_name = get_thumbnail_path($new_file_name);
 
         // Move the uploaded file to save path (for all other formats)
         move_uploaded_file($tmp_name, $image_path . $new_file_name);
