@@ -26,7 +26,6 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
-
     <link rel="stylesheet" href="static/styles.css<?= $rand_v ?>">
 </head>
 
@@ -268,6 +267,22 @@ $max_filesize_msg = human_readable_size($max_file_size, 0);
             </div>
         </div>
         <!-- Image Modal End -->
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modalPopout = document.getElementById('modalPopout');
+                const modalImage = document.getElementById('modalImage');
+                const modalImageLink = document.getElementById('modalImageLink');
+                const modalHeader = document.getElementById('modalPopoutHeader');
+
+                modalPopout.addEventListener('hidden.bs.modal', function() {
+                    modalImage.src = '';
+                    modalImageLink.value = '';
+                    modalHeader.textContent = '';
+                    console.log('Modal closed, everything cleared.');
+                });
+            });
+        </script>
 
 
     <?php else: ?>
