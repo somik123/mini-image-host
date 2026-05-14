@@ -1,10 +1,10 @@
-# Use ubuntu 24.04
-FROM ubuntu:24.04 AS base
+# Use ubuntu 26.04
+FROM ubuntu:26.04 AS base
 
 # Set required environmental variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Singapore
-ENV PHP_VERSION=8.3
+ENV PHP_VERSION=8.5
 
 # Install dependencies
 RUN apt update \
