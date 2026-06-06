@@ -28,7 +28,7 @@ WORKDIR /var/www/html
 
 RUN chmod +x /start.sh \
     && chown -R www-data:www-data /var/www/html /var/www/db \
-    && sed -i -e "s/server_tokens off\;/server_tokens off\;\\n        client_max_body_size 500M\;/g" /etc/nginx/nginx.conf \
+    && sed -i -e "s/sendfile on\;/sendfile on\;\\n        client_max_body_size 500M\;/g" /etc/nginx/nginx.conf \
     && echo \
 "server { \n\
     listen 80 default_server; \n\
