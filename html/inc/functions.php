@@ -5,8 +5,14 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
 }
 
 
-// Conver byte size to human redable size
-function human_readable_size($raw_size, $return_array = true)
+/**
+ * Convert byte size to human readable size
+ *
+ * @param int $raw_size Raw size in bytes
+ * @param bool $return_array Whether to return as array or string
+ * @return array|string Size as array [size, unit] or formatted string "size unit"
+ */
+function human_readable_size(int $raw_size, $return_array = true)
 {
     $size_arr = array("B", "KB", "MB", "GB", "TB", "PB");
     $max = count($size_arr) - 1;
@@ -26,7 +32,7 @@ function human_readable_size($raw_size, $return_array = true)
 
 
 // Get thumbnail path for a given image
-function get_thumbnail_path($image_path)
+function get_thumbnail_path(string $image_path)
 {
     $path_info = pathinfo($image_path);
     return $path_info['filename'] . '_thumb.' . $path_info['extension'];
@@ -48,7 +54,7 @@ function rand_str($length = 10)
 
 // Function to perform HTTP requests using cURL and return the response
 // This mimics a browser request as much as possible
-function mimic_browser($upload_url, $data = false, $reffer = false, $cookie = false, $head = false)
+function mimic_browser(string $upload_url, $data = false, $reffer = false, $cookie = false, $head = false)
 {
     global $cookie_file;
 
@@ -108,7 +114,7 @@ function mimic_browser($upload_url, $data = false, $reffer = false, $cookie = fa
 // Basic cURL function to handle requests with more options
 // This is used for 0x0.st, UpImg and ImgBox, and mimics curl or ajax requests
 function basic_curl_call(
-    $url,
+    string $url,
     $request_type = "post",
     $data = "",
     $headers = [],
@@ -172,7 +178,21 @@ function basic_curl_call(
 
 
 // Function to draw text with custom spacing between characters
-function imagettftextSpaced($im, $size, $angle, $x, $y, $color, $font, $text, $spacing = 0)
+/**
+ * Draw text with custom spacing between characters.
+ *
+ * @param GdImage $im  GD image resource
+ * @param float|int $size Font size
+ * @param float|int $angle Angle in degrees
+ * @param int $x X coordinate
+ * @param int $y Y coordinate
+ * @param int $color Color identifier (imagecolorallocate)
+ * @param string $font Path to TTF font file
+ * @param string $text Text to draw
+ * @param int $spacing Extra spacing between characters
+ * @return void
+ */
+function imagettftextSpaced(GdImage $im, float|int $size, float|int $angle, int $x, int $y, int $color, string $font, string $text, int $spacing = 0): void
 {
     $chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY); // handle UTF-8 too
     foreach ($chars as $char) {
@@ -191,7 +211,7 @@ function imagettftextSpaced($im, $size, $angle, $x, $y, $color, $font, $text, $s
 
 
 // Generate an image from text using Imagick
-function text2image($text)
+function text2image(string $text)
 {
     // Settings
     $font_size = 24;
@@ -270,7 +290,7 @@ function cleanup()
 
 
 // HTML Footer
-function html_footer($contact)
+function html_footer(string $contact)
 {
     global $enable_short_links_for_external_hosts, $enable_external_hosts;
 ?>

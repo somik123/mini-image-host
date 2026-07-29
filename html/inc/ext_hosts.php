@@ -364,7 +364,7 @@ function init_external_hosts()
 
 
 
-function upload_to_postimages($curlfile)
+function upload_to_postimages(CURLFile $curlfile): string
 {
     // PostImages upload logic
     $upload_url = 'https://postimages.org/json/upload';
@@ -386,7 +386,7 @@ function upload_to_postimages($curlfile)
 }
 
 
-function upload_to_catbox($curlfile)
+function upload_to_catbox(CURLFile $curlfile): string
 {
     // CatBox upload logic
     $upload_url = 'https://catbox.moe/user/api.php';
@@ -402,7 +402,7 @@ function upload_to_catbox($curlfile)
 }
 
 
-function upload_to_pomf2_lain_la($curlfile)
+function upload_to_pomf2_lain_la(CURLFile $curlfile): string
 {
     // pomf2.lain.la upload logic
     $upload_url = 'https://pomf2.lain.la/upload.php';
@@ -419,7 +419,7 @@ function upload_to_pomf2_lain_la($curlfile)
 }
 
 
-function upload_to_0x0_st($curlfile)
+function upload_to_0x0_st(CURLFile $curlfile): string
 {
     // 0x0.st upload logic
     $upload_url = 'https://0x0.st';
@@ -439,7 +439,7 @@ function upload_to_0x0_st($curlfile)
 }
 
 
-function upload_to_imgur($curlfile)
+function upload_to_imgur(CURLFile $curlfile): string
 {
     // UploadImgur upload logic
     $upload_url = "https://uploadimgur.com/api/upload";
@@ -456,7 +456,7 @@ function upload_to_imgur($curlfile)
 }
 
 
-function upload_to_myimgs($curlfile)
+function upload_to_myimgs(CURLFile $curlfile): string
 {
     // myimgs.org upload logic
     $url = "http://myimgs.org/";
@@ -490,7 +490,7 @@ function upload_to_myimgs($curlfile)
 
 
 
-function upload_to_imghost($curlfile)
+function upload_to_imghost(CURLFile $curlfile): string
 {
     // imghost.cc upload logic
     $upload_url = "https://imghost.cc/upload";
@@ -509,7 +509,7 @@ function upload_to_imghost($curlfile)
 
 
 
-function upload_to_upimg($curlfile)
+function upload_to_upimg(CURLFile $curlfile): string
 {
     // UpImg upload logic
     $url = "https://upimg.com/";
@@ -537,7 +537,7 @@ function upload_to_upimg($curlfile)
 
 
 
-function upload_to_imgbox($curlfile)
+function upload_to_imgbox(CURLFile $curlfile): string
 {
     global $cookie_file;
 
@@ -590,7 +590,7 @@ function upload_to_imgbox($curlfile)
 
 
 
-function upload_to_imgbb($curlfile)
+function upload_to_imgbb(CURLFile $curlfile): string
 {
     global $imgbb_api_key;
 
@@ -614,7 +614,7 @@ function upload_to_imgbb($curlfile)
 
 
 
-function upload_to_imgpaste($curlfile)
+function upload_to_imgpaste(CURLFile $curlfile): string
 {
     // ImgPaste upload logic
     $upload_url = 'https://api.imgpaste.net/upload';
@@ -631,7 +631,7 @@ function upload_to_imgpaste($curlfile)
 
 
 
-function upload_to_imgiu($curlfile)
+function upload_to_imgiu(CURLFile $curlfile): string
 {
     // ImgiU upload logic
     $upload_url = 'https://imgiu.com/upload.php';
@@ -648,7 +648,7 @@ function upload_to_imgiu($curlfile)
 
 
 
-function upload_to_fileshare_ing($curlfile)
+function upload_to_fileshare_ing(CURLFile $curlfile): string
 {
     // fileshare.ing upload logic
     $upload_url = 'https://api.fileshare.ing/upload';
@@ -670,7 +670,7 @@ function upload_to_fileshare_ing($curlfile)
 }
 
 
-function upload_to_xilt_net($curlfile)
+function upload_to_xilt_net(CURLFile $curlfile): string
 {
     // Xilt.net upload logic
     $upload_url = 'https://xilt.net/inc/upload.php';
@@ -687,7 +687,7 @@ function upload_to_xilt_net($curlfile)
 
 
 
-function upload_to_windypix($curlfile)
+function upload_to_windypix(CURLFile $curlfile): string
 {
     // WindyPix upload logic
     $upload_url = 'https://windypix.com/upload.php';
@@ -706,7 +706,7 @@ function upload_to_windypix($curlfile)
 }
 
 
-function upload_to_imglink_io($curlfile)
+function upload_to_imglink_io(CURLFile $curlfile): string
 {
     // Imglink.io upload logic
     $upload_url = 'https://imglink.io/upload';
@@ -723,7 +723,7 @@ function upload_to_imglink_io($curlfile)
 
 
 
-function upload_to_image2url($curlfile)
+function upload_to_image2url(CURLFile $curlfile): string
 {
     // Image2url upload logic
     $upload_url = 'https://www.image2url.com/api/upload';
@@ -741,7 +741,7 @@ function upload_to_image2url($curlfile)
 
 
 
-function upload_to_dragndropz($curlfile)
+function upload_to_dragndropz(CURLFile $curlfile): string
 {
     // DragNdropZ upload logic
     $upload_url = 'https://serv1.dragndropz.com/image_uploader.php';
@@ -759,7 +759,7 @@ function upload_to_dragndropz($curlfile)
 
 
 
-function upload_to_picser_pages_dev($curlfile)
+function upload_to_picser_pages_dev(CURLFile $curlfile): string
 {
     // PicSer.Pages.dev upload logic
     $upload_url = 'https://picser.pages.dev/api/upload';
@@ -776,7 +776,7 @@ function upload_to_picser_pages_dev($curlfile)
 }
 
 
-function upload_to_imgpx($curlfile)
+function upload_to_imgpx(CURLFile $curlfile): string
 {
     // ImgPx upload logic
     $url = "https://imgpx.com/";
@@ -803,11 +803,12 @@ function upload_to_imgpx($curlfile)
             return $match; // Return the first direct link without '/thumbnail/'
         }
     }
+    return "";
 }
 
 
 
-function upload_to_imglink_app($curlfile)
+function upload_to_imglink_app(CURLFile $curlfile): string
 {
     // Imglink.app upload logic
     $upload_url = 'https://imglink.app/api/blob-upload';
@@ -825,7 +826,7 @@ function upload_to_imglink_app($curlfile)
 
 
 
-function upload_to_hostpic_org($curlfile)
+function upload_to_hostpic_org(CURLFile $curlfile): string
 {
     // HostPic.org upload logic
     $upload_url = 'https://www.hostpic.org/inc/uploader.php';
@@ -844,7 +845,7 @@ function upload_to_hostpic_org($curlfile)
 
 
 
-function upload_to_iimg_live($curlfile){
+function upload_to_iimg_live(CURLFile $curlfile): string{
     // iImg.live upload logic
     $upload_url = 'https://iimg.live/upload.php';
     $data = array('file' => $curlfile);
@@ -861,7 +862,7 @@ function upload_to_iimg_live($curlfile){
 
 
 
-function upload_to_cdn_imageperl_com($curlfile)
+function upload_to_cdn_imageperl_com(CURLFile $curlfile): string
 {
     global $imageperl_api_key;
     if (empty($imageperl_api_key)) {
@@ -893,7 +894,7 @@ function upload_to_cdn_imageperl_com($curlfile)
 
 
 // Index 100+ are all chevereto hosts
-function upload_to_chevereto($curlfile, $file_host, $mime_type)
+function upload_to_chevereto(CURLFile $curlfile, string $file_host, string $mime_type) : string
 {
     global $chevereto_hosts;
 
@@ -1006,7 +1007,7 @@ function generate_short_code($length = 10)
 
 
 // Add new external link to the database
-function add_ext_link($ext_link, $short_code = "", $file_ext = "")
+function add_ext_link(string $ext_link, string $short_code = "", string $file_ext = "")
 {
     global $ext_links_db;
 
@@ -1040,7 +1041,7 @@ function add_ext_link($ext_link, $short_code = "", $file_ext = "")
 
 
 // Retrieve external link details by short code and optionally update hit count
-function get_ext_link($short_code, $hit = true)
+function get_ext_link(string $short_code, bool $hit = true)
 {
     global $ext_links_db;
 
@@ -1066,7 +1067,7 @@ function get_ext_link($short_code, $hit = true)
 
 
 // Delete external link by short code as Admin
-function delete_ext_link($short_code)
+function delete_ext_link(string $short_code)
 {
     global $ext_links_db;
 
@@ -1084,7 +1085,7 @@ function delete_ext_link($short_code)
 
 
 // Delete external link by delete code
-function delete_ext_link_by_delete_code($delete_code)
+function delete_ext_link_by_delete_code(string $delete_code)
 {
     global $ext_links_db;
 
@@ -1142,7 +1143,7 @@ function get_client_ip()
 }
 
 
-function add_full_error_info($page)
+function add_full_error_info(string $page)
 {
     global $debug;
 

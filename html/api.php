@@ -1,5 +1,11 @@
 <?php
 
+// Fix php validation errors
+$max_file_size = 1;
+$external_hosts = array();
+$allowed_types = array();
+
+
 // Read functions file for helper functions
 require_once("inc/functions.php");
 
@@ -269,7 +275,7 @@ try {
 
             // Check if upload was successful
             if (empty($hotlink))
-                throw new Exception("Error uploading image." . $debug ? "\n" . htmlspecialchars($page) : "");
+                throw new Exception("Error uploading image.");
 
             // Create a short link for the external link if enabled
             if ($enable_short_links_for_external_hosts) {

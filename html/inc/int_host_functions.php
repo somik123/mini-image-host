@@ -26,7 +26,7 @@ function initialize_int_file_hash_db()
 
 
 // Add a new file hash entry to the database
-function add_file_hash($file_name, $file_ext, $file_hash)
+function add_file_hash(string $file_name, string $file_ext, string $file_hash)
 {
     global $int_file_hash_db;
     $db = new SQLite3($int_file_hash_db, SQLITE3_OPEN_READWRITE);
@@ -42,7 +42,7 @@ function add_file_hash($file_name, $file_ext, $file_hash)
 
 
 // Retrieve a file entry by its hash
-function get_file_by_hash($file_hash)
+function get_file_by_hash(string $file_hash)
 {
     global $int_file_hash_db;
     $db = new SQLite3($int_file_hash_db, SQLITE3_OPEN_READONLY);
@@ -59,7 +59,7 @@ function get_file_by_hash($file_hash)
 
 
 // Delete a file hash entry from the database
-function delete_hash_entry($file_path)
+function delete_hash_entry(string $file_path)
 {
     global $int_file_hash_db;
     $db = new SQLite3($int_file_hash_db, SQLITE3_OPEN_READWRITE);
@@ -78,7 +78,7 @@ function delete_hash_entry($file_path)
 
 
 // Check if a file with the same hash already exists in the database
-function is_duplicate_file($file_path, $new_file_name, $new_file_ext)
+function is_duplicate_file(string $file_path, string $new_file_name, string $new_file_ext)
 {
     if (file_exists($file_path) && is_readable($file_path)) {
         $file_hash = hash_file('sha256', $file_path);
@@ -111,7 +111,7 @@ function delete_file_hash_db()
 
 
 // Resize and save image using Imagick
-function resizeAndSaveImage($source, $dest, $maxSize = 200)
+function resizeAndSaveImage(string $source, string $dest, $maxSize = 200)
 {
     if (!file_exists($source)) {
         return false;
