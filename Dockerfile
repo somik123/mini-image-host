@@ -22,7 +22,7 @@ COPY start.sh /start.sh
 # Copy/create html dir
 ADD  html /var/www/html
 # Copy/create database dir
-Add db /var/www/db
+ADD db /var/www/db
 
 WORKDIR /var/www/html
 
