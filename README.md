@@ -19,3 +19,5 @@ Just a quick image host in PHP
 1. Access the website by going to `yourServerIp:port` (default port `8080`)
 
 > **Note:** You can edit `docker-compose.yml` file and replace `./html` with the full path to your html directory. You can also change the default port from `8080` to your prefered port.
+
+> Updated: 2026-10-24
